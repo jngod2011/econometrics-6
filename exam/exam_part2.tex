@@ -1,0 +1,233 @@
+% !TeX encoding = UTF-8
+% !TeX spellcheck = en_US
+\documentclass{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[a4paper,top=2cm]{geometry}
+\usepackage{amssymb,amsmath,amsfonts}
+\usepackage[english]{babel}
+\usepackage[a4paper]{geometry}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{csquotes}
+\usepackage{dcolumn}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+
+\begin{document}
+	
+	\title{Econometrics 2 \\ \small Exam}
+	\author{Dr. Willi Mutschler}
+	\date{}
+	\maketitle
+	
+	\begin{itemize}
+		\item Answer \textbf{all} of the following exercises in either German or English.
+		\item Explain your answers and derivations. All your computations and intermediate steps need to be verifiable and understandable. 
+		\item Formulas which we covered in the lecture and class need not to be derived again.
+		\item If you prefer a notation different from the one used in the course, define it.
+		\item Always use significance level $a=5\%$.
+		\item Please report 3 decimal places in numerical answers.
+		\item If not otherwise stated, assume the validity of the assumption A, B and C given in the lecture.
+		\item Permissible aids:
+		\begin{itemize}
+			\item non-programmable pocket calculator
+			\item cheat sheet: one-sided A4 white sheet of paper with annotations, formulas, texts, sketches, etc.
+		\end{itemize}
+	\end{itemize}
+\thispagestyle{empty}
+
+\newpage
+\setcounter{page}{1}
+\section{Understanding}
+\begin{enumerate}[label=(\alph*)]
+\item The standard output of an OLS estimation yields a Durbin-Watson statistic of 0.32. What does this imply?
+\item The estimation of a dynamic model yields
+$$y_t = 0.6 y_{t-1} + 0.3 x_t +\hat{u}_t$$
+where $y_t$ and $x_t$ are \textbf{both measured in logs}. Compute the dynamic effect (multiplier) of a 1\% increase in x on y (i) in the same period (ii) in the next period and (iii) in the long run.
+\item List the assumptions on the error term one needs to show that the covariance matrix of the OLS estimator $\hat{\beta}$ is given by $\sigma^2 (X'X)^{-1}$?
+\end{enumerate}
+\newpage
+
+
+\section{Violation of B1}
+Assume that the true model is given by
+$$y_t^\ast = \alpha + \beta x_t + u_t$$
+where $u_t \sim N(0,\sigma_u^2)$ with $\sigma_u^2>0$. However, $y_t^\ast$ is only observable with a measurement error
+$$y_t^\ast = y_t + v_t$$
+where $v_t \sim N(0,\sigma_v^2)$ with $\sigma_v^2>0$ and $cov(u_t,v_s)=0$ for all $t$ and $s$. The observed model is hence given by
+$$ y_t = \alpha + \beta x_t + \underbrace{u_t - v_t}_{\varepsilon_t}$$
+\begin{enumerate}[label=(\alph*)]
+	\item Compute the (i) expectation, (ii) variance and (iii) autocorrelation function of $\varepsilon_t$.
+	\item Compute the bias of the OLS estimators for $\alpha$ and $\beta$.
+	\item What happens to the standard errors of the OLS estimators for $\alpha$ and $\beta$? Are hypothesis tests and interval estimators still valid? 
+	\item Provide intuition whether or not the OLS estimator remains consistent. A formal proof is not necessary.	
+\end{enumerate}
+
+\newpage
+\section{Testing violations}
+The demand for money is determined using the regression model
+$$ m_t = \alpha + \beta_1 y_{t} + \beta_2 i_{t} + u_t$$
+where
+\begin{align*}
+m_t:    & \text{ real money stock in logs}\\
+y_{t}: & \text{ real income in logs}\\
+i_{t}: & \text{ interest rate in \%}
+\end{align*} 
+Given quarterly data for the period 1970-1996 ($T=108$), a least squares estimation shows that
+$$\sum_{t=1}^T \hat{u}_t^2=108$$
+A separate estimation for the period 1970-1989 (80 observations) yields an unbiased estimate for $\sigma^2$ of 0.02, whereas considering the period 1990-1996 (28 observations) yields an unbiased estimate for $\sigma^2$ of 2. Test the following null hypotheses:
+\begin{enumerate}[label=(\alph*)]
+	\item The variance $\sigma^2$ did not change after the reunification 1990.
+	\item The coefficients of the regression model did not change after the reunification 1990.
+\end{enumerate}
+\newpage
+
+\section{Instrument variables}
+The aim is to investigate the influence of education, $educ$, on a person's salary, $wage$, by using the following regression model
+\[\log(wage_t) = \beta_0 + \beta_1\, educ_t + u_t\]
+Since it is assumed that $educ$ is an endogenous variable, the geographical distance of the person's place of residence to the nearest university, $nearc4$, and the number of years of the father's education, $fatheduc$, are used as instrumental variables. The \textbf{IV estimation} yields the following result
+
+\renewcommand{\arraystretch}{0.8}
+\begin{center}
+	
+	Model: IV Estimation, observations 1--2320\\
+	Endogenous Variable: log(wage)\\
+	Instruments: const nearc4 fatheduc \\
+	Instruments used for: educ \\	
+	\vspace{1em}
+	
+	\begin{tabular}{lr@{,}lr@{,}lr@{,}lr@{,}l}
+		&
+		\multicolumn{2}{c}{Coefficient} &
+		\multicolumn{2}{c}{Std.\ error} &
+		\multicolumn{2}{c}{$t$ statistic} &
+		\multicolumn{2}{c}{p-value} \\[1ex]
+		const &
+		5&3155 &
+		0&0966 &
+		55&0198 &
+		0&0000 \\
+		educ &
+		0&0715 &
+		0&0071 &
+		10&0722 &
+		0&0000 \\
+	\end{tabular}
+	
+	\vspace{1em}
+	
+\end{center}
+
+\renewcommand{\arraystretch}{1.5}
+
+\begin{enumerate}[label=(\alph*)]
+	\item What is an endogenous regressor? What is a relevant and valid instrument?
+	
+	\item An  OLS estimation of 
+	$$ educ_t = \pi_0 + \pi_1 nearc4_t + \pi_2 fatheduc_t + v_t$$ yields
+	\renewcommand{\arraystretch}{0.8}
+	\begin{center}		
+		Model: OLS, observations 1--2320\\
+		Endogenous Variable: educ\\
+		
+		\vspace{1em}
+		
+		\begin{tabular}{lr@{,}lr@{,}lr@{,}lr@{,}l}
+			&
+			\multicolumn{2}{c}{Coefficient} &
+			\multicolumn{2}{c}{Std.\ error} &
+			\multicolumn{2}{c}{$t$-statistic} &
+			\multicolumn{2}{c}{p-value} \\[1ex]
+			const &
+			10&0549 &
+			0&1465 &
+			68&6545 &
+			0&0000 \\
+			nearc4 &
+			0&3388 &
+			0&1038 &
+			3&2653 &
+			0&0011 \\
+			fatheduc &
+			0&3269 &
+			0&0129 &
+			25&3125 &
+			0&0000 \\
+		\end{tabular}
+		
+		\vspace{1ex}
+		\begin{tabular}{lr}
+		$F(2, 2317)$ = 344,2389, & p-value($F$) = 1,3\textrm{e--131}
+		\end{tabular}
+		
+		\vspace{1em}
+		
+	\end{center}
+	Are the instruments $nearc4$ and $fatheduc$ relevant? 
+	\renewcommand{\arraystretch}{1.5}
+	
+	
+\end{enumerate}
+
+\newpage
+\section{Stochastic convergence}
+Suppose that the infinite sequence $Y_{1},Y_{2},\ldots $ is an $AR(1)$ process, i.e.
+$$Y_{t}-\mu =\rho \left(Y_{t-1}-\mu\right) +\varepsilon _{t}$$ where $\varepsilon _{t}\sim iid(0,\sigma_{\varepsilon }^{2})$ and $|\rho |<1$. Furthermore, let $\hat{\mu} =\frac{1}{T}\sum_{t=1}^{T}Y_{t}$ denote the sample mean.\\
+\textit{Hint: From the lecture we know that $Y_t$ is stationary, so that $E(Y_t) = \mu$ and $Var(Y_t) = \sigma_\varepsilon^2/(1-\rho^2)$ for all $t=1,...,T$.}
+
+\begin{enumerate}[label=(\alph*)]
+		\item Show that $\frac{1}{\sqrt{T} } \sum_{t=1}^T \varepsilon_t \overset{d}{\rightarrow} U_\varepsilon \sim N(0,\sigma_\varepsilon^2)$.
+		\item Show that
+		$$\frac{1}{\sqrt{T}} \sum_{t=1}^T \varepsilon_t = \sqrt{T}\left[(1-\rho)\left(\hat{\mu}-\mu\right) + \rho\left(\frac{Y_T - Y_0}{T}\right)\right]$$
+
+		\textit{Hint: $\frac{1}{T}\sum_{t=1}^{T}Y_{t-1} = \left(\frac{1}{T}\sum_{t=1}^{T} Y_{t}\right) - \frac{1}{T} (Y_T - Y_0) = \hat{\mu} - \frac{Y_T - Y_0}{T}$.}
+		\item Assume that
+		$$\underset{T\rightarrow \infty}{\textsl{plim}}\left[\frac{\rho}{1-\rho}\left(\frac{Y_T - Y_0}{\sqrt{T}}\right)\right] = 0$$
+		Put the results of (b) and (c) together and show that
+		\begin{align}
+		Z_{T} =\sqrt{T}\frac{\hat{\mu} -\mu }{\sigma_Z} \overset{d}{\rightarrow} U \sim N(0,1) \label{eq:AsymDistribAR1}
+		\end{align}
+		for $\sigma_Z=\sqrt{\sigma_\varepsilon^2/(1-\rho)^2}$.\\		
+		\textit{Hint: Start with (c) and divide by $(1-\rho)$, then use (b) to derive the asymptotic distribution.}
+		\item Briefly describe the intuition and result of the usual Central Limit Theorem for the sample mean of iid random variables. Why does it not hold for the $AR(1)$ process?\\
+		\textit{Hint: Note that $\sigma_Z =\sqrt{\sigma_\varepsilon^2/(1-\rho)^2}$ \textbf{is not equal to} $\sqrt{Var(Y_t)} = \sqrt{\sigma_\varepsilon^2/(1-\rho^2)}$.}
+\end{enumerate}
+
+
+\newpage Table of the quantiles of the $F_{\nu _{1},\nu _{2}}$%
+-distribution,	given are the 0.95 -quantiles (i.e. $a=0.05$)
+
+\begin{tabular}{|r|rrrrrrrrrrr|}
+	\hline
+	& \multicolumn{11}{|c|}{$\nu_1$} \\ 
+	$\nu_2$ & 1 & 2 & 3 & 4 & 5 & 10 & 15 & 20 & 25 & 50 & $\infty$\\ \hline
+	1 & 161.45 & 199.50 & 215.71 & 224.58 & 230.16 & 241.88 & 245.95 & 248.01 & 249.26 & 251.77 & 254\\ 
+	2 & 18.51 & 19.00 & 19.16 & 19.25 & 19.30 & 19.40 & 19.43 & 19.45 & 19.46 & 19.48 & 19.5\\ 
+	3 & 10.13 & 9.55 & 9.28 & 9.12 & 9.01 & 8.79 & 8.70 & 8.66 & 8.63 & 8.58 & 8.53\\ 
+	4 & 7.71 & 6.94 & 6.59 & 6.39 & 6.26 & 5.96 & 5.86 & 5.80 & 5.77 & 5.70 & 5.63\\ 
+	5 & 6.61 & 5.79 & 5.41 & 5.19 & 5.05 & 4.74 & 4.62 & 4.56 & 4.52 & 4.44 & 4.37\\ 
+	6 & 5.99 & 5.14 & 4.76 & 4.53 & 4.39 & 4.06 & 3.94 & 3.87 & 3.83 & 3.75 & 3.67\\ 
+	7 & 5.59 & 4.74 & 4.35 & 4.12 & 3.97 & 3.64 & 3.51 & 3.44 & 3.40 & 3.32 & 3.23\\ 
+	8 & 5.32 & 4.46 & 4.07 & 3.84 & 3.69 & 3.35 & 3.22 & 3.15 & 3.11 & 3.02 & 2.93\\ 
+	9 & 5.12 & 4.26 & 3.86 & 3.63 & 3.48 & 3.14 & 3.01 & 2.94 & 2.89 & 2.80 & 2.71\\ 
+	10 & 4.96 & 4.10 & 3.71 & 3.48 & 3.33 & 2.98 & 2.85 & 2.77 & 2.73 & 2.64 & 2.54\\ 
+	15 & 4.54 & 3.68 & 3.29 & 3.06 & 2.90 & 2.54 & 2.40 & 2.33 & 2.28 & 2.18 & 2.07\\ 
+	20 & 4.35 & 3.49 & 3.10 & 2.87 & 2.71 & 2.35 & 2.20 & 2.12 & 2.07 & 1.97 & 1.84\\ 
+	25 & 4.24 & 3.39 & 2.99 & 2.76 & 2.60 & 2.24 & 2.09 & 2.01 & 1.96 & 1.84 & 1.71\\ 
+	30 & 4.17 & 3.32 & 2.92 & 2.69 & 2.53 & 2.16 & 2.01 & 1.93 & 1.88 & 1.76 & 1.62\\ 
+	35 & 4.12 & 3.27 & 2.87 & 2.64 & 2.49 & 2.11 & 1.96 & 1.88 & 1.82 & 1.70 & 1.56\\ 
+	40 & 4.08 & 3.23 & 2.84 & 2.61 & 2.45 & 2.08 & 1.92 & 1.84 & 1.78 & 1.66 & 1.51\\ 
+	45 & 4.06 & 3.20 & 2.81 & 2.58 & 2.42 & 2.05 & 1.89 & 1.81 & 1.75 & 1.63 & 1.47\\ 
+	50 & 4.03 & 3.18 & 2.79 & 2.56 & 2.40 & 2.03 & 1.87 & 1.78 & 1.73 & 1.60 & 1.44\\ 
+	60 & 4.00 & 3.15 & 2.76 & 2.53 & 2.37 & 1.99 & 1.84 & 1.75 & 1.69 & 1.56 & 1.39\\ 
+	70 & 3.98 & 3.13 & 2.74 & 2.50 & 2.35 & 1.97 & 1.81 & 1.72 & 1.66 & 1.53 & 1.35\\ 
+	80 & 3.96 & 3.11 & 2.72 & 2.49 & 2.33 & 1.95 & 1.79 & 1.70 & 1.64 & 1.51 & 1.32\\ 
+	90 & 3.95 & 3.10 & 2.71 & 2.47 & 2.32 & 1.94 & 1.78 & 1.69 & 1.63 & 1.49 & 1.30\\ 
+	100 & 3.94 & 3.09 & 2.70 & 2.46 & 2.31 & 1.93 & 1.77 & 1.68 & 1.62 & 1.48 & 1.28 \\ 
+	$\infty$ & 3.84 & 3.00 & 2.60 & 2.37 & 2.21 & 1.83 & 1.67 & 1.57 & 1.49 & 1.35 & 1.01 \\ 
+	\hline
+\end{tabular}
+
+	
+\end{document}

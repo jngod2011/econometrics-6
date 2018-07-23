@@ -1,0 +1,115 @@
+% !TeX encoding = UTF-8
+% !TeX spellcheck = en_US
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{eurosym}
+\usepackage[ngerman]{babel}
+\usepackage[ansinew]{inputenc}
+\usepackage[a4paper]{geometry}
+\usepackage{csquotes}
+
+\parindent0mm
+\parskip1.5ex plus0.5ex minus0.5ex
+\raggedright
+
+\begin{document}
+
+\title{Econometrics 1}
+\date{Winter 2017/2018}
+\author{Willi Mutschler}
+\maketitle
+
+Exercise: Show that $\hat{\sigma}^2 = \frac{1}{T-2}\sum_{t=1}^T \hat{u}_t^2$ is an unbiased estimator of the variance of the error terms\\
+Proof: 
+
+The simple linear regression model is
+\begin{align}
+y_t = \alpha + \beta x_t + u_t \label{eq:model}
+\end{align}
+and the least squares estimator for the slope is given by
+\begin{align}
+\hat{\beta} = \frac{S_{xy}}{S_{xx}}  = \beta + \frac{\sum_{t=1}^{T}(x_t - \bar{x})(u_t - \bar{u})}{\sum_{t=1}^{T}(x_t - \bar{x})^2}= \beta + \frac{S_{xu}}{S_{xx}} \label{eq:estimator}
+\end{align}
+Summing up \eqref{eq:model} and dividing by $T$ yields 
+\begin{align}
+\bar{y} = \alpha + \beta \bar{x} + \bar{u}
+\end{align}
+Subtracting both equations yields:
+\begin{align}
+y_t - \bar{y} = \beta (x_t - \bar{x}) + (u_t - \bar{u})\label{eq:1}
+\end{align}
+By definition the residual is equal to
+\begin{align*}
+\hat{u}_t = y_t - \hat{\alpha} - \hat{\beta} x_t
+\end{align*}
+Again summing up and dividing by T yields:
+\begin{align}
+\bar{\hat{u}}_t = \bar{y} - \hat{\alpha} - \hat{\beta} \bar{x}
+\end{align}
+Subtracting the equations and noting that due to the first normal equation $\bar{\hat{u}}_t=0$, we get
+\begin{align}
+\hat{u}_t = (y_t - \bar{y}) -\hat{\beta} (x_t -\bar{x})
+\end{align}
+Inserting equation \eqref{eq:1} yields:
+\begin{align}
+\hat{u}_t = -(\hat{\beta}-\beta) (x_t -\bar{x}) + (u_t - \bar{u})
+\end{align}
+Squaring and summing up both sides we have
+\begin{align}
+\sum_{t=1}^{T}\hat{u}_t^2 &= (\hat{\beta}-\beta)^2 \sum_{t=1}^{T}(x_t -\bar{x})^2 + \sum_{t=1}^{T}(u_t - \bar{u})^2 -2 (\hat{\beta}-\beta)\sum_{t=1}^{T} (x_t - \bar{x})(u_t-\bar{u})\\
+&= (\hat{\beta}-\beta)^2 S_{xx} + S_{uu} -2(\hat{\beta}-\beta)S_{xu}\\
+&= S_{uu} -(\hat{\beta}-\beta)S_{xx} \label{eq:hatu2}
+\end{align}
+where we have also taking \eqref{eq:estimator} into account. We make use of the fact that 
+\begin{align}
+E(\bar{u})=0 \text{ and } var(\bar{u})=E(\bar{u}^2)=\frac{\sigma^2}{T}
+\end{align} 
+Then the expectation of the first term in \eqref{eq:hatu2} may be expressed as
+\begin{align}
+E(S_{uu}) &= E\left(\sum_{t_1}^{T}(u_t-\bar{u})^2\right) = E\left[\sum_{t=1}^{T}u_t^2 - T\bar{u}^2 \right] \\
+&= \sum_{t=1}^{T} E(u_t^2) - T E(\bar{u}^2)  = T \sigma^2 - T \frac{\sigma^2}{T} = (T-1)\sigma^2
+\end{align}
+For the second term in \eqref{eq:hatu2}, we make use of the distribution of 
+\begin{align}
+	\hat{\beta} \sim N(0,\sigma^2/S_{xx})\label{eq:distributionbeta}
+\end{align}
+Hence,
+\begin{align}
+	E(\hat{\beta}-\beta)^2 \cdot S_{xx} = var(\hat{\beta})\cdot S_{xx} = \frac{\sigma^2}{S_{xx}}S_{xx} = \sigma^2
+\end{align}
+In sum, the expectation of \eqref{eq:hatu2} is given by
+\begin{align}
+	E\left[\sum_{t=1}^{T}\hat{u}_t^2\right] &= (T-1)\sigma^2 - \sigma^2 = (T-2)\sigma^2\\
+	\Leftrightarrow E\left[\underbrace{\frac{1}{T-2}\sum_{t=1}^{T}\hat{u}_t^2}_{\hat{\sigma}^2}\right] &= \sigma^2
+\end{align}
+Therefore $\hat{\sigma}^2$ is an unbiased estimator of the variance of the error terms.
+
+\newpage
+Exercise: Show that $\sum_{t=1}^T \left(\frac{\hat{u}_t}{\sigma}\right)^2 \sim \chi^2(T-2)$\\
+
+Proof (INCOMPLETE): 
+
+We start at equation \eqref{eq:hatu2}
+\begin{align}
+\sum_{t=1}^{T}\hat{u}_t^2 = S_{uu} -(\hat{\beta}-\beta)^2 S_{xx} \label{eq:hatu2new}
+\end{align}
+Dividing by $\sigma^2$ we get
+\begin{align}
+\sum_{t=1}^{T}\left(\frac{\hat{u}_t}{\sigma}\right)^2 =   \frac{S_{uu}}{\sigma^2} -\frac{(\hat{\beta}-\beta)^2}{\sigma^2/S_{xx}}
+\end{align}
+Note that the second term $\left(\frac{\hat{\beta}-\beta}{\sigma/\sqrt{S_{xx}}}\right)^2$ is the square of a single standard normally distributed variable due to \eqref{eq:distributionbeta} and therefore $\chi^2(1)$ distributed. The first term may be expressed as
+\begin{align}
+\frac{S_{uu}}{\sigma^2} &= \frac{\sum_{t_1}^{T}(u_t-\bar{u})^2}{\sigma^2} = \frac{\sum_{t_1}^{T}u_t^2}{\sigma^2} - \frac{T\bar{u}^2}{\sigma^2}\\
+&= \sum_{t=1}^{T}\left(\frac{u_t}{\sigma}\right)^2 - \left(\frac{\bar{u}}{\sigma/\sqrt{T}}\right)^2
+\end{align}
+The first term is the sum of $T$ squared standard normally distributed random variables, hence it is $\chi^2(T)$ distributed, whereas the second term is $\chi^2(1)$ distributed as $\bar{u}$ is the mean of iid random variables and its distribution is equal to $\bar{u}\sim N(0,\sigma^2/T)$.\\
+Going back to \eqref{eq:hatu2new}, we find that the right hand side is the sum of $T-1-1 = T-2$ squared standard normally and independently distributed random variables, hence
+\begin{align}
+\sum_{t=1}^T \left(\frac{\hat{u}_t}{\sigma}\right)^2 \sim \chi^2(T)-\chi^2(1)-\chi^2(1) = \chi^2(T-2)
+\end{align}
+WRONG: In general the distribution of the difference of two independently distributed $\chi^2$ variables is not $\chi^2$ in general... Need to express this as some sort of sums maybe instead of differences.
+\end{document}

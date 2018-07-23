@@ -1,0 +1,542 @@
+---
+title: "Econometrics II - Solutions"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+```{r, echo = F, include = F}
+library(knitr)
+```
+
+# Exercise 1
+## a)
+```{r, fig.height = 4, fig.width = 6}
+ct <- c(55, 65, 70, 80, 79, 84, 98, 95, 90, 75, 74, 113, 108,
+        140, 120, 145, 152, 144, 175, 180, 135, 140, 178, 191, 137, 189)
+yt <- c(80, 100, 85, 110, 120, 115, 130, 140, 125, 90, 105, 150, 145,
+        225, 200, 240, 220, 210, 245, 260, 190, 205, 265, 270, 230, 250)
+
+par(mar = c(5, 4.5, 4, 1) + 0.1)
+plot(yt, ct, xlab = expression("Income  " * y[t]),
+     ylab = expression("Consumption  " * c[t]),
+     font = 2, cex.axis = 1.3, cex.lab = 1.3, pch = 19)
+```
+
+We perform two separate regressions:
+```{r, fig.height = 4, fig.width = 6}
+lm1 <- lm(ct[1:13] ~ yt[1:13])
+lm2 <- lm(ct[14:26] ~ yt[14:26])
+
+par(mar = c(5, 4.5, 4, 1) + 0.1)
+plot(yt, ct, xlab = expression("Income  " * y[t]),
+     ylab = expression("Consumption  " * c[t]),
+     font = 2, cex.axis = 1.3, cex.lab = 1.3, pch = 19,
+     col = c(rep("forestgreen", 13), rep("red", 13)), cex = 1.3)
+legend("topleft", legend = c("Group 1", "Group 2"),
+       pch = 19, col = c("forestgreen", "red"), cex = 1.3)
+lines(x = range(yt[1:13]), y = lm1$coef[1] + lm1$coef[2]*range(yt[1:13]),
+      col = "forestgreen", lwd = 2)
+lines(x = range(yt[14:26]), y = lm2$coef[1] + lm2$coef[2]*range(yt[14:26]),
+      col = "red", lwd = 2)
+
+Suu1 <- sum(residuals(lm1)^2)
+Suu2 <- sum(residuals(lm2)^2)
+```
+Since the number of observations is equal in the two subgroups, we compute the test statistic as
+\[
+  \frac{S_{\hat{u}\hat{u}}^{(2)}}{S_{\hat{u}\hat{u}}^{(1)}} = \frac{1536.8}{377.17} \approx 4.07\text{ ,}
+\]which is compared with the 95\% quantile of the $\text{F}_{11, 11}$-distribution, i.e. 2.82.  
+The null hypothesis of homoscedasticity is thus rejected.
+```{r}
+```
+## b)
+\[
+  \text{Cov}(\boldsymbol{u}) =
+  \begin{pmatrix}
+  \sigma_1^2&0&0&0&0&0\\
+  0&\ddots&0&0&0&0\\
+  0&0&\sigma_1^2&0&0&0\\
+  0&0&0&\sigma_2^2&0&0\\
+  0&0&0&0&\ddots&0\\
+  0&0&0&0&0&\sigma_2^2
+  \end{pmatrix}
+\]
+```{r}
+```
+## c)
+
+In above sitiation, the FGLS estimation is used following the steps:  
+- Run two regressions in subgroups  
+- Estimate $\sigma_1^2$ and $\sigma_2^2$  
+- Plugging it in to the formula in b) gives $\widehat{W}$  
+- Estimation: $\hat{\beta}_{\text{FGLS}} = (X'\widehat{W}^{-1}X)^{-1}X'\widehat{W}^{-1}y$    
+\hphantom{- }with estimated variance $\widehat{\text{Var}}(\hat{\beta}_{\text{FGLS}}) = (X'\widehat{W}^{-1}X)^{-1}$
+
+# Exercise 2
+## a)
+First step of a white test is to calculate the (unbiased) OLS estimates and obtain residuals. If the squares of residuals can be explained through exogenous variables, squared exogenous variables and cross products of exogenous variables good enough, the null hypothesis of homoscedasticity is rejected.  
+Note: Denoting $K$ as the number of exogenous variables, the test statistics is $\chi^2$ distributed with
+\[r = \underbrace{K}_{\text{Exog. Vars}} + \underbrace{K}_{\text{Squared Exog. Vars}} + \underbrace{\frac{K(K-1)}{2}}_{Cross Products}\]
+degrees of freedom.  
+```{r}
+```
+## b)
+A Goldfeld-Quandt test is applicable if the source of heteroscedasticity is known or presumed. A white test checks for every linear combination of exogenous variables, their squares and crossproducts. The flexibility comes with the price that a White test shall be interpreted with care if the number of observations is small.
+```{r}
+```
+## c)
+### i)
+Test statistic is defined as estimate devided by estimated standard error, so that the estaimted parameter is the realized test statistic 10.18 multiplied with estimated standard error 0.08 $\rightarrow$ $\hat{\beta} = 0.8144$.
+```{r}
+```
+### ii)
+The test statistic is $\tfrac{\hat{\alpha}}{\widehat{\text{se}}(\hat{\alpha})} = \tfrac{0.25}{0.24} \approx 1.04$. It is compared with the 5\% quantile of the t-distribution with 120 - 2 - 1 degrees of freedom, i.e. -1.66. The  null hypothesis is thus not rejected.  
+Without the need to calculate, one could have seen this decision, since the estimator is positive.
+```{r}
+```
+### iii)
+We use the general formula for the GQ-teststatistic:
+\[
+  \frac{680/(98 - 2)}{188/(22 - 2)} = 1.327 < 1.68 = F_{0.95;20, 100}
+\]so that $\text{H}_0$ is rejrected.
+```{r}
+```
+# Exercise 3
+First a short explanation of EVIEWS output:  
+- ``t-Statistic`` and ``Prob`` are test statistic with its p-value for $\text{H}_0: \beta = 0$ vs. $\text{H}_1: \beta\ne 0$  
+- ``S.E. of Regression`` is the standard deviation of residuals $\hat{\sigma}$  
+- ``Durbin-Watson stat`` will be introduced later  
+- ``Mean`` and ``S.D. dependent var`` Mean and standard deviation of exogenous variable  
+- ``Akaike info`` ``Schwarz criterion`` for model choice  
+- ``F-Statistic`` see below  
+- ``Prob(F-statistic)`` p value of above F-Test  
+  
+1. False - The value ``Prob`` is not smaller than 5\%  
+2. False - Every parameter except the intercept  
+3. True  
+4. False - See Econometrics I 
+5. True  
+6. False - By definition $\bar{R}^2 = R^2 - (1 - R^2)\frac{K}{T - K - 1}$, so that $R^2 \le \bar{R}^2$ is equivalent to $R^2 \ge 1$, which is possible in case of perfect linear dependency (can be seen by plugging in $R^2 = 1$)  
+7. False - They maximize the likelihood and (in OLS framework) minimize the sum of squared residuals    
+8. False - Only $\operatorname{E}(u_t) = 0$ and exogenous regressors uncorrelated to error terms is used  
+9. False - No estimator falls below this bound  
+10. True  
+11. False - Discussed before  
+12. False - It gives the proportion of variance explained by the model  
+13. False - It is allowed to be positive, but the test would reject the null hypothesis
+```{r}
+```
+# Exercise 4
+```{r, fig.height = 4, fig.width = 6}
+x <- c(3, 4, 7)
+X <- cbind(1, x)
+y <- c(2, 1, 4)
+plot(x, y, pch = 19, cex.axis = 1.3, cex.lab = 1.3)
+```
+
+```{r, fig.height = 4, fig.width = 6}
+# a)
+lmA <- lm(y ~ x)
+resiB <- lm1$residuals
+covMatA <- var(lmA$residuals)*solve(t(X)%*%X)
+
+# b)
+OmegaB <- diag(x^2)
+coefB <- solve(t(X)%*%solve(OmegaB)%*%X)%*%t(X)%*%solve(OmegaB)%*%y
+resiB <- y - X%*%coefB
+
+# c)
+OmegaC <- diag(abs(x))
+coefC <- solve(t(X)%*%solve(OmegaC)%*%X)%*%t(X)%*%solve(OmegaC)%*%y
+resiC <- y - X%*%coefC
+
+# Conclusion
+ERG4 <- round(rbind(matrix(c(lmA$coef, sum(lmA$residuals), sum(lmA$residuals^2)), nrow = 1),
+matrix(c(coefB, sum(resiB), sum(resiB^2)), nrow = 1),
+matrix(c(coefC, sum(resiC), sum(resiC^2)), nrow = 1)), digits = 4)
+
+dimnames(ERG4) <- list(c("a)", "b)", "c)"),
+                       c("intercept", "beta", "sumResi", "sumResi2"))
+ERG4
+
+plot(x, y, pch = 19, cex.axis = 1.3, cex.lab = 1.3)
+abline(lmA, col = 2)
+abline(coefB[1], coefB[2], col = 3)
+abline(coefC[1], coefC[2], col = 4)
+legend("topleft", lty = 1, col = 2:4, legend = c("a)", "b)", "c)"))
+```
+
+```{r}
+# d)
+# Estiates same as OLS
+
+What <- diag(lmA$residuals^2)
+solve(t(X)%*%X)%*%(t(X)%*%What%*%X)%*%solve(t(X)%*%X)
+```
+# Exercise 5  
+## a)  
+To show the unbiasedness, we see that $\widehat{W} = \text{diag}(\hat{u}_1^2, ..., \hat{u}_T^2)$. In case of homoscedasticity it holds that $\operatorname{E}(\hat{u}_t^2) = \sigma^2$ for all $t = 1,...,T$.  
+Finally we see that
+\begin{align*}
+  \operatorname{E}(\widehat{\operatorname{Var}}(\hat{\beta})) &= \operatorname{E}((X'X)^{-1}X'\widehat{W}X(X'X)^{-1})\\
+  &= (X'X)^{-1}X'\operatorname{E}(\widehat{W})X(X'X)^{-1}\\
+  &= (X'X)^{-1}X'\sigma^2IX(X'X)^{-1}\\
+  &= \sigma^2(X'X)^{-1}X'X(X'X)^{-1}\\
+  &= \sigma^2(X'X)^{-1} = \operatorname{Var}(\hat{\beta})
+\end{align*}
+```{r}
+```
+## b)
+To derive the expectation, variance and covariance of $u_t$, two approaches are purposeful. First one could rewrite $u_t$ recursively:
+\[
+  u_t = \rho u_{t-1} + \epsilon_t = \rho(\rho u_{t-2} + \epsilon_{t-1}) + \epsilon_t = ... = \rho^nu_{t-n} + \sum_{i = 0}^n{\rho^i\epsilon_{t-i}}
+\]
+Assuming we can iterate endlessly into the past, the first part vanishes as $n$ approaches infinity. What remains is
+\[u_t = \sum_{i = 0}^\infty{\rho^i\epsilon_{t-i}}\]
+The expectation of $u_t$ is the expectation of a linear combination of random variables $\epsilon_{t-i}$ with expectation zero, so that $\operatorname{E}(u_t) = 0$.  
+The other possible way to derive the expectation is by using $\operatorname{E}(u_t) = \operatorname{E}(u_{t-1})$:
+\begin{align*}
+\operatorname{E}(u_t) &= \operatorname{E}(\rho u_t + \epsilon_t)\\
+\operatorname{E}(u_t) &= \rho\operatorname{E}(u_{t-1}) + \operatorname{E}(\epsilon_t)\\
+\operatorname{E}(u_t) &= \rho \operatorname{E}(u_t)\\
+\end{align*}
+If $\rho\ne 0$, the expectation needs to be zero for the equation to hold. If $\rho=0$ there would be no autocorrelation.  
+For the variance we use that the error terms $\epsilon_t$ and $\epsilon_s$ are uncorrelated for $t\ne s$ by assumption.
+\begin{align*}
+   \operatorname{Var}(u_t) &= \operatorname{Var}\left(\sum_{i = 0}^\infty{\rho^i\epsilon_{t-i}}\right)
+   = \sum_{i = 0}^\infty{\operatorname{Var}(\rho^i\epsilon_{t-i})}\\
+   &= \sum_{i = 0}^\infty{\rho^{2i}\operatorname{Var}(\epsilon_{t-i})}
+   = \sum_{i = 0}^\infty{(\rho^2)^i\sigma_\epsilon^2}\\
+   &= \sigma_\epsilon^2\sum_{i = 0}^\infty{(\rho^2)^i}
+   = \frac{\sigma_\epsilon^2}{1 - \rho^2}
+\end{align*}
+The same approach as above is also possible using $\operatorname{Var}(u_t) = \operatorname{Var}(u_{t-1}) = \sigma_u^2$:
+\begin{align*}
+\operatorname{Var}(u_t) &= \operatorname{Var}(\rho u_{t-1} + \epsilon_t)\\
+\operatorname{Var}(u_t) &= \rho^2\operatorname{Var}(u_{t-1}) + \operatorname{var}(\epsilon_t)\\
+\sigma_u^2 &= \rho^2 \sigma_u^2 + \sigma_\epsilon^2\\
+(1 - \rho^2)\sigma_u^2 &= \sigma_\epsilon^2\\
+\sigma_u^2 &= \frac{\sigma_\epsilon^2}{1 - \rho^2}
+\end{align*}
+Finally we take a look at the covariance and use that $\epsilon_t$ and $u_s$ are uncorrelated:
+\begin{align*}
+\operatorname{Cov}(u_t, u_{t - 1}) &= \operatorname{E}(u_tu_{t-1}) - \operatorname{E}(u_t)\operatorname{E}(u_{t-1})\\
+    &= \operatorname{E}(u_tu_{t-1}) = \operatorname{E}((\rho u_{t-1} + \epsilon_t)u_{t-1})\\
+    &= \operatorname{E}(\rho u_{t-1}u_{t-1}) + \operatorname{E}(\epsilon_tu_{t-1}) = \operatorname{E}(\rho u_{t-1}u_{t-1})\\
+    &= \rho\operatorname{E}(u_{t-1}^2) = \rho \sigma_u^2 = \frac{\rho}{1 - \rho^2}\sigma_\epsilon^2
+\end{align*}
+In a similar fashion is is easy to show that $\operatorname{Cov}(u_t, u_{t - h}) = \rho^h\sigma_u^2 = \frac{\rho^h}{1 - \rho^2}\sigma_\epsilon^2$.
+```{r}
+
+```
+
+# Exercise 6
+The following autocorrelations are present:  
+1. If $x_t = t$ or $x_1 \le x_t \le ... \le x_T$, then autocorrelation. If no further information available, then no statement possible  
+2. No autocorrelation  
+3. Negative autocorrelation  
+4. Negative autocorrelation  
+5. Positive autocorrelation  
+6. Same as 1
+```{r}
+```
+# Exercise 7  
+## a)
+```{r}
+u <- c(4, 3.5, 3.5, 2, -1, -4, -3, -2, -3, -1, 1, 3, 1, -2, -2)
+par(mar = c(5,5,4,1) + 0.1)
+plot(u, xlab = "t", ylab = expression(hat(u)[t]), pch = 19)
+abline(h = 0)
+plot(u[-length(u)], u[-1], asp = 1, xlab = expression(hat(u)[t-1]), ylab = expression(hat(u)[t]), pch = 19)
+```
+We can see in above figure, that positive autocorrelation might be present.
+## b)
+To test for (positive) autocorrelation in AR(1) form using the Durbin-Watson-Test for
+\[H_0: \rho \le 0\qquad \text{vs.}\qquad H_1: \rho > 0\]
+The test statistic is
+\[
+  d=\frac{\sum_{t = 2}^T{(\hat{u}_t - \hat{u}_{t-1})^2}}{\sum_{t = 1}^T{\hat{u}_t^2}} = \frac{48.5}{103.5}\approx 0.4686
+\]and the critical values $Q_L=1.077$ and $Q_U = 1.361$. $H_0$ is rejected, because $d<Q_L$.
+```{r}
+```
+# Exercise 8
+## a)
+The histogram shows a possible skewness in the distribution of error terms.
+```{r}
+```
+## b)
+To test for $\quad H_0: \text{ Normally distributed residuals}\quad$ we use the Jarque-Bera-Test. Therefore
+\begin{align*}
+  S &= \frac{\frac{1}{T}\sum_{t = 1}^T{\hat{u}_t^3}}{\left(\frac{1}{T}\sum_{t = 1}^T{\hat{u}_t^2}\right)^{3/2}}  = \frac{0.0747}{0.2071^{3/2}} = 0.7926\\
+  K &= \frac{\frac{1}{T}\sum_{t = 1}^T{\hat{u}_t^4}}{\left(\frac{1}{T}\sum_{t = 1}^T{\hat{u}_t^2}\right)^{2}} = \frac{0.1841}{0.2071^2} = 4.29\\
+  JB &= \frac{100}{6}\left(0.7926^2 + \frac{1.29^2}{4}\right)\\
+  &= 17.404
+\end{align*}
+The value of $JB$ is compared to the 95\% Quantile of a $\chi^2$ distribution with 2 degrees of freedom, i.e. $\chi^2_{2; 0.95} = 5.99$. The null hypothesis is rejected because $JB>5.99$.
+```{r}
+```
+# Exercise 9
+To show the law of iterated expectation we use integrals which all have limits $-\infty$ and $\infty$.  
+First we summarize:
+\begin{align*}
+  E(X) &= \int x f_X(x) dx\\
+  E(X|Y) = E(X|Y = y) &= \int x f_{X|Y}(x|y) dx \text{ function of $y$}\\
+  E(g(X)) &= \int g(x)f_X(x) dx
+\end{align*}
+So that
+\begin{align*}
+  E(E(X|Y)) &= \int E(X|Y = y)f(y)dy = \int f_Y(y) = \int \left(\int xf_{X|Y}(x|y)dx\right)f(y)dy\\
+  &= \int \int xf_{X|Y}(x|y)f_Y(y)dxdy = \int \int xf_{X|Y}(x|y)f_Y(y)dydx\\
+  &= \int \int xf_{Y|X}(y|x)f_X(x)dydx = \int xf_X(x)\underbrace{\int f_{Y|X}(y|x)dy}_{= 1}dx\\
+  &= \int xf_X(x)dx = E(X)
+\end{align*}
+Or in another way:
+\begin{align*}
+  E(E(X|Y)) &= \int E(X|Y = y)f_Y(y)dy = \int \left(\int xf_{X|Y}(x|y)dx\right)f_Y(y)dy\\
+  &= \int \int x\frac{f_{X,Y}(x,y)}{f_Y(y)}dxf_Y(y)dy =  \int \int xf_{X,Y}(x,y)dx\frac{f_Y(y)}{f_Y(y)}dy\\
+  &= \int \int xf_{X,Y}(x,y)dxdy = \int \int xf_{X,Y}(x,y)dydx\\
+  &= \int x \int f_{X,Y}(x,y)dydx = \int xf_X(x) dx = E(X)
+\end{align*}
+```{r}
+```
+# Exercise 10
+## a)
+An OLS estimation is not an appropriate method to estimate the model, because of a correlation between $Y_t$ and $u_t$. This is because $C_t$ is a part of $Y_t$ and can be seen as follows:
+\begin{align*}
+  \operatorname{Cov}(Y_t, u_t) &= \operatorname{E}(Y_tu_t) + \operatorname{E}(Y_t)\operatorname{E}(u_t) = \operatorname{E}(Y_tu_t)\\
+  &= \operatorname{E}((C_t + I_t)u_t) = \operatorname{E}(C_tu_t) + \operatorname{E}(I_tu_t) = \operatorname{E}(C_tu_t)\\
+  &= \operatorname{E}((\beta_0 + \beta_1 Y_t + u_t)u_t) = \beta_0\operatorname{E}(u_t) + \beta_1\operatorname{E}(Y_tu_t) + \operatorname{E}(u_t^2)\\
+  &= \beta_1\operatorname{E}(Y_tu_t) + \sigma_u^2
+\end{align*}
+Rearranging gives $\operatorname{Cov}(Y_t, u_t) = \beta_1\operatorname{Cov}(Y_t,u_t) + \sigma_u^2$ and finally $\operatorname{Cov}(Y_t, u_t) = \frac{\sigma_u^2}{1 - \beta_1}$
+```{r}
+```
+## b)
+We denote $I = (I_1, ..., I_T)'$, $C=(C_1,...,C_T)'$, $Y = (Y_1,...,Y_T)'$ and $\mathbf{1} = (1,...,1)'$. Then we define $Z=(\mathbf{1}; I)$ and $X = (\mathbf{1}, Y)$ so that
+\[
+  \hat{\beta}_{IV1} = (Z'X)^{-1}Z'C = \left[\begin{pmatrix}\mathbf{1}'\\I'\end{pmatrix}\begin{pmatrix}\mathbf{1}&Y\end{pmatrix}\right]^{-1}\begin{pmatrix}\mathbf{1}'\\I'\end{pmatrix}C = \begin{pmatrix}\mathbf{1}'\mathbf{1}& \mathbf{1}'Y\\I'\mathbf{1}&I'Y\end{pmatrix}\begin{pmatrix}\mathbf{1}'C\\I'C\end{pmatrix} = \begin{pmatrix}102.0462\\0.7454\end{pmatrix}
+\]
+```{r}
+ZX <- matrix(c(9, 101.9, 4007.6, 45782.98), ncol = 2)
+Zy <-c(3905.7, 44525.36)
+(bIV1 <- round(solve(ZX), digits = 60)%*%Zy)
+```
+## c)
+An instrument should be contemporarily uncorrelated with the error term and at the same time correlated with the variable(s) that is (are) replaced.
+```{r}
+```
+# Exercise 11
+## a)
+The OLS estaimtor is as usual
+\[
+  \hat{\beta} = (X'X)^{-1}X'y = \begin{pmatrix} 0.5141\\-1.0736\\-0.2779 \end{pmatrix}
+\]
+```{r}
+XX <- matrix(c(14665, -14744,-10659,-14744,26917,-820,-10659,-820,19366)/10000, ncol = 3)
+Xy <- c(-120695,-72261,-70925)/10000
+(bOLS <- XX%*%Xy)
+```
+with variance matrix
+```{r}
+Vols <- 0.34884/45*XX
+round(Vols, digits = 4)
+```
+## b)
+To discuss this, we conclude first:  
+Instrumental variables are needed if an exogenous variable is correlated with the error term. This may occur through definition as for example in exercise 10. An other source is an ommited variable that influences an exogenous variable in the model as well as the endogenous variable. An example is the model in which the general health should be described by the smoking habit. Mental health status (happiness, depression) influences both, so that in instrument is needed. The instrument should influence the health only through the smoking habits and should be uncorrelated to the error term.  
+Tobacco tax rate influences the health only through cigarette cunsumption and is not correlated to the error term. (There is no relevant variable left out, which is correlated to the tobacco tax rate).  
+Further the problem of correlation between $x_t$ and $u_t$ can occur because of a measurement error in $x_t$.  
+Consider a model $y_t = \alpha + \beta \tilde{x}_t + u_t$, where $\tilde{x}_t = x_t + \epsilon_t$. Where $\tilde{x}_t$ is the (wrong) variable including the true $x_t$ and a random measurement error $\epsilon_t$. If $x_t$ and $u_t$ are uncorrelated, it holds that $Cov(\tilde{x}_t, u_t) = \operatorname{Cov}(\epsilon_t, u_t)$. If $x_t$ is measured as too large $\epsilon_t$ > 0, then $y_t$ is over estimated if $\beta>0$ and underestimated if $\beta<0$.  
+One indication for the need for instrumental variables are $y$ and $x$ variables that affect each other contemporarily (bilateral causality) like price and demand.  
+In this exercise the latter case is present, making OLS estimation inconsistent.
+```{r}
+```
+## c)
+We check the requirements from 10 a):  
+The taxes are correlated with the price of cigarettes, since they are proportional. To decide if they are uncorrelated with the error term we see that the taxes only affect the consumption through the cigarette price and the taxes are not correlated with any influence of cigarette consumption that is not in the model. Therefore $z2$ (and $z1$) is a valid intrument for the price.
+```{r}
+```
+## d)
+We calculate the IV estimator as
+\[
+  \hat{\beta}_{IV1} = (Z_1'X)^{-1}Z_1'y = ... = \begin{pmatrix} 0.6407 \\ -1.3033 \\ -0.2707 \end{pmatrix}
+\]
+```{r}
+ZX <- matrix(c(10631, -7379,-10884,-7733,14117,-430,-10762,-634,19361)/10000, ncol = 3)
+Zy <- c(-120695,-75505,-70925)/10000
+(bIV1 <- ZX%*%Zy)
+```
+The influence of price is estimated larger when using an intrument.
+and obtain the variance estimator as
+\[
+\widehat{\text{Var}}(\hat{\beta}_{IV1}) = \hat{\sigma}_1^2 (X'PX)^{-1}
+\]
+Calculated in R
+```{r}
+V1 <- 0.36844/45*matrix(c(17501,-19921,-10502,-19921,36367,-1108,
+                        -10502,-1108,19375)/10000, ncol = 3)
+round(V1, digits = 4)
+```
+The standard errors indicate that the estimated parameters are significant.
+```{r}
+```
+## e)
+To test the hypothesis
+\[
+H_0: \text{plim}\frac{X'u}{T} = 0
+\]we use the Hausmann-test.
+```{r}
+(stat1 <- t(bOLS - bIV1)%*%solve(V1 - Vols)%*%(bOLS - bIV1))
+qchisq(p = 0.95, df = 1)
+1 - pchisq(q = stat1, df = 1)
+```
+The null hypothesis is rejected.
+```{r}
+```
+## f)
+```{r}
+XPX <- matrix(c(17237,-19440,-10516,-19440,35489,-1081,-10516,-1081,19374)/10000, ncol = 3)
+XPy <- c(-120695, -71749, -70925)/10000
+(bIV2 <- XPX%*%XPy)
+V2 <- 0.35834/45*XPX
+round(V2, digits = 4)
+```
+## e)
+The importance of instruments was tested, so that OLS is not an appropriate way of estimation. A good answer to this question would require tests.
+```{r}
+```
+
+## f)
+As final statement, the coefficient for the effect of price change on the change in cigarette consumption is always estimated negative (with significance). This means that a rise in price causes the consumption to go down (according to the model).  
+Especially the consumption of tobacco does not follow the usual "rules" of economics. Customers ignore slight price changes most of the time. Further, many influences on the consumption are not included in the model (laws in the states, age distribution, rural vs. urban states, health infrastructure, prevention programs, ...)  
+The results of the study should be interpreted with care.
+```{r}
+```
+# Exercise 12
+## a)
+
+After 2001, for observations 8 - 11, there is a possible change in parameters visible.
+
+## b)
+
+The regression model that takes a structural break into account would be
+\[
+  y_t = \alpha_1 + \alpha_2 D_{t} + \beta_1 x_1 + \beta_2 D_{t}x_t
+\]where $D_t$ is one if time $t$ belongs to the latter four. The regression matrix then is
+\[
+  X = \begin{pmatrix}
+  1&0&x_1&0\\
+  \vdots&\vdots&\vdots&\vdots\\
+  1&0&x_7&0\\
+  1&1&x_8&x_8\\
+  \vdots&\vdots&\vdots&\vdots\\
+  1&1&x_{11}&x_{11}
+  \end{pmatrix}
+\]
+
+## c)
+
+For the null hypothesis of no structural break between $t=7$ and $t=8$, we use an F-Test with test statistic
+\[
+  F = \frac{(S_{\hat{u}\hat{u}}^0 - S_{\hat{u}\hat{u}}^{\text{SB}})/2}{S_{\hat{u}\hat{u}}^{\text{SB}}/(11 - 4)} = 22.23
+\]This statistic is compared with the 95\% quantile of an $F_{2, 7}$ distribution, i.e. 4.737. The null hypothesis is thus rejected.
+```{r}
+```
+
+# Exercise 13
+## a)
+
+The suitable regression model is the one in b). Including every dummy variable would lead to multicorrelation.
+
+## b)
+
+The value 440.4 given the quantity of ice cream that is sold more in summer compared to the beginning. One can see that a higher price causes less ice cream sold, while greater advertising expenses increase the amount.  
+We test the estrimation 440.4 for being zero, since this value gives the difference between beginning of the year and summer sales. with a simple t-test we get
+\[
+  \frac{440.4}{70.92} = 6.21 > t_{0.975; 36} = 2.028
+\]so that the null hypothesis is rejected.
+
+# Exercise 14
+
+```{r, include = F}
+X <-  matrix(c(1, 0.2208097,
+1, 0.9483211,
+1, 1.3587122,
+1, 1.9369905,
+1, 2.5712312,
+1, 3.1122012,
+1, 3.3360508,
+1, 3.7464419,
+1, 4.4926074,
+1, 5.1268481,
+1, 5.4066602,
+1, 6.1155175,
+1, 6.3393671,
+1, 7.2720741,
+1, 7.4959237,
+1, 7.8503524,
+1, 7.9436230,
+1, 8.2793975,
+1, 8.4659389,
+1, 8.6151720), ncol = 2, byrow = T)
+
+y <- c(1.757446,  4.621170,  3.840154,  3.145918,  5.575745,  4.013713,  3.753375,  7.050996,  4.447611,  8.960146,  5.055067,  7.398114,  4.274052, 14.774373, 10.435397, 21.456396, 19.460467, 17.464538, 25.968931, 21.022498)
+```
+
+## a)
+
+The structural break would be most plausible around $t = 13$.
+
+## b)
+
+\[
+\text{Tstat} = \frac{\left[S_{\hat{u}\hat{u}} - (S_{\hat{u}\hat{u}}^{I} + S_{\hat{u}\hat{u}}^{II})\right]/(K+1)}{(S_{\hat{u}\hat{u}}^{I} + S_{\hat{u}\hat{u}}^{II})/(T - 2(K+1))}
+\]
+
+A larger test statistic indicates a more plausible structural break, so that $t = 12$ seems like the most plausible structural break point.  
+The critical value of above test is the 95\% quantile of an F distribution with $K+1 = 2$ and $T-2(K+1) = 16$ degrees of freedom: 3.63. A Chow test would reject the null hypothesis for $t = 12$ and $t = 13$.  
+For the remaining values of $T_1$, we can use the Chow prediction test. For the large values of $T_1$ ($T_2 = T - T_1 \le K$) with test statistic
+\[
+\text{Tstat} = \frac{\left[S_{\hat{u}\hat{u}} - (S_{\hat{u}\hat{u}}^{I} + S_{\hat{u}\hat{u}}^{II})\right]/(T_1 - K - 1)}{(S_{\hat{u}\hat{u}}^{I} + S_{\hat{u}\hat{u}}^{II})/(T - T_1)}\text{ ,}
+\]where $S_{\hat{u}\hat{u}}^{II} = 0$.
+
+## c)
+
+The main problem when using two exogenous regressors is probably how to group the data, if there is not structure visible in the data.  
+To look for plausible structural breaks, you could use every grouping and calculate test statistics.  
+Warning: If you look at many different possible break points, it is likely that a test statistic is larger than the critical value by chance.
+
+## d)
+
+As an alternative to modeling a strural break, $y$ can be transformed as $\ln(y)$, see plot:
+```{r}
+plot(X[,2], log(y), pch = 19, xlab = "x")
+```
+
+# Exercise 15
+
+The shortrun and longrun multiplier are $0.55\cdot 0.02 = 0.011$ and $0.55\cdot(0.01+...+0.17) = 0.55$ respectively.
+
+# Exercise 16
+
+We use the same idea as seen in the lecture and subtract $\lambda S_t$, so that
+\begin{align*}
+  S_t - \lambda S_{t-1} =& \alpha + \beta_0 A_t + \beta_1 A_{t-1} + \beta_2 A_{t-2} + ... + u_t\\
+                     & -\lambda\alpha - \lambda\beta_0 A_{t-1} - \underbrace{\lambda\beta_1}_{ = \beta_2} A_{t-2} - \underbrace{\lambda\beta_2}_{= \beta_3} A_{t-3} - ... - \lambda u_{t-1}\\
+                     =& (1 - \lambda)\alpha + \beta_0 A_t + (\beta_1 - \lambda \beta_0)A_{t-1} + (u_t - \lambda u_{t-1})\\
+S_t =& (1 - \lambda)\alpha + \beta_0 A_t + (\beta_1 - \lambda \beta_0)A_{t-1} + \lambda S_{t-1} (u_t - \lambda u_{t-1}) 
+\end{align*}
+The estimates are found by
+\begin{align*}
+  \lambda &= 0.399\\
+  \beta_0 = 0.127\\
+  (1 - \lambda)\alpha &= 286.3\\
+  \rightarrow \alpha &= 286.3\cdot(1 - 0.399) = 476.37\\
+  \beta_1 - \lambda\beta_0 &= 0.081\\
+  \rightarrow \beta_1 &= 0.081 + 0.399\cdot 0.127 = 0.06096
+\end{align*}
+and for $k \ge 2$: $\beta_k = 0.399^{k-1}\cdot 0.06096$
+```{r, invlude = F, echo = F}
+knit_exit()
+```

@@ -1,0 +1,4720 @@
+% !TeX encoding = windows-1252
+% !TeX spellcheck = en_US
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{eurosym}
+\usepackage[ngerman]{babel}
+\usepackage[ansinew]{inputenc}
+\usepackage[a4paper]{geometry}
+\usepackage{csquotes}
+
+\parindent0mm
+\parskip1.5ex plus0.5ex minus0.5ex
+\raggedright
+
+\begin{document}
+
+\title{Econometrics}
+\date{Winter 2017/2018 and Summer 2018}
+\author{Willi Mutschler}
+\maketitle
+
+
+\section{Introduction}
+
+See slides\marginpar{Slides 1-16}
+
+\section{Review of basic statistics}
+
+\begin{itemize}
+	\item Random experiment (Zufallsexperiment)
+	\item Sample space (Ergebnismenge)
+	\item Event (Ereignis)
+	\item Set operations (Verkn\"{u}pfungen von Ereignissen)
+	\item Partition (Partition oder vollst\"{a}ndige Zerlegung)
+	\item Probability (Wahrscheinlichkeit)	
+	\item Kolmogorov's axioms (Kolmogorovs Axiome)	
+	\item Conditional probability (bedingte Wahrscheinlichkeit)	
+	\item Total probability (Satz von der totalen Wahrscheinlichkeit)	
+	\item Bayes' theorem (Satz von Bayes)	
+	\item Independence (Unabh\"{a}ngigkeit)	
+	\item Random variables (Zufallsvariable)	
+	\begin{itemize}
+		\item Definition and intuition
+		\item Distribution function and quantile function (Verteilungsfunktion und Quantilfunktion)		
+		\item Discrete and continuous random variables (diskrete und stetige Zufallsvariable)
+		\item Density function (Dichtefunktion)		
+		\item Expectation (Erwartungswert)		
+		\item Variance (Varianz)
+	\end{itemize}
+	\item Special discrete distributions, e.g. Bernoulli, binomial, Poisson, geometric, hypergeometric, \ldots
+	\item Special continuous distributions, e.g. normal, standard normal distribution, exponential, Pareto, $\chi ^{2},$$F,$ $t$, \ldots
+	\item There are many more special distributions
+	\item Which distribution can be used when?
+\end{itemize}
+
+Let $X$ and $Y$ be both  (jointly) normally distributed: $X_i \sim N(\mu_x, \sigma^2_x)$ and $Y_i \sim N(\mu_y, \sigma^2_y)$, $corr(X,Y) = \rho$, then the joint density is
+$$f(x,y)=\frac{1}{2\pi\sigma_x\sigma_y(1-\rho^2)}exp\left\{-\frac{-\tilde{x}^2-2\rho\tilde{x}\tilde{y}+\tilde{y}^2}{2(1-\rho)^2}\right\}$$ where $\tilde{x} = (x-\mu_x)/\sigma_x$ and $\tilde{y} = (y-\mu_y)/\sigma_y$.
+
+The conditional expectation is
+$$E(Y|X) = \int_{-\infty}^{\infty}\underbrace{\frac{f(X,y)}{f(X)}}_{f(y|X)}y~dy = \left(\mu_y -\mu_x\rho\frac{\sigma_y}{\sigma_x}\right)+\left(\rho \frac{\sigma_y}{\sigma_x}\right) X$$.
+
+The conditional variance is:
+$$Var(Y|X) = \int_{-\infty}^{\infty}f(y|X)(y-E(Y|X))^2~dy = \sigma_y^2(1-\rho^2)$$.
+
+What is the distribution of Y conditional on X?
+$$Y|X \sim N(\alpha + \beta X, \sigma^2)$$
+where $\alpha = \mu_y - \mu_x\rho\frac{\sigma_y}{\sigma_x}$ and $\beta=\rho \frac{\sigma_y}{\sigma_x}$ and $\sigma^2 = \sigma_y^2(1-\rho^2)$. Alternatively:
+$Y = \underbrace{\alpha + \beta X}_{E(Y|X)} + u$ with $u\sim N(0,\sigma^2)$.
+
+\section{Simple linear regression model}
+
+\subsection{Specification}
+
+Tip example\marginpar{Slides 20-22}
+Example:
+Guests of a restaurant leave the waiter with more or less large amounts of tips.Since the waiter is always friendly to all guests he can't explain the difference in tips.  The waiter collects data for 20 guests in a table.
+
+Economic Reasoning: Since the waiter treats all his guests in the same way, it can be assumed that the difference in the amount of gratuities y is essentially declared by the amount of the bill x (measured in euros):
+
+Economic model: functional dependence (in general)
+\[ y=f(x) \]
+and particularly
+\[ y=\alpha +\beta x \]
+Focus on linear relationships. Slide with true relationship. $\alpha$ is intercept, $\beta$ is slope of the line. R is the true linear relationship, we want to be as close as possible to it.
+
+Now our work as econometrician begins!
+Econometric model:
+\[ y_t=\alpha+ \beta x_t+u_t \]
+y: endogenous variable, x is exogenous variable, u is error, $\alpha$ and $\beta$ are true coefficients. Even though later on we will study the effects of several variables on another variable, right now we start with the simple linear regression model, i.e. only one exogenous and one endogenous variable. We focus on observed values, hence the subindex $t=1,...,T$, $\alpha$ and $\beta$ are the same for all persons (assumption which we could relax). In Reality we won't see an exact relationship due to randomness, different moods of people, exogenous factors, therefore we add an error term $u$.
+Slide with Econometric model.
+
+Side note: Other functional forms are of course possible:
+ \begin{itemize}
+ 	\item Cobb-Douglas Production Function: $Y_t = \alpha L_t^\beta K_t^\gamma e^{u_t}$, take logs, then you get linear form. Of interest: is $\beta+\gamma=1$
+ 	\item logarithmic: $Y_t = a(X_t)^\beta e^{u_t}$ which may be rewritten $log(Y_t) = log(a) + \beta log(X_t) + u_t$ Then $\beta$ is elasticity:$\beta = \frac{\partial Y_t / Y_t}{\partial X_t / X_t}$ very usefull as this is without dimension:
+ 	\begin{align*}
+ 	\frac{\partial log(Y_t)}{\partial log(X_t)} =  	\frac{\partial log(Y_t)}{\partial y_t}  	\frac{\partial Y_t}{\partial X_t}  	\frac{\partial X_t}{\partial log(X_t)} = \frac{1}{Y_t}\partial Y_t \frac{X_t}{\partial X_t} = \frac{\partial Y}{\partial X_t} \frac{X_t}{Y_t} = \beta
+ 	\end{align*}
+ 	If $X$ is raised by $1\%$ then $y$ changes by $\beta$ \%.
+ 	 	\item quadratic (or polynomials)
+ 	$ Y_t = \alpha + \beta_1 X_t + \beta_2 X_t^2 + u_t$
+\end{itemize}
+ 
+ 
+The econometric model is specified using the A-, B- and  C-assumptions
+\paragraph{Functional specification (A-Assumptions)}
+
+\begin{description}
+	\item[Assumption a1:] No relevant exogenous variable is omitted from the
+	econometric model, and the exogenous variable included in the model is
+	relevant [here: what about quality of the meal, we will consider these cases later on]
+	
+	\item[Assumption a2:] The true functional dependence between $x_{t}$ and $%
+	y_{t}$ is linear
+	
+	\item[Assumption a3:] The parameters $\alpha $ and $\beta $ are constant for
+	all $T$ observations $(x_{t},y_{t})$
+\end{description}
+
+\paragraph{Error term specification (B-assumptions)}
+Why do we need an error term:
+\begin{itemize}
+	\item unsystematic measurement errors due to proxy variables
+	\item some exogenous variables are not considered in the economic model since they are not observable
+	\item human behavior is rather unpredictable and humans make errors
+\end{itemize}
+So the error term is supposed to fluctuate around 0, its average value. u is a random variable. Thougth experiment: Consider an infinite amount of samples of x and therefore y and u. Look at the distribution of u.
+\begin{description}
+	\item[Assumption b1:] $E(u_{t})=0$ for $t=1,\ldots ,T$ 
+	[no systematic measurement errors, very important, we loose efficiency]
+	\item[Assumption b2:] Homoskedasticity: $Var(u_{t})=\sigma ^{2}$ for $%
+	t=1,\ldots ,T$
+	[not so important, we can deal with heteroscedasticity]
+	\item[Assumption b3:] For all $t\neq s$ with $t=1,2,...,T$ and $s=1,2,..,T$
+	we have%
+	\begin{equation*}
+	Cov(u_{t},u_{s})=0
+	\end{equation*}
+	[no autocorrelation, if one persons gives a rather large tip and the person sitting at the next table follows that example, we have autocorrelation, we loose efficiency]
+	\item[Assumption b4:] The error terms $u_{t}$ are (jointly) normally distributed.
+\end{description}
+b1 to b3: white noise assumptions
+
+Compact notation of all B-assumptions: 
+\begin{description}
+	\item[b1-b4:] $u_{t}\sim NID(0,\sigma ^{2})$ for $t=1,\ldots ,T$
+\end{description}\marginpar{Slide 23} 
+Actually we have 20 of such distributions. Point A actually observed, u3 residual; expectation of all us must lie on R, have the same variance, bell shaped
+
+\paragraph{Variable specification (C-assumptions)}:
+
+\begin{description}
+	\item[Assumption c1] The exogenous variable $x_{t}$ is not stochastic, but
+	can be controlled as in an experimental situation
+	[highly unlikely, economic data is most often not from experimental situations, we will stick to this due to didactic reasons, later on we discuss what changes if we suppose that x is a random variable but not correlated with u]
+	\item[Assumption c2] The exogenous variable $x_{t}$ is not constant for all
+	observations $t$: $S_{xx}>0$
+	[we need some variation in x to explain the variation in y, this assumption also implies that we need at least two observations (which we also need to estimate two parameters)]
+\end{description}
+
+Of course, many (or even all?) of the A-, B-, and C-assumptions are	restrictive and unrealistic	:
+\begin{itemize}
+	\item Number of exogenous variables, stochastic nature of variables
+	\item Dynamics in variables, considering systems of equations
+	\item Linear form
+	\item Deterministic or stochastic trends
+\end{itemize}
+
+We will nevertheless suppose they are satisfied for the time being, and consider their violations later on
+
+
+\subsection{Point estimation}
+
+The simple (two-variable) linear regression model is
+	\begin{equation*}
+	y_{t}=\alpha +\beta x_{t}+u_{t}
+	\end{equation*}
+
+Estimation: Compute estimated values $\hat{\alpha}$ and $\hat{\beta}$\marginpar{OLS.R}
+Intuitively: try to minimize the absolute values of the residuals or alternatively minimize quadratic deviations.
+
+We need to distinguish between true ($\alpha$,$\beta$) and estimated values:
+\[ \hat{y}_{t}=\hat{\alpha}+\hat{\beta}x_{t} \]
+
+How can we estimate the coefficients? (values of coefficients)
+\paragraph{Least squares method (LS)}
+Residual (Residuum): Difference between the observed value $y_{t}$ and the estimated (predicted) value $\hat{y}_{t}$:
+\begin{eqnarray*}
+	\hat{u}_{t} &=&y_{t}-\hat{y}_{t} \\
+	&=&y_{t}-\hat{\alpha}-\hat{\beta}x_{t}
+\end{eqnarray*}
+Idea: Choose $\hat{\alpha}$ and $\hat{\beta}$ such, that the sum of squared residuals
+\[ S_{\hat{u}\hat{u}}=\sum_{t=1}^T \hat{u}_t^2=\sum_{t=1}^T(y_t-\hat\alpha-\hat\beta x_t)^2 \]
+is minimized!
+
+\paragraph{Derivation of the OLS estimators}
+Necessary conditions: Differentiate - Set FOC to zero - Reorder
+Sufficient conditions: Check second-order derivatives
+
+Differentiate%
+\[
+S_{\hat{u}\hat{u}}=\sum_{t=1}^{T}\left( y_{t}-\hat{\alpha}-\hat{\beta}%
+x_{t}\right) ^{2} 
+\]%
+with respect to $\hat{\alpha}$ and $\hat{\beta}$:%
+\begin{eqnarray*}
+	\frac{\partial S_{\hat{u}\hat{u}}}{\partial \hat{\alpha}} &=&\sum_{t=1}^{T}2%
+	\left( y_{t}-\hat{\alpha}-\hat{\beta}x_{t}\right) \left( -1\right) \\
+	\frac{\partial S_{\hat{u}\hat{u}}}{\partial \hat{\beta}} &=&\sum_{t=1}^{T}2%
+	\left( y_{t}-\hat{\alpha}-\hat{\beta}x_{t}\right) \left( -x_{t}\right) .
+\end{eqnarray*}%
+Setting the derivatives to zeros and reordering yields%
+\begin{eqnarray*}
+	\sum_{t=1}^{T}\left( y_{t}-\hat{\alpha}-\hat{\beta}x_{t}\right) &=&0 \\
+	\sum_{t=1}^{T}\left( x_{t}y_{t}-x_{t}\hat{\alpha}-\hat{\beta}%
+	x_{t}^{2}\right) &=&0
+\end{eqnarray*}%
+or the \emph{normal equations }(Normalgleichungen)%
+\begin{eqnarray}
+\hat{\alpha}T+\hat{\beta}\sum_{t=1}^{T}x_{t} &=&\sum_{t=1}^{T}y_{t}
+\label{g1} \\
+\hat{\alpha}\sum_{t=1}^{T}x_{t}+\hat{\beta}\sum_{t=1}^{T}x_{t}^{2}
+&=&\sum_{t=1}^{T}x_{t}y_{t}.  \label{g2}
+\end{eqnarray}%
+Different ways to solve this system of equations, e.g. in matrix form:
+\begin{align*}
+\begin{pmatrix} T & \sum_{t=1}^{T}x_{t}\\ \sum_{t=1}^{T}x_{t} & \sum_{t=1}^{T}x_{t}^2\end{pmatrix} \begin{pmatrix} \hat{\alpha} \\ \hat{\beta} \end{pmatrix} =& \begin{pmatrix} \sum_{t=1}^{T}y_{t}\\ \sum_{t=1}^{T}x_t y_{t}\end{pmatrix}\\
+\begin{pmatrix} \hat{\alpha} \\ \hat{\beta} \end{pmatrix} =& \begin{pmatrix} T & \sum_{t=1}^{T}x_{t}\\ \sum_{t=1}^{T}x_{t} & \sum_{t=1}^{T}x_{t}^2\end{pmatrix}^{-1}  \begin{pmatrix} \sum_{t=1}^{T}y_{t}\\ \sum_{t=1}^{T}x_t y_{t}\end{pmatrix}
+\end{align*}
+Compute the inverse of a $2\times2$ matrix is easy:
+\begin{align*}
+\begin{pmatrix} T & \sum_{t=1}^{T}x_{t}\\ \sum_{t=1}^{T}x_{t} & \sum_{t=1}^{T}x_{t}^2\end{pmatrix}^{-1} &= \frac{1}{\det\begin{pmatrix} T & \sum_{t=1}^{T}x_{t}\\ \sum_{t=1}^{T}x_{t} & \sum_{t=1}^{T}x_{t}^2\end{pmatrix}} \begin{pmatrix} \sum_{t=1}^{T}x_{t}^2 & -\sum_{t=1}^{T}x_{t}\\ -\sum_{t=1}^{T}x_{t} & T\end{pmatrix}\\
+&=\frac{1}{T\sum_{t=1}^{T}x_{t}^{2}-\left( \sum_{t=1}^{T}x_{t}\right) ^{2}} \begin{pmatrix} \sum_{t=1}^{T}x_{t}^2 & -\sum_{t=1}^{T}x_{t}\\ -\sum_{t=1}^{T}x_{t} & T\end{pmatrix}
+\end{align*}
+Therefore:
+\begin{align*}
+\begin{pmatrix} \hat{\alpha} \\ \hat{\beta} \end{pmatrix} =& =\frac{1}{T\sum_{t=1}^{T}x_{t}^{2}-\left( \sum_{t=1}^{T}x_{t}\right) ^{2}} \begin{pmatrix} \sum_{t=1}^{T}x_{t}^2 & -\sum_{t=1}^{T}x_{t}\\ -\sum_{t=1}^{T}x_{t} & T\end{pmatrix}  \begin{pmatrix} \sum_{t=1}^{T}y_{t}\\ \sum_{t=1}^{T}x_t y_{t}\end{pmatrix}
+\end{align*}
+Let's focus on $\hat{\beta}$:
+\begin{eqnarray}
+\hat{\beta} 
+&=&\frac{\sum_{t=1}^{T}x_{t}y_{t}-\frac{1}{T}\sum_{t=1}^{T}x_{t}%
+	\sum_{t=1}^{T}y_{t}}{\sum_{t=1}^{T}x_{t}^{2}-\frac{1}{T}\left(
+	\sum_{t=1}^{T}x_{t}\right) ^{2}}  \nonumber \\
+&=&\frac{\sum_{t=1}^{T}\left( x_{t}-\bar{x}\right) \left( y_{t}-\bar{y}%
+	\right) }{\sum_{t=1}^{T}\left( x_{t}-\bar{x}\right) ^{2}}  \nonumber \\
+&=&\frac{S_{xy}}{S_{xx}}.  \label{defbetahat}
+\end{eqnarray}%
+
+Divide the first normal equation by $T$, then%
+\[
+\hat{\alpha}+\hat{\beta}\bar{x}=\bar{y} 
+\]%
+or%
+\begin{equation}
+\hat{\alpha}=\bar{y}-\hat{\beta}\bar{x}.  \label{defalphahat}
+\end{equation}
+
+
+
+
+\begin{eqnarray*}
+	\hat{\beta} &=&S_{xy}/S_{xx} \\
+	\hat{\alpha} &=&\bar{y}-\hat{\beta}\bar{x}
+\end{eqnarray*}%
+with 
+\begin{eqnarray*}
+	S_{xx} &=&\sum \left( x_{t}-\bar{x}\right) ^{2}=\sum x_{t}^{2}-T\bar{x}^{2}
+	\\
+	S_{xy} &=&\sum \left( x_{t}-\bar{x}\right) \left( y_{t}-\bar{y}\right) =\sum
+	y_{t}x_{t}-T\bar{x}\bar{y}
+\end{eqnarray*}%
+These are variations, not variances or covariances as we are not dividing by $T-1$.
+
+Interpretation of the estimators or estimates? Do for our example! \marginpar{OLS.R}
+
+Numeric illustration for a three points example
+
+\begin{center}%
+	\begin{tabular}{|c|c|c|}
+		\hline
+		$\mathbf{t}$ & $\mathbf{x}_{\mathbf{t}}$ & $\mathbf{y}_{\mathbf{t}}$ \\ 
+		\hline
+		1 & 10 & 2 \\ 
+		2 & 30 & 3 \\ 
+		3 & 50 & 7 \\ \hline
+	\end{tabular}%
+\end{center}%
+Calculate
+\begin{eqnarray*}
+	&&\hat{\alpha},\hat{\beta} \\
+	&&\hat{y}_{1},\hat{y}_{2},\hat{y}_{3} \\
+	&&\hat{u}_{1},\hat{u}_{2},\hat{u}_{3} \\
+	&&S_{\hat{u}}, S_{\hat{u}\hat{u}}
+\end{eqnarray*}
+Compute $\bar{x}=30$ and $\bar{y}=4$ and%
+\begin{eqnarray*}
+	S_{xx} &=&\sum \left( x_{t}-\bar{x}\right) ^{2}=400+0+400=800 \\
+	S_{xy} &\equiv &\sum \left( x_{t}-\bar{x}\right) \left( y_{t}-\bar{y}\right)
+	\\
+	&=&(-20)\cdot (-2)+0\cdot 1+20\cdot 3=100
+\end{eqnarray*}%
+Estimates (Sch\"{a}tzwerte)%
+\begin{eqnarray*}
+	\hat{\beta} &=&S_{xy}/S_{xx}=100/800=0.125 \\
+	\hat{\alpha} &=&\bar{y}-\hat{\beta}\bar{x}=4-0.125\cdot 30=0.25
+\end{eqnarray*}%
+With each additional Euro on the bill, the waiter receives an additional tip of 0.125 Euro. $\hat{\alpha}$ is a level parameter, mostly no good interpretation (no bill, but still 0.25 Euros tip does not make sense).
+Always stick to the interval where you have observations!
+
+Estimated model%
+\[
+\hat{y}_{t}=0.25+0.125\cdot x_{t} 
+\]%
+If the billing amounts are $x_{1}=10$, $x_{2}=30$ and $x_{3}=50$ we predict
+the following gratuities%
+\begin{eqnarray*}
+	\hat{y}_{1} &=&0.25+0.125\cdot 10=1.5 \\
+	\hat{y}_{2} &=&0.25+0.125\cdot 30=4 \\
+	\hat{y}_{3} &=&0.25+0.125\cdot 50=6.5
+\end{eqnarray*}%
+Estimated error terms (residuals)%
+\begin{eqnarray*}
+	\hat{u}_{1} &=&y_{1}-\hat{y}_{1}=2-1.5=0.5 \\
+	\hat{u}_{2} &=&y_{2}-\hat{y}_{2}=3-4=-1 \\
+	\hat{u}_{3} &=&y_{1}-\hat{y}_{1}=7-6.5=0.5
+\end{eqnarray*}%
+Sum of residuals: $S_{\hat{u}}=0.5-1+0.5=0$. (This is always the case!)
+
+Sum of squared residuals%
+\[
+S_{\hat{u}\hat{u}}=\sum \hat{u}_{t}^{2}=0.5^{2}+\left( -1\right)
+^{2}+0.5^{2}=1.5 
+\]
+
+
+\subsection{The coefficient of determination $R^{2}$}
+Variation of the endogenous variable
+\[ S_{yy}=S_{\hat{y}\hat{y}}+S_{\hat{u}\hat{u}} \]
+$\bar{R}: \bar{y}=\hat{a} + \hat{\beta}\bar{x}$,\\$g:(\bar{x},\bar{y})$
+\begin{center}
+	\input{plots/abb03-06}
+\end{center}
+We try to explain the variation in $y_t$ through the variation in $x_t$. $\bar{R}$ is a bad choice since the variation in $y_t$ is equal the variation in $u_t$, but not in $x_t$. $R^{KQ}$ must go through g. We rotate the line such that $S_{\hat{u}\hat{u}}$
+
+\begin{center}
+	\input{plots/abb03-08}
+\end{center}
+This shows that the entire variation $S_{yy}$ can be broken down into two components: the explained variation $S_{\hat{y}\hat{y}}$ and the unexplained variation $S_{\hat{u}\hat{u}}$. Graphically, this means that the sum of dark grey and medium grey areas corresponds to the sum of the light grey areas. However, this connection does not apply to a single observation point!
+
+We get the equation:
+\[ \sum \left( y_{t}-\bar{y}\right) ^{2}=\sum \left( \hat{y}_{t}-\bar{y}\right)^{2}+\sum \hat{u}_{t}^{2} \]
+
+
+Proof: Rewrite the normal equations:
+\begin{eqnarray*}
+\sum_{t=1}^{T}y_{t} &=&\sum_{t=1}^{T}\hat{\alpha}+\hat{\beta}%
+\sum_{t=1}^{T}x_{t} \\
+\sum_{t=1}^{T}x_{t}y_{t} &=&\hat{\alpha}\sum_{t=1}^{T}x_{t}+\hat{\beta}%
+\sum_{t=1}^{T}x_{t}^{2}
+\end{eqnarray*}%
+or
+\begin{eqnarray*}
+\sum_{t=1}^{T}y_{t}-\sum_{t=1}^{T}\hat{\alpha}-\hat{\beta}%
+\sum_{t=1}^{T}x_{t} &=&0 \\
+\sum_{t=1}^{T}x_{t}y_{t}-\hat{\alpha}\sum_{t=1}^{T}x_{t}-\hat{\beta}%
+\sum_{t=1}^{T}x_{t}^{2} &=&0
+\end{eqnarray*}%
+or
+\begin{eqnarray*}
+\sum_{t=1}^{T}\left( y_{t}-\hat{\alpha}-\hat{\beta}x_{t}\right) &=&0 \\
+\sum_{t=1}^{T}x_{t}\left( y_{t}-\hat{\alpha}-\hat{\beta}x_{t}\right) &=&0.
+\end{eqnarray*}
+Because of $\hat{u}_{t}=y_{t}-\hat{\alpha}-\hat{\beta}x_{t}$ this equals
+\begin{eqnarray}
+\sum_{t=1}^{T}\hat{u}_{t} &=&0  \label{n1} \\
+\sum_{t=1}^{T}x_{t}\hat{u}_{t} &=&0.  \label{n2}
+\end{eqnarray}%
+The decomposition is now easy to show:
+\begin{eqnarray*}
+\sum \left( y_{t}-\bar{y}\right) ^{2} &=&\sum \left( y_{t}-\hat{y}_{t}+\hat{y%
+}_{t}-\bar{y}\right) ^{2} \\
+&=&\sum \hat{u}_{t}^{2}+\sum \left( \hat{y}_{t}-\bar{y}\right) ^{2} \\
+&&+\sum 2\hat{u}_{t}\left( \hat{y}_{t}-\bar{y}\right) .
+\end{eqnarray*}%
+The last term is
+\begin{eqnarray*}
+\sum 2\hat{u}_{t}\left( \hat{y}_{t}-\bar{y}\right) &=&\sum 2\hat{u}%
+_{t}\left( \hat{\alpha}+\hat{\beta}x_{t}-\bar{y}\right) \\
+&=&2\hat{\alpha}\sum \hat{u}_{t}+2\hat{\beta}\sum \hat{u}_{t}x_{t}-2\bar{y}%
+\sum \hat{u}_{t}.
+\end{eqnarray*}%
+Due to (\ref{n1}) and (\ref{n2}) this term equals zero. Hence, the decomposition is proved.
+
+Coefficient of determination (Bestimmtheitsmaß) $R^2$
+\[ R^{2}=\frac{\text{`explained variation''}}
+{\text{``total variation''}}=\frac{S_{yy}-S_{\hat{u}\hat{u}}}{S_{yy}}=\frac{S_{\hat{y}\hat{y}}}{S_{yy}} \]
+
+Different way of computing $R^{2}$:
+\[ R^{2}=\frac{\hat{\beta}S_{xy}}{S_{yy}}=\frac{S_{xy}^{2}}{S_{xx}S_{yy}} \]
+
+For our example with the three points:
+We already know that%
+\begin{eqnarray*}
+	S_{xx} &=&\sum \left( x_{t}-\bar{x}\right) ^{2}=800 \\
+	S_{xy} &=&\sum \left( x_{t}-\bar{x}\right) \left( y_{t}-\bar{y}\right) =100
+\end{eqnarray*}%
+Now compute%
+\[
+S_{yy}=\sum \left( y_{t}-\bar{y}\right) ^{2}=14 
+\]%
+Calculate%
+\begin{eqnarray*}
+	R^{2} &=&\frac{S_{xy}^{2}}{S_{xx}S_{yy}} \\
+	&=&\frac{100^{2}}{800\cdot 14}\approx 89.3\%
+\end{eqnarray*}%
+or%
+\begin{eqnarray*}
+	R^{2} &=&\frac{S_{yy}-S_{\hat{u}\hat{u}}}{S_{yy}} \\
+	&=&\frac{14-1.5}{14}\approx 89.3\%
+\end{eqnarray*}
+
+Note that in the simple linear regression model: $\widehat{corr}(x,y)=\frac{S_{xy}}{\sqrt{S_{xx}}\sqrt{S_{yy}}}= \pm \sqrt{\frac{S_{xx}^2}{S_{xx}S_{yy}}} = \pm \sqrt{R^2}$
+
+Note also that in models without an intercept the coefficient of determination could be negative.
+\section{Properties of the estimators}
+
+The estimates
+\begin{eqnarray*}
+\hat{\beta} &=&S_{xy}/S_{xx} \\
+\hat{\alpha} &=&\bar{y}-\hat{\beta}\bar{x}
+\end{eqnarray*}
+are random variables.
+
+Thought experiment: repeated samples
+
+Computer simulation \marginpar{experiment.R}
+
+In order to compare different estimators we need criteria for \enquote{good} estimators:
+\begin{itemize}
+	\item Unbiasedness: An estimator $\hat{\beta}^A$ is unbiased if given an infinite amount of repeated samples, the obtained estimates $\hat{\beta}^A$ are on average equal to the true value of $\beta$, i.e. $E(\hat{\beta}^A)=\beta$.
+	\item Efficiency: An estimator $\hat{\beta}^A$ is efficient, if it is the one with the smallest variance $var(\hat{\beta}^A)$ \textbf{within} the class of unbiased estimators.
+\end{itemize}
+\begin{center}
+	\input{plots/abb04-01}\\
+		\input{plots/abb04-02}
+\end{center}
+Efficiency is subordinated criteria. We focus on unbiased estimators first, then we compare these. What about a slightly biased estimator (of which we even can compute the bias) which has a much less variance?
+\begin{center}
+	\input{plots/abb04-03}
+\end{center}
+This question cannot be answered in general, it depends on the focus of the researcher.
+
+Furthermore, what about considering $\alpha$ and $\beta$ jointly? We will come back to this issue in the multivariate case.
+\subsection*{Expectation of the estimators}
+
+Unbiasedness: Under the a-, b- and c-assumptions (without b2 and b4)
+\begin{eqnarray*}
+E(\hat{\alpha}) &=&\alpha \\
+E(\hat{\beta}) &=&\beta
+\end{eqnarray*}
+
+Proof: We will use the following equality at a later stage:
+\[
+\sum \left( x_{t}-\bar{x}\right) y_{t}=\sum \left( x_{t}-\bar{x}\right)
+\left( y_{t}-\bar{y}\right) , 
+\]%
+because
+\[
+\sum \left( x_{t}-\bar{x}\right) \left( y_{t}-\bar{y}\right) =\sum
+x_{t}y_{t}-\bar{x}\sum y_{t}-\underbrace{\bar{y}\sum x_{t}}_{=T\bar{x}\bar{y}%
+}+\underbrace{\sum \bar{x}\bar{y}}_{=T\bar{x}\bar{y}} 
+\]%
+The expectation is easy to calculate. Since
+\begin{eqnarray}
+\hat{\beta} &=&\frac{S_{xy}}{S_{xx}}  \nonumber \\
+&=&\frac{\sum \left( x_{t}-\bar{x}\right) \left( y_{t}-\bar{y}\right) }{\sum
+\left( x_{t}-\bar{x}\right) ^{2}}  \nonumber \\
+&=&\frac{\sum \left( x_{t}-\bar{x}\right) \left( \alpha +\beta
+x_{t}+u_{t}-\alpha -\beta \bar{x}-\bar{u}\right) }{\sum \left( x_{t}-\bar{x}%
+\right) ^{2}}  \nonumber \\
+&=&\frac{\sum \left( x_{t}-\bar{x}\right) \left( \beta \left( x_{t}-\bar{x}%
+\right) +\left( u_{t}-\bar{u}\right) \right) }{\sum \left( x_{t}-\bar{x}%
+\right) ^{2}}  \nonumber \\
+&=&\beta +\frac{\sum \left( x_{t}-\bar{x}\right) }{\sum \left( x_{t}-\bar{x}%
+\right) ^{2}}\left( u_{t}-\bar{u}\right)  \label{betahat2}
+\end{eqnarray}%
+we find
+\begin{eqnarray*}
+E(\hat{\beta}) &=&E\left( \beta +\frac{\sum \left( x_{t}-\bar{x}%
+\right) }{\sum \left( x_{t}-\bar{x}\right) ^{2}}\left( u_{t}-\bar{u}\right)
+\right) \\
+&=&\beta +\frac{\sum \left( x_{t}-\bar{x}\right) }{\sum \left( x_{t}-\bar{x}%
+\right) ^{2}}E\left( u_{t}-\bar{u}\right) \\
+&=&\beta .
+\end{eqnarray*}
+
+To find the expectation of 
+$\hat{\alpha}$ we use the following equations
+\begin{eqnarray*}
+\bar{y} &=&\hat{\alpha}+\hat{\beta}\bar{x} \\
+\bar{y} &=&\alpha +\beta \bar{x}+\bar{u}.
+\end{eqnarray*}%
+Substract:
+\begin{eqnarray}
+0 &=&\hat{\alpha}-\alpha +\left( \hat{\beta}-\beta \right) \bar{x}-\bar{u} 
+\nonumber \\
+\hat{\alpha} &=&\alpha -( \hat{\beta}-\beta ) \bar{x}+\bar{u}.
+\label{alphahat2}
+\end{eqnarray}
+Thus,
+\begin{eqnarray*}
+E\left( \hat{\alpha}\right) &=&\alpha +E( \hat{\beta}-\beta ) 
+\bar{x}+E\left( \bar{u}\right) \\
+&=&\alpha .
+\end{eqnarray*}
+
+\subsection*{Variance and covariance of the estimators}
+
+The variances and covariances are given by
+\begin{eqnarray*}
+Cov(\hat{\alpha},\hat{\beta}) &=&-\sigma ^{2}\left( \bar{x}/S_{xx}\right) \\
+Var(\hat{\alpha}) &=&\sigma ^{2}\left( 1/T+\bar{x}^{2}/S_{xx}\right) \\
+Var(\hat{\beta}) &=&\sigma ^{2}/S_{xx}
+\end{eqnarray*}
+The variance is smaller if (i) the variance of the error term is smaller and (ii) the larger the variation in x, i.e. $S_{xx}$. $S_{xx}$ is higher the more observations we have, therefore the more observations the more efficient the estimators. 
+
+
+Proof:
+\begin{eqnarray*}
+\hat{\beta} &=&\frac{S_{xy}}{S_{xx}} \\
+&=&\frac{\sum \left( x_{t}-\bar{x}\right) y_{t}}{\sum \left( x_{t}-\bar{x}%
+\right) ^{2}} \\
+&=&\frac{\sum \left( x_{t}-\bar{x}\right) \left( \alpha +\beta
+x_{t}+u_{t}\right) }{\sum \left( x_{t}-\bar{x}\right) ^{2}} \\
+&=&\frac{\sum \left( x_{t}-\bar{x}\right) \left( \alpha +\beta x_{t}\right) 
+}{\sum \left( x_{t}-\bar{x}\right) ^{2}}+\frac{\sum \left( x_{t}-\bar{x}%
+\right) u_{t}}{\sum \left( x_{t}-\bar{x}\right) ^{2}}
+\end{eqnarray*}%
+Hence
+\begin{eqnarray*}
+Var( \hat{\beta}) &=&Var\left( \frac{\sum \left( x_{t}-\bar{x}%
+\right) u_{t}}{\sum \left( x_{t}-\bar{x}\right) ^{2}}\right) \\
+&=&\frac{Var\left( \sum \left( x_{t}-\bar{x}\right) u_{t}\right) }{\left(
+\sum \left( x_{t}-\bar{x}\right) ^{2}\right) ^{2}} \\
+&=&\frac{\sum Var\left( \left( x_{t}-\bar{x}\right) u_{t}\right) }{\left(
+\sum \left( x_{t}-\bar{x}\right) ^{2}\right) ^{2}} \\
+&=&\frac{\sum \left( x_{t}-\bar{x}\right) ^{2}Var\left( u_{t}\right) }{%
+\left( \sum \left( x_{t}-\bar{x}\right) ^{2}\right) ^{2}} \\
+&=&Var\left( u_{t}\right) \frac{\sum \left( x_{t}-\bar{x}\right) ^{2}}{%
+\left( \sum \left( x_{t}-\bar{x}\right) ^{2}\right) ^{2}} \\
+&=&\frac{\sigma ^{2}}{S_{xx}}.
+\end{eqnarray*}%
+For the Variance of $\hat{\alpha}$ we make use of (\ref{alphahat2}), 
+\begin{eqnarray*}
+\hat{\alpha} &=&\alpha -( \hat{\beta}-\beta ) \bar{x}+\bar{u} \\
+&=&\alpha +\beta \bar{x}-\hat{\beta}\bar{x}+\bar{u}
+\end{eqnarray*}%
+Dropping the constants, we get
+\begin{eqnarray*}
+Var\left( \hat{\alpha}\right) &=&Var(\hat{\beta}\bar{x})+Var(\bar{u})-2Cov(%
+\hat{\beta}\bar{x},\bar{u}) \\
+&=&\bar{x}^{2}Var(\hat{\beta})+Var(\bar{u})-2\bar{x}Cov(\hat{\beta},\bar{u}).
+\end{eqnarray*}%
+We will show shortly, that $Cov(\hat{\beta},\bar{u})=0$, hence
+\begin{eqnarray*}
+Var\left( \hat{\alpha}\right) &=&\bar{x}^{2}Var(\hat{\beta})+Var\left( \frac{%
+1}{T}\sum u_{t}\right) \\
+&=&\bar{x}^{2}\frac{\sigma ^{2}}{S_{xx}}+\frac{1}{T^{2}}\sum \sigma ^{2} \\
+&=&\sigma ^{2}\left( 1/T+\bar{x}^{2}/S_{xx}\right) .
+\end{eqnarray*}%
+To see, that the covariance vanishes, use (\ref{betahat2}), 
+\[
+\hat{\beta}=\beta +\frac{\sum \left( x_{t}-\bar{x}\right) \left( u_{t}-\bar{u%
+}\right) }{\sum \left( x_{t}-\bar{x}\right) ^{2}}. 
+\]%
+Since $E(\bar{u})=0$ the covariance is given by
+\begin{eqnarray*}
+Cov(\hat{\beta},\bar{u}) &=&E\left( \left( \hat{\beta}-\beta \right) \bar{u}%
+\right) \\
+&=&E\left( \frac{\sum \left( x_{t}-\bar{x}\right) \left( u_{t}-\bar{u}%
+\right) \bar{u}}{\sum \left( x_{t}-\bar{x}\right) ^{2}}\right) \\
+&=&\frac{\sum \left( x_{t}-\bar{x}\right) E\left( \left( u_{t}-\bar{u}%
+\right) \bar{u}\right) }{\sum \left( x_{t}-\bar{x}\right) ^{2}}.
+\end{eqnarray*}%
+The expectation is
+\begin{eqnarray*}
+E\left( \left( u_{t}-\bar{u}\right) \bar{u}\right) &=&E\left( u_{t}\bar{u}%
+\right) -E\left( \bar{u}^{2}\right) \\
+&=&E\left( u_{t}\frac{1}{T}\sum_{i}u_{i}\right) -E\left( \frac{1}{T^{2}}%
+\sum_{i}\sum_{j}u_{i}u_{j}\right) \\
+&=&\frac{1}{T}\sum_{i}E\left( u_{t}u_{i}\right) -\frac{1}{T^{2}}%
+\sum_{i}\sum_{j}E\left( u_{i}u_{j}\right) .
+\end{eqnarray*}%
+Since $E(u_{i}u_{j})=0$ for $i\neq j$ and $E(u_{i}^{2})=\sigma ^{2}$ we find
+\begin{eqnarray*}
+E\left( \left( u_{t}-\bar{u}\right) \bar{u}\right) &=&\frac{1}{T}%
+\sum_{i}E\left( u_{t}u_{i}\right) -\frac{1}{T^{2}}\sum_{i}\sum_{j}E\left(
+u_{i}u_{j}\right) \\
+&=&\frac{1}{T}\sigma ^{2}-\frac{1}{T^{2}}\sum_{i}\sigma ^{2} \\
+&=&0.
+\end{eqnarray*}
+This completes the derivation of the variance of $\hat{\alpha}$.
+
+
+The covariance between $\hat{\alpha}$ and $\hat{\beta}$ is easy to derive.
+Using the definition of the covariance, unbiasedness and (\ref{alphahat2})
+we get
+\begin{eqnarray*}
+Cov( \hat{\alpha},\hat{\beta}) &=&E\left[ \left( \hat{\alpha}%
+-\alpha \right) \left( \hat{\beta}-\beta \right) \right] \\
+&=&E\left[ \left( \bar{u}-\left( \hat{\beta}-\beta \right) \bar{x}\right)
+\left( \hat{\beta}-\beta \right) \right] \\
+&=&E\left[ \bar{u}\left( \hat{\beta}-\beta \right) \right] -E\left[ \left( 
+\hat{\beta}-\beta \right) ^{2}\bar{x}\right] \\
+&=&-\bar{x}Var(\hat{\beta}) \\
+&=&-\frac{\bar{x}\sigma ^{2}}{S_{xx}}.
+\end{eqnarray*}%
+the first term vanishes because $Cov(\hat{\beta},\bar{u})=0$ as has been
+shown above.
+
+\subsection*{Distribution}
+We now know the expected values, variances and covariance of the estimators $\hat\alpha$ and $\hat\beta$. How are the estimators distributed? Which distribution family do they belong to?
+
+Pre-consideration: Because of
+\[ y_t=\alpha+\beta x_t+u_t \]
+the $y_t$ are linear transformations (in fact just shifts) of the normally distributed error terms.
+Hence, $y_t$ is also normally distributed. Due to the independence of the errors we get that $y_t$ are also independent.
+
+$E(y_t) = \alpha + \beta x_t$ and $var(y_t) = \sigma^2$. $y_t \sim NID (\alpha + \beta x_t, \sigma^2)$.
+
+Because of
+\begin{align*}
+\hat\beta &=\frac{\sum (x_t-\bar{x})(y_t-\bar{y})}{\sum (x_t-\bar{x})^2} \\
+&=\frac{\sum (x_t-\bar{x})y_t}{\sum (x_t-\bar{x})^2}\\
+&=\frac{\sum (x_t-\bar{x})}{\sum (x_t-\bar{x})^2}y_t\\
+\end{align*}
+we see that $\hat\beta$ is a linear transformation of the $y_t$. Linear transformations of (jointly) normally distributed random variables are also normally distributed. Thus, $\hat\beta$ is normally distributed. 
+
+A similar argument holds for $\hat\alpha$.
+
+The normal distribution is uniquely identified by its expectation and variances.
+
+The distribution of both estimators is thus:
+\begin{align*}
+\hat\alpha &\sim N\left(\alpha,\sigma^2\left(\frac{1}{T}+\frac{\bar x^2}{S_{xx}}\right)\right)\\
+\hat\beta &\sim N\left(\beta,\frac{\sigma^2}{S_{xx}}\right).
+\end{align*}
+
+\subsection*{BLUE-Property} 
+LS estimator is a linear estimator, linear function in $\hat{\beta}$ and $\hat{\alpha}$. It is even the Best Linear Unbiased Estimator (without b4). With Normal distribution assumption (b4) we even get BUE, Best Unbiased Estimator (Cramer-Rao)
+
+A linear estimator is a linear function of the $y$-values. Let $\tilde{\beta}
+$ denote an arbitrary linear unbiased estimator of $\beta $,
+\[ \tilde{\beta}=\sum_{t=1}^{T}c_{t}y_{t}. \]
+Since the estimator is unbiased,
+\[ E(\tilde{\beta}) =E\left( \sum_{t=1}^{T}c_{t}y_{t}\right) =\beta, \]
+i.e.
+\begin{eqnarray*}
+\sum_{t=1}^{T}c_{t}E\left( y_{t}\right) &=&\beta \\
+\sum_{t=1}^{T}c_{t}\left( \alpha +\beta x_{t}\right) &=&\beta \\
+\alpha \sum_{t=1}^{T}c_{t}+\beta \sum_{t=1}^{T}c_{t}x_{t} &=&\beta .
+\end{eqnarray*}%
+Therefore
+\begin{eqnarray*}
+\sum_{t=1}^{T}c_{t} &=&0 \\
+\sum_{t=1}^{T}c_{t}x_{t} &=&1.
+\end{eqnarray*}
+We now determine the values $c_{1},\ldots ,c_{T}$ that minimize the variance
+of the estimator $\tilde{\beta}$. The variance is
+\begin{eqnarray*}
+Var(\tilde{\beta}) &=&Var\left( \sum_{t=1}^{T}c_{t}y_{t}\right)\\
+&=&\sum_{t=1}^{T}c_{t}^{2}Var\left( y_{t}\right) \\
+&=&\sigma ^{2}\sum_{t=1}^{T}c_{t}^{2}.
+\end{eqnarray*}
+This is a standard optimization problem with constraints. Obviously, $\sigma
+^{2}$ is immaterial and for simplicity we normalize it to $\sigma ^{2}=1/2$.
+The method of Lagrange is
+\[
+\frac{1}{2}\sum_{t=1}^{T}c_{t}^{2}\longrightarrow \min_{c_{1},\ldots ,c_{T}} 
+\]%
+subject to
+\begin{eqnarray*}
+\sum_{t=1}^{T}c_{t} &=&0 \\
+\sum_{t=1}^{T}c_{t}x_{t} &=&1.
+\end{eqnarray*}
+
+The Lagrange function is%
+\[
+L(c_{1},\ldots ,c_{T},\lambda _{1},\lambda
+_{2})=\sum_{t=1}^{T}c_{t}^{2}-\lambda _{1}\left( \sum_{t=1}^{T}c_{t}\right)
+-\lambda _{2}\left( \left[ \sum_{t=1}^{T}c_{t}x_{t}\right] -1 \right) . 
+\]%
+The derivatives are
+\begin{eqnarray*}
+\frac{\partial L}{\partial c_{t}} &=&c_{t}-\lambda _{1}-\lambda
+_{2}x_{t},\quad t=1,\ldots ,T \\
+\frac{\partial L}{\partial \lambda _{1}} &=&-\sum_{t=1}^{T}c_{t} \\
+\frac{\partial L}{\partial \lambda _{2}} &=&\left( -\left[
+\sum_{t=1}^{T}c_{t}x_{t}\right] +1\right) .
+\end{eqnarray*}
+The first order conditions are
+\begin{eqnarray}
+c_t-\lambda_1-\lambda_2 x_t &=&0,\quad t=1,\ldots ,T  \label{foc1}\\
+\sum_{t=1}^{T}c_{t} &=&0  \label{foc2} \\
+\sum_{t=1}^{T}c_{t}x_{t} &=&1.  \label{foc3}
+\end{eqnarray}
+From (\ref{foc1}) we find the optimal values
+\begin{equation}
+c_{t}=\lambda _{1}+\lambda _{2}x_{t}. \label{copt}
+\end{equation}
+Next, we determine the Lagrange multipliers $\lambda _{1}$ and $\lambda _{2}$%
+. Add all $T$ equations (\ref{foc1}) and use (\ref{foc2}):
+\[ \underbrace{\sum_{t=1}^{T}c_{t}}_{=0}-T\lambda _{1}-\lambda
+_{2}\sum_{t=1}^{T}x_{t}=0, \]
+such that
+\begin{equation}
+T\lambda _{1}+\lambda _{2}\sum_{t=1}^{T}x_{t}=0.  \label{lbda1}
+\end{equation}
+Now, multiply all $T$ equations (\ref{foc1}) with $x_{t}$ and add them;
+using (\ref{foc3}) we find
+\[
+\underbrace{\sum_{t=1}^{T}c_{t}x_{t}}_{=1}-\lambda
+_{1}\sum_{t=1}^{T}x_{t}-\lambda _{2}\sum_{t=1}^{T}x_{t}^{2}=0, 
+\]
+such that
+\begin{equation}
+\lambda _{1}\sum_{t=1}^{T}x_{t}+\lambda _{2}\sum_{t=1}^{T}x_{t}^{2}=1.
+\label{lmbd2}
+\end{equation}
+The solution of the equation system (\ref{lbda1}) and (\ref{lmbd2}) is
+\begin{eqnarray*}
+\lambda _{1} &=&\frac{\left\vert 
+\begin{array}{cc}
+0 & \sum_{t=1}^{T}x_{t} \\ 
+1 & \sum_{t=1}^{T}x_{t}^{2}%
+\end{array}%
+\right\vert }{\left\vert 
+\begin{array}{cc}
+T & \sum_{t=1}^{T}x_{t} \\ 
+\sum_{t=1}^{T}x_{t} & \sum_{t=1}^{T}x_{t}^{2}%
+\end{array}%
+\right\vert }=\frac{-\sum_{t=1}^{T}x_{t}}{T\sum_{t=1}^{T}x_{t}^{2}-\left(
+\sum_{t=1}^{T}x_{t}\right) ^{2}} \\
+&=&\frac{-T\bar{x}}{T\sum_{t=1}^{T}x_{t}^{2}-\left( T\bar{x}\right) ^{2}}=%
+\frac{-\bar{x}}{\sum_{t=1}^{T}x_{t}^{2}-T\bar{x}^{2}}=\frac{-\bar{x}}{S_{xx}}
+\\
+\lambda _{2} &=&\frac{\left\vert 
+\begin{array}{cc}
+T & 0 \\ 
+\sum_{t=1}^{T}x_{t} & 1%
+\end{array}%
+\right\vert }{\left\vert 
+\begin{array}{cc}
+T & \sum_{t=1}^{T}x_{t} \\ 
+\sum_{t=1}^{T}x_{t} & \sum_{t=1}^{T}x_{t}^{2}%
+\end{array}%
+\right\vert }=\frac{T}{T\sum_{t=1}^{T}x_{t}^{2}-\left(
+\sum_{t=1}^{T}x_{t}\right) ^{2}} \\
+&=&\frac{1}{\sum_{t=1}^{T}x_{t}^{2}-T\bar{x}^{2}}=\frac{1}{S_{xx}}.
+\end{eqnarray*}%
+Hence, we may rewrite (\ref{copt}) as
+\begin{eqnarray*}
+c_{t} &=&\lambda _{1}+\lambda _{2}x_{t} \\
+&=&\frac{-\bar{x}}{S_{xx}}+\frac{1}{S_{xx}}x_{t} \\
+&=&\frac{x_{t}-\bar{x}}{S_{xx}}.
+\end{eqnarray*}
+Therefore, the optimal linear unbiased estimator is
+\begin{align*}
+\hat{\beta} &=\sum_{t=1}^{T}c_{t}y_{t} \\
+&=\sum_{t=1}^{T}\frac{x_{t}-\bar{x}}{S_{xx}}y_{t} \\
+&=\frac{\sum_{t=1}^{T}(x_t-\bar{x})y_t}{S_{xx}}\\
+&=\frac{S_{xy}}{S_{xx}}.
+\end{align*}
+
+\section{Confidence intervals and interval estimation}
+Up to now, we only habe one numerical balue for $\hat{\alpha}$ and $\hat{\beta}$, i.e. a point estimator. How reliable is this? Again thought experiment: repeated samples, for fixed x we randomly draw new u and get a different y, recompute the point estimators. And lets do this for a very large number of times. All of our estimates should be close to the true value, but maybe some are not. Given those samples, let's quantify reliability.
+We already know that $\hat{\beta}$ is a random variable and%
+\[ \hat{\beta}\sim N\left( \beta ,\sigma ^{2}/S_{xx}\right), \]
+Instead of a point estimator $\hat{\beta}$ we now want an interval
+estimator
+\[ P(\beta-k\le \hat\beta\le \beta+k)=1-a.\]
+That is a fixed ratio $k$ of samples such that the interval should contain the true value in $1-a$\% of times.
+
+Both inequalities within the probability can be transformed to
+\begin{align*}
+P(\beta-k\le \hat\beta\le \beta+k)&=1-a \\
+P(-\hat\beta-k\le -\beta\le -\hat\beta+k)&=1-a \\
+P(\hat\beta-k\le \beta\le \hat\beta+k)&=1-a.
+\end{align*}
+The interval $[\hat{\beta}-k\;;\;\hat{\beta}+k]$ is called $\left(
+1-a\right) $-confidence interval (Konfidenzintervall).  $a$ is called confidence level.
+\begin{center}
+	\input{plots/abb05-01}
+\end{center}
+
+How to choose $k$?
+
+Case 1: Confidence interval when $\sigma ^{2}$ is known
+\begin{itemize}
+	\item Step 1: Standardization of $\hat{\beta}$%
+	\begin{eqnarray*}
+		se(\hat{\beta}) &=&\sqrt{\sigma ^{2}/S_{xx}} \\
+		z &=&\frac{\hat{\beta}-E(\hat{\beta})}{se(\hat{\beta})} \\
+		&=&\frac{\hat{\beta}-\beta }{se(\hat{\beta})}\sim N\left( 0,1\right)
+	\end{eqnarray*}
+	
+	\item The random variable $z=(\hat{\beta}-\beta )/se(\hat{\beta})$ is a standardized normally distributed variable. Furthermore, it is a
+	pivot (Pivot), i.e. its distribution does not depend on unknown parameters. It is a normed indicator for the deviations from the estimates from the true value.\\
+	Side note: why go this way? Because we know everything about N(0,1) (it is a pivot), as we do not know the exact position (E()) and shape (var) of $\hat{\beta}$. 
+	
+	\item Step 2: Find the $\left( 1-\alpha /2\right) $-quantile $z_{a/2}$%
+	\begin{equation*}
+	P(-z_{a/2}\leq z\leq z_{a/2})=1-a
+	\end{equation*}	
+	Why $\alpha /2$: because we focus on a symmetric interval!
+	\item Step 3: Substitute $z$ by $(\hat{\beta}-\beta )/se(\hat{\beta})$%
+	\begin{equation*}
+	P\left( -z_{a/2}\leq \frac{\hat{\beta}-\beta }{se(\hat{\beta})}\leq
+	z_{a/2}\right) =1-a
+	\end{equation*}
+	
+	\item Rewriting yields the $(1-a)$-interval
+\begin{eqnarray*}
+	P\left( -z_{a/2}\leq z\leq z_{a/2}\right) &=&1-a \\
+	P\left( -z_{a/2}\leq \frac{\hat{\beta}-\beta }{se(\hat{\beta})}\leq z_{a/2}%
+	\text{{}}\right) &=&1-a \\
+	P\left( -\hat{\beta}-z_{a/2}\cdot se(\hat{\beta})\leq -\beta \leq -\hat{\beta%
+	}+z_{a/2}\cdot se(\hat{\beta})\right) &=&1-a \\
+	P\left( \hat{\beta}+z_{a/2}\cdot se(\hat{\beta})\geq \beta \geq \hat{\beta}%
+	-z_{a/2}\cdot se(\hat{\beta})\right) \text{{}} &=&1-a \\
+	P\left( \hat{\beta}-z_{a/2}\cdot se(\hat{\beta})\leq \beta \leq \hat{\beta}%
+	+z_{a/2}\cdot se(\hat{\beta})\right) &=&1-a.
+\end{eqnarray*}
+Hence:
+\[
+\left[ \hat{\beta}-z_{a/2}\cdot se(\hat{\beta})\;;\;\hat{\beta}+z_{a/2}\cdot
+se(\hat{\beta})\right] 
+\]
+\item Numerical example:
+The 0.975-quantile $z_{0.975}$ can be found in statistical tables or by
+using built-in computer functions, e.g. the R-command \texttt{qnorm(0.975):
+	1.959964}$.$ Assume that $\sigma ^{2}=2$. The standard error of $\hat{\beta}$
+is%
+\[
+se(\hat{\beta})=\sqrt{\sigma ^{2}/S_{xx}}=\sqrt{2/800}=0.05 
+\]%
+Because of $\hat{\beta}=0.125$ the interval estimator is%
+\[
+\left[ 0.125-1.96\cdot 0.05;0.125+1.96\cdot 0.05\right] =\left[ 0.027;0.223%
+\right] . 
+\]
+
+\end{itemize}
+
+
+Case 2: Confidence interval when $\sigma ^{2}$ is unknown
+\begin{itemize}
+\item Step 1: Consistent and unbiased estimation of $\sigma ^{2}$ and $se(\hat{\beta})$:
+\begin{align*}
+\hat{\sigma}^2 & =\frac{1}{T-2}\sum_{t=1}^{T}\hat{u}_{t}^{2} \\
+\widehat{se}(\hat{\beta})&=\sqrt{\hat{\sigma}^{2}/S_{xx}} 
+\end{align*}
+ (we postpone the proofs). We divide by the degrees of freedom $T-2$, as we have $T$ observations but two parameters which we need to estimate first. Again: if we had only two observations ($T=2$), then the parameters were fixed by these two observations (the regression line goes through these two points). But then we could not say anything about the deviation of the errors or residuals!. Independent of the random draws we would always get the same regression line (only two points), residuals would always be zero. With two observations there is no \enquote{free information} to estimate the variance of the errors. We need more than two observations to start making inference for the variance of the error term. So with three observations we would have $T-2=3-2=1$ degree of freedom.
+\item Step 2: Standardization of $\hat{\beta}$%
+\[ t=\frac{\hat{\beta}-E(\hat{\beta})}{\widehat{se}(\hat{\beta})}
+=\frac{\hat{\beta}-\beta }{\widehat{se}(\hat{\beta})}\sim t_{(T-2)}. \]
+The random variable $t=(\hat{\beta}-\beta )/\widehat{se}(\hat{\beta})$
+is a pivot.
+Side note: Why is this a t-distributed value?
+\item Step 3: Find the $\left( 1-\alpha /2\right) $-quantile $t_{a/2}$
+\[ P(-t_{a/2}\leq t\leq t_{a/2})=1-a. \]
+\item Step 4: Substitute and solve for $\beta $,
+\[ P(\hat{\beta}-t_{a/2}\cdot \widehat{se}(\hat{\beta})\leq \beta \leq \hat{\beta}
++t_{a/2}\cdot \widehat{se}(\hat{\beta}))=1-a. \]
+The interval estimator is
+\[ \left[ \hat{\beta}-t_{a/2}\cdot \widehat{se}(\hat{\beta});\;\hat{\beta}
++t_{a/2}\cdot \widehat{se}(\hat{\beta})\right] \]
+\item Numerical example:
+The estimated variance of the error terms (standard error of regression) is%
+\begin{eqnarray*}
+	\hat{\sigma}^{2} &=&S_{\hat{u}\hat{u}}/\left( T-2\right) \\
+	&=&1.5/1 \\
+	&=&1.5
+\end{eqnarray*}%
+The estimated standard error is%
+\begin{eqnarray*}
+	\widehat{se}(\hat{\beta}) &=&\sqrt{\hat{\sigma}^{2}/S_{xx}} \\
+	&=&\sqrt{1.5/800} \\
+	&=&0.0433,
+\end{eqnarray*}%
+and for $\alpha $ we find%
+\begin{eqnarray*}
+	\widehat{se}(\hat{\alpha}) &=&\sqrt{1.5\cdot \left( 1/3+30^{2}/800\right) }%
+	=1.4790 \\
+	t_{a/2} &=&12.706 \\
+	\hat{\alpha} &=&0.25 \\
+	\text{intervall} &=&\left[ -18,5424\;;\;19,0424\right]
+\end{eqnarray*}
+
+\end{itemize}
+
+Interval estimator for intercept $\alpha$:
+\[ \left[ \hat{\alpha}-t_{a/2}\cdot \widehat{se}(\hat{\alpha})\;;\;\hat{\alpha}
++t_{a/2}\cdot \widehat{se}(\hat{\alpha})\right] \]
+where
+\[ \widehat{se}(\hat{\alpha})=\sqrt{\widehat{\sigma }^{2}(1/T+\overline{x}^{2}/S_{xx})}. \]
+Some terminology: The standard error (Standardfehler) is $se(\hat{\beta});$ \newline
+the estimated standard error is $\widehat{se}(\hat{\beta})$\newline
+Usually, both $se(\hat{\beta})$ and $\widehat{se}(\hat{\beta})$ are called standard error (Standardfehler)\\
+
+Interpretation of interval estimators?\marginpar{interval.R}
+The interval means that for a portion of $1-$ of the repeated samples, the calculated interval covers the true value. If one were to pick out one of the infinite number of samples by chance, then the probability would be that a random sample that covers the true value is exactly $1-a$. The equation does not say that the true parameter is within the interval estimator determined by our actual sample with a probability of $1-a$! The actually calculated interval estimator is an expression of a random variable \enquote{interval estimator}. A statement of probability is only permitted in connection with possible outcomes of a random variable, but not in connection with the actual outcome of this random variable. A simple example may illustrate this: Consider the random variable \enquote{dice number}. The probability to observe the possible outcome 4 is 1/6. Once the dice has been thrown, it is 4 or it is not 4, but it is by no means 4 with probability 1/6. This thought is also transferable to the random variable \enquote{interval estimator}. Once the interval estimator of our actual sample has been determined (actual outcome of the random variable \enquote{interval estimator}), it covers the fixed value or it does not cover it, but it does not cover it with a certain probability (e. g. 95\%).
+
+The actual calculated interval estimator can only be used as an \textbf{indicator} for the expected shape of the interval estimators determined in repeated samples.
+\section{Hypotheses Tests}
+
+How can we test hypotheses about the regression coefficients (usually about the slope $\beta $)?
+
+Null hypothesis $H_{0}$ and alternative hypothesis $H_{1}$ (There are one-sided and two-sided tests):
+\begin{eqnarray*}
+H_{0} &:&\beta=q \\
+H_{1} &:&\beta\neq q
+\end{eqnarray*}
+We already know that
+\[ \hat\beta\sim N(\beta,\sigma^2/S_{xx}) \]
+If the null hypothesis $H_{0}:\beta =q$ is true, then $\beta $ can be
+substituted by $q$
+\[ \hat\beta\sim N(q,\sigma^2/S_{xx}) \]
+Graphical representation: If $H_0$ is true, then $\hat\beta$ lies in the interval $[q-k; q+k]$ with (high) probability $1-a$. If $\hat\beta$ lies outside the interval, that is evidence against the null hypothesis.\marginpar{ttest.R (I)}
+
+Analytical approach is slightly different: we don't look at $\hat\beta$ directly, but standardize it.\marginpar{ttest.R (II)}
+\begin{itemize}
+\item Step 1: fix the significance level $a$ and set
+\begin{align*}
+H_0&: \beta=q\\
+H_1&: \beta\neq q
+\end{align*}
+
+\item Step 2: Estimate the standard error $se(\hat{\beta})$ with
+\[ \widehat{se}(\hat\beta)=\sqrt{\hat\sigma^2/S_{xx}} \]
+where
+\[ \hat\sigma^2=S_{\hat u \hat u}/(T-2) \]
+\item Step 3: Compute the pivotal t-test statistic
+\[ t=\frac{\hat{\beta}-q}{\widehat{se}(\hat{\beta})} \]
+If $H_0$ is true, then $t\sim t_{(T-2)}$.
+\item Step 4: Find the critical value $t_{a/2}$
+\[ P(-t_{a/2}\le t \le t_{a/2})=1-a \]
+that is the $(1-a/2)$-quantile of the $t$-distribution with $T-2$ degrees of freedom
+\item Step 5: Compare $t$ and $t_{a/2}$. If $t$ is outside of $[-t_{a/2}, t_{a/2}]$, i.e. if $|t|>t_{a/2}$, then reject $H_0$
+\end{itemize}
+
+Example: Our three observations.
+
+Step 1: $H_{0}:\beta =0.7$ and $H_{1}:\beta \neq 0.7$, the significance
+level should be $a=5\%$
+
+Step 2: $T=3,$ $S_{\hat{u}\hat{u}}=1,5$ and $S_{xx}=800$. So%
+\[
+\hat{\sigma}^{2}=S_{\hat{u}\hat{u}}/\left( T-2\right) =1.5/1=1.5 
+\]%
+and%
+\[
+\widehat{se}(\hat{\beta})=\sqrt{\hat{\sigma}^{2}/S_{xx}}=\sqrt{1.5/800}%
+=0.0433 
+\]%
+Step 3: The test statistic is%
+\[
+t=\frac{\hat{\beta}-q}{\widehat{se}(\hat{\beta})}=\frac{0.125-0.7}{0.0433}%
+=-13.279 
+\]%
+Step 4: the critical value is%
+\[
+t_{a/2}=12.7062 
+\]%
+Step 5: Since the test statistic $-13.279$ is outside $[-12.7062\;;%
+\;12.7062] $ we reject $H_{0}:\beta =0.7$
+
+Connections between hypothesis testing and confidence intervals:
+Under the (two-sided) null hypothesis $H_0$
+\[ P(q-t_{a/2}\cdot \widehat{se}(\hat\beta)\le \hat\beta\le q+t_{a/2}\cdot \widehat{se}(\hat\beta))=1-a \]
+The $(1-a)$-confidence interval is
+\[ [\hat\beta-t_{a/2}\cdot \widehat{se}(\hat\beta); \hat\beta+t_{a/2}\cdot \widehat{se}(\hat\beta) ]\]
+Conclusion: If $q$ is outside the confidence interval, $H_{0\text{ }}$%
+is rejected.
+
+Example: The 0.95-confidence interval for $\beta $ is $[-0.4252;0.6752]$; since $%
+q=0.7 $ is outside the interval, $H_{0}:\beta =0.7$ is rejected at the 5\%
+level.
+
+One-sided tests, e.g. right-sided null hypothesis:
+\begin{align*}
+H_0 &: \beta\le q\\
+H_1 &: \beta> q
+\end{align*}
+The basic idea remains the same: If $\hat{\beta}$ is \enquote{much larger} than $q$, reject $H_{0}$.
+
+Step 4 changes to: Find the critical value $t_{a}$%
+\begin{equation*}
+P(t\leq t_{a})=1-a
+\end{equation*}%
+For left-sided null hypotheses, the steps 1, 2 and 3 are the same; the
+critical value is $t_{1-a}$ with $P(t<t_{a})=a$
+
+Step 5: Compare $t_{a}$ and $t$; reject $H_{0}$, if $t>t_{a}$
+For left-sided null hypotheses, $H_{0}$ is rejected if $t$ is less
+than the critical value, $t<t_{1-a}$
+
+Example:
+We suspect that there is a positive impact of the billing amount on the tip.
+
+Step 1: $H_{0}:\beta \leq 0$ and $H_{1}:\beta >0$. The significance level is
+set to $5\%.$
+
+Step 2: We have already calculated $\widehat{se}(\hat{\beta})=0.0433.$
+
+Step 3: The $t$-value is%
+\[
+t=\frac{\hat{\beta}-q}{\widehat{se}(\hat{\beta})}=\frac{0.125-0}{0.0433}%
+=2.8868 
+\]%
+Step 4: According to Tabelle T.2 $t_{a}=6.3138$; or in R: \texttt{%
+	qt(0.95,df=1): 6.313752.}
+
+Step 5: Since $t=2.8868<t_{a}=6.3138$, we \emph{cannot }reject $H_{0}.$ The
+data are compatible with the hypothesis that $\beta \leq 0.$ The positive
+estimate $\hat{\beta}=0.125$ could have happened just by chance.
+
+$p$-value:
+
+The $p$-value is
+\begin{itemize}
+\item the probability that the test statistic (a random variable) is greater than the realized test statistic
+\item the smallest significance level for which the null hypothesis is just rejected
+\end{itemize}
+
+Traditional approach: Reject the null hypothesis if the test statistic is inside the critical region, e.g. if $t>t_{a}$
+
+Alternative approach: Comparison of probabilities; reject the null hypothesis if the $p$-value is less than the significance level $a$
+
+Plot for $p$-Value (right-sided,left-sided,two-sided)\marginpar{pwert.R}
+
+Analytical computation of the p value for the right-sided test: the p-value is
+\begin{eqnarray*}
+P(T>t) &=&1-P(T\leq t) \\
+&=&1-F_{t_{T-2}}(t),
+\end{eqnarray*}
+where $F_{t_{T-2}}$ is the distribution function of the $t_{T-2}$-distribution
+
+Similar for the p value of left-sided tests:
+\begin{eqnarray*}
+P(T<t) &=&P(T\leq t) \\
+&=&F_{t_{T-2}}(t).
+\end{eqnarray*}
+For two-sided tests
+\begin{eqnarray*}
+P\left( |T|>t\right) &=&P\left( T<-t\right) +P\left( T>t\right) \\
+&=&2P\left( T>t\right) \text{\quad (due to symmetry)} \\
+&=&2\left( 1-P\left( T\leq t\right) \right) \\
+&=&2\left( 1-F_{t_{T-2}}(t)\right) .
+\end{eqnarray*}
+
+Example:
+Consider the one-sided null and alternative hypotheses%
+\begin{eqnarray*}
+	H_{0} &:&\beta \leq 0 \\
+	H_{1} &:&\beta >0.
+\end{eqnarray*}%
+We choose our significance level at 5\%. We already know:\ $\hat{\beta}%
+=0.125 $ and $\widehat{se}(\hat{\beta})=0.0433$; thus the $t$-statistic is $%
+2.8868$. Standard software returns $p=10.6\%$. Since $10.6\%>5\%$, we \emph{%
+	cannot} reject $H_{0}$.
+
+Interpretation of $p$-values? Advocates of p values find that you can see by how much the null is rejected.
+
+How to choose the null and alternative hypothesis? E.g. for the tip example: one-sided test, we want to state that there is a positive relationship of the bill amount on tips $\beta >0$.
+\begin{itemize}
+	\item There are basically two strategies:
+	
+	\begin{itemize}
+		\item State the opposite of the conjecture as the null hypothesis
+		and try to reject it (this is the dominant strategy), $H_0:\beta \leq0$
+		
+		\item State the conjecture as the null hypothesis 
+		and show that it cannot be rejected $H_0:\beta >0$
+	\end{itemize}
+	
+	\item There is an important asymmetry between rejection and
+	non-rejection
+\end{itemize}
+\begin{center}
+\begin{tabular}{l|ll}
+& $H_0$ is not rejected & $H_0$ is rejected \\\hline
+$H_0$ is true & no error & Type I error\\
+$H_0$ is false& Type II error& no error
+\end{tabular}
+\end{center}
+Type I errors are less or equal to $a$. If the null is rejected, then we are quite sure that it is not true. A lower $a$ increases, however, the Type II error.
+
+\begin{center}
+	\input{plots/abb06-04}
+\end{center}
+\begin{center}
+	\input{plots/abb06-05}
+\end{center}
+Because the test is constructed in such a way that an error of the first type only occurs with a small probability, we interpret a rejection of $H_0$ as a ``statistical underpinning'' of $H_1$.
+
+Attention: Statements about the probability that $H_0$ or $H_1$ is correct are nonsense even after testing. If we cannot reject $H_0$, it does not mean that $H_0$ is correct but rather there is not enough statistical evidence that the difference between $\hat{\beta}$ and $q$ is large enough.
+
+
+\subsection*{Maximum-Likelihood-Estimation}
+
+Main idea: Find those parameter values that maximize the probability
+(or likelihood) of observing the actually observed data
+
+Notation:
+\begin{eqnarray*}
+\theta &:&\text{vector of parameters, e.g. }\theta =(\alpha ,\beta ,\sigma^2)\\
+L(\theta ) &:&\text{likelihood (conditional on data)} \\
+\ln L\left( \theta \right) &:&\text{log-likelihood}
+\end{eqnarray*}
+Maximum-Likelihood-Estimator
+\[ \hat{\theta}=\arg \max \ln L(\theta )=\arg \min (-\ln L(\theta )) \]
+
+We already know that for all $t=1,\ldots ,T$
+\[ y_{t}\sim NID(\alpha +\beta x_{t},\sigma ^{2}), \]
+Hence, the density of each $y_{t}$
+\[ f_{y_{t}}(y)=\frac{1}{\sqrt{2\pi \sigma ^{2}}}\exp \left( -\frac{1}{2}
+\frac{\left( y-\alpha -\beta x_{t}\right) ^{2}}{\sigma ^{2}}\right). \]
+Due to independence we get
+\begin{align*}
+L(\alpha ,\beta ,\sigma^2) &= f_{y_1,\ldots ,y_T}(y_1,\ldots,y_T)=\prod_{t=1}^{T}f_{y_t}(y_t) \\
+\ln L(\alpha ,\beta ,\sigma^2) &= \ln f_{y_1,\ldots,y_T}(y_1,\ldots ,y_T)=\sum_{t=1}^T\ln f_{y_t}(y_t)
+\end{align*}
+Maximizing
+\begin{align*}
+\ln L(\alpha ,\beta ,\sigma ^{2}) &= \ln f_{y_{1},\ldots,y_{T}}(y_{1},\ldots ,y_{T}) \\
+&=\sum_{t=1}^{T}\ln \left[ \frac{1}{\sqrt{2\pi \sigma^2}}\exp \left(-\frac{1}{2}\frac{(y_t-\alpha -\beta x_t)^2}{\sigma^2}\right) \right]\\
+&=\sum_{t=1}^{T}\left[ \ln \frac{1}{\sqrt{2\pi \sigma ^{2}}}-\frac{1}{2}\frac{\left( y_{t}-\alpha -\beta x_{t}\right) ^{2}}{\sigma ^{2}}\right] \\
+&=\sum_{t=1}^{T}\left[ -\frac{1}{2}\ln \left( 2\pi \sigma ^{2}\right) -\frac{1}{2}\frac{\left( y_{t}-\alpha -\beta x_{t}\right) ^{2}}{\sigma ^{2}}\right] \\
+&=-\frac{T}{2}\ln \left( 2\pi \sigma ^{2}\right) -\frac{1}{2\sigma ^{2}}\sum_{t=1}^{T}\left( y_{t}-\alpha -\beta x_{t}\right) ^{2}.
+\end{align*}
+w.r.t. $\alpha ,\beta ,\sigma ^{2}$.
+
+For any given value of $\sigma ^{2}$ the loglikelihood is obviously
+maximized if the sum of squared residuals (SSR) is minimized. Thus, the ML
+estimators of $\alpha $ and $\beta $ are identical to the OLS estimators,%
+\begin{eqnarray*}
+\hat{\beta} &=&\frac{S_{xy}}{S_{xx}} \\
+\hat{\alpha} &=&\bar{y}-\hat{\beta}\bar{x}.
+\end{eqnarray*}
+Differentiating with respect to $\sigma ^{2}$ yields the first order
+condition,
+\[ \frac{\partial \ln f_{y_{1},\ldots ,y_{T}}}{\partial \sigma ^{2}}=-\frac{T}{2}
+\frac{1}{\sigma ^{2}}+\frac{SSR}{2}\frac{1}{\sigma ^{4}}=0 \]
+Solve the first order condition
+\[ \hat{\sigma}_{ML}^{2}=\frac{SSR}{T}=\frac{1}{T}\sum_{t=1}^{T}\hat{u}_{t}^{2} \]
+which is different from the OLS estimator
+\[ \hat{\sigma}_{OLS}^{2}=\frac{1}{T-2}\sum_{t=1}^{T}\hat{u}_{t}^{2} \]
+
+\section{Forecasting}
+
+Conditional forecast: the value of the exogenous variable is known and
+non-stochastic: $x_0$
+
+Point forecast of the endogenous variable is:
+\[ \hat{y}_{0}=\hat{\alpha}+\hat{\beta}x_{0} \]
+The true value of $y_{0}$ is usually not $\hat{y}_{0}$ but
+\[ y_{0}=\alpha +\beta x_{0}+u_{0} \]
+The forecasting error is
+\begin{align*}
+\hat{y}_{0}-y_{0} &= \hat{\alpha}+\hat{\beta}x_{0}-\left( \alpha +\beta x_{0}+u_{0}\right) \\
+&= (\hat{\alpha}-\alpha)+(\hat{\beta}-\beta) x_{0}-u_{0}
+\end{align*}
+There are two error sources:
+\begin{enumerate}
+\item The error term $u_{0}$ will not vanish, in general.
+\item The parameter estimates $\hat{\alpha}$ and $\hat{\beta}$ will deviate
+from the true values $\alpha $ and $\beta $.
+\end{enumerate}
+Properties of the point forecast
+
+Expected forecasting error:
+\[ E(\hat{y}_0-y_{0})=E(\hat{\alpha}-\alpha)+E(\hat{\beta}-\beta)x_0-E(u_0)=0 \]
+
+Variance of the forecasting error: 
+\[ Var\left( \hat{y}_{0}-y_{0}\right) =Var( \hat{\alpha})
++x_{0}^{2}Var( \hat{\beta}) +\sigma ^{2}+2x_{0}Cov( \hat{\alpha},\hat{\beta}) . \]
+we already derived the variances and covariances, inserting:
+\begin{eqnarray*}
+Var\left( \hat{y}_{0}-y_{0}\right) &=&\sigma ^{2}\left( \frac{1}{T}+\frac{%
+\bar{x}^{2}}{S_{xx}}\right) +x_{0}^{2}\frac{\sigma ^{2}}{S_{xx}}+\sigma
+^{2}-2x_{0}\frac{\bar{x}\sigma ^{2}}{S_{xx}} \\
+&=&\sigma ^{2}\left( \frac{1}{T}+\frac{\bar{x}^{2}}{S_{xx}}+\frac{x_{0}^{2}}{%
+S_{xx}}+1-\frac{2x_{0}\bar{x}}{S_{xx}}\right) \\
+&=&\sigma ^{2}\left( 1+\frac{1}{T}+\frac{\left( x_{0}-\bar{x}\right) ^{2}}{%
+S_{xx}}\right) .
+\end{eqnarray*}
+
+Estimated variance of the forecasting error:
+\[ \widehat{Var}(\hat{y}_{0}-y_{0})=\hat{\sigma}^{2}\left[ 1+1/T+\left( x_{0}-\overline{x}\right) ^{2}/S_{xx}\right] \]
+
+Interval forecast
+\begin{itemize}
+\item Step 1: Estimation of $se(\hat{y}_{0}-y_{0})$
+\item Step 2: Standardization of $\left( \hat{y}_{0}\mathbf{-}y_{0}\right)$
+\[ t=\frac{(\hat{y}_{0}-y_0)-\overbrace{E(\hat{y}_{0}-y_{0})}^{=0}}
+{\widehat{se}(\hat{y}_{0}-y_{0})}=\frac{\hat{y}_{0}-y_{0}}{\widehat{se}(\hat{y}_{0}-y_{0})}\sim t_{T-2} \]
+\item  Step 3: Find the $t_{a/2}$-value (from statistical tables or using
+statistical computer software)
+\item Step 4: With large probability $1-\alpha $, the random variable $t$
+will be inside the interval $[-t_{a/2}; t_{a/2}]$
+\[ P\left( -t_{a/2}\leq \frac{\hat{y}_{0}-y_{0}}{\widehat{se}(\hat{y}_0-y_0)}\leq t_{a/2}\right) =1-a \]
+Solving for $y_0$ yields the interval forecast\marginpar{prognose.R}
+\[ \left[ \hat{y}_{0}-t_{a/2}\cdot \widehat{se}(\hat{y}_{0}-y_{0});\;\hat{y}_{0}
++t_{a/2}\cdot \widehat{se}(\hat{y}_{0}-y_{0})\right] \]
+\end{itemize}
+
+Example:
+Suppose $x_{0}=20$. Insert it into the estimated model, to get the point
+forecast 
+\begin{eqnarray*}
+	\widehat{y}_{0} &=&0.25+0.125\cdot x_{0} \\
+	&=&2.75.
+\end{eqnarray*}%
+The expected forecasting error is 0. We know already that $\hat{\sigma}%
+^{2}=1.5$, $S_{xx}=800$ and $\bar{x}=30$. Thus, the estimated variance of
+the forecast error is%
+\begin{eqnarray*}
+	\widehat{Var}(\hat{y}_{0}-y_{0}) &=&1.5\left[ 1+1/3+\left( 20-30\right)
+	^{2}/800\right] \\
+	&=&2.1875.
+\end{eqnarray*}%
+The estimated standard deviation of the forecast error is $\widehat{se}(\hat{%
+	y}_{0}-y_{0})=\sqrt{2.1875}=1.4790$.
+
+The critical value is the 0.975-quantile of the $t$-distribution with $T-2=1$
+degrees of freedom, i.e. $12.706.$ Hence, 0.95-interval forecast is%
+\begin{eqnarray*}
+	&&\left[ \hat{y}_{0}\pm t_{a/2}\cdot \widehat{se}(\hat{y}_{0}-y_{0})\right]
+	\\
+	&=&2.75\pm 12.706\cdot 1.4790 \\
+	&=&[-16.0422;\;21.5422].
+\end{eqnarray*}
+
+
+\newpage
+
+\textbf{\Large II.\quad  Multiple linear regression model}
+
+
+Until today we only considered a \emph{single} exogenous variable, but
+in most empirical problems we face many exogenous variables
+
+Many of the results from the simple linear regression model can be
+transferred to the multiple case
+
+Important tool: matrix algebra\newline
+(main diagonal, transpose, addition, scalar multiplication, inner product,
+matrix multiplication, idem potent, determinant, rank, inverse, trace,
+definit matrices, semidefinite matrices)
+
+Example: Estimation of a production function for barley\marginpar{Slide\\gerstebsp.R}
+Conduct an experiment where the barley output (Gerste, $g_{t}$) is
+observed for different combinations of phosphate ($p_{t}$) and nitrogen ($%
+n_{t}$)
+There are $T=30$ different combinations, see table
+
+Functional Specification (A-Annahmen):  
+The economic (agro-economic) model formalizes the connection between the barley output ($g$) and the fertilizers ($p$ and $n$)
+\[ g=f(p,n), \]
+Possible function form
+\[ g=\alpha +\beta _{1}p+\beta _{2}n. \]
+A more realistic functional form
+\[ g=Ap^{\beta _{1}}n^{\beta _{2}} \]
+where $A$, $\beta _{1}$ and $\beta _{2}$ are constant parameters. Taking logs on both sides, we get
+\[ \ln g=\ln A+\beta _{1}\ln p+\beta _{2}\ln n. \]
+Define $\alpha =\ln A$, $y=\ln g$, $x_{1}=\ln p$ and $x_{2}=\ln n$, then the econometric model (for $t=1,\ldots ,T$) is
+\[ y_{t}=\alpha +\beta _{1}x_{1t}+\beta _{2}x_{2t}+u_{t} \]
+In general for $K$ exogenous variables
+\[ y_{t}=\alpha +\beta _{1}x_{1t}+\beta _{2}x_{2t}+\ldots +\beta_{K}x_{kt}+u_{t} \]
+or
+\begin{align*}
+y_{1} &=\alpha +\beta _{1}x_{11}+\beta _{2}x_{21}+...+\beta _{K}x_{K1}+u_{1} \\
+y_{2} &=\alpha +\beta _{1}x_{12}+\beta _{2}x_{22}+...+\beta _{K}x_{K2}+u_{2} \\
+&\vdots \\
+y_{T} &=\alpha +\beta _{1}x_{1T}+\beta _{2}x_{2T}+...+\beta _{K}x_{KT}+u_{T}
+\end{align*}
+Matrix notation: Define
+\begin{equation*}
+\mathbf{y}=\left[ 
+\begin{array}{l}
+y_{1} \\ 
+y_{2} \\ 
+\vdots \\ 
+y_{T}%
+\end{array}%
+\right] ;\quad \mathbf{X}=\left[ 
+\begin{array}{llll}
+1 & x_{11} & \ldots & x_{K1} \\ 
+1 & x_{12} & \ldots & x_{K2} \\ 
+\vdots & \vdots & \ddots & \vdots \\ 
+1 & x_{1T} & \ldots & x_{KT}%
+\end{array}%
+\right] ;\quad \mathbf{\beta }=\left[ 
+\begin{array}{l}
+\alpha \\ 
+\beta _{1} \\ 
+\vdots \\ 
+\beta _{K}%
+\end{array}%
+\right] ;\quad \mathbf{u}=\left[ 
+\begin{array}{l}
+u_{1} \\ 
+u_{2} \\ 
+\vdots \\ 
+u_{T}%
+\end{array}%
+\right]
+\end{equation*}
+Then the model equations are
+\begin{equation*}
+\left[ 
+\begin{array}{l}
+y_{1} \\ 
+y_{2} \\ 
+\vdots \\ 
+y_{T}%
+\end{array}%
+\right] =\left[ 
+\begin{array}{llll}
+1 & x_{11} & \ldots & x_{K1} \\ 
+1 & x_{12} & \ldots & x_{K2} \\ 
+\vdots & \vdots & \ddots & \vdots \\ 
+1 & x_{1T} & \ldots & x_{KT}%
+\end{array}%
+\right] \left[ 
+\begin{array}{l}
+\alpha \\ 
+\beta _{1} \\ 
+\vdots \\ 
+\beta _{K}%
+\end{array}%
+\right] +\left[ 
+\begin{array}{l}
+u_{1} \\ 
+u_{2} \\ 
+\vdots \\ 
+u_{T}%
+\end{array}%
+\right]
+\end{equation*}
+or compactly:
+\[ \mathbf{y}=\mathbf{X\beta }+\mathbf{u}. \]
+
+\section{Specification}
+
+\textbf{A-Assumptions}:
+\begin{description}
+\item[A1:] No relevant exogenous variable is omitted from the
+econometric model, and all exogenous variables included in the model are
+relevant
+\item[A2:] The true functional dependence between $\mathbf{X}$
+and $\mathbf{y}$ is linear
+\item[A3:] The parameters $\mathbf{\beta }$ are constant for all $%
+T$ observations $(\mathbf{x}_{t},y_{t})$ 
+\end{description}
+
+\textbf{B-Assumptions}:
+
+The B-assumptions are the same as in the simple linear model, i.e. $E(u_{t})=0$, $Var(u_{t})=\sigma ^{2}$, 
+$Cov(u_{t},u_{s})=0$ für $t\neq s$ and normality.
+
+B1 to B4 in matrix notation:
+\[ \mathbf{u}\sim N\left( \mathbf{0},\sigma ^{2}\mathbf{I}_{T}\right) \]
+
+\textbf{C-Assumptions}:
+\begin{description}
+\item[C1:] The exogenous variables $x_{1t},\ldots ,x_{Kt}$ are
+not stochastic, but can be controlled as in an experimental situation
+\item[C2:] No perfect multicollinearity: The are no parameter
+values
+$\gamma _{0}$, $\gamma _{1}$, $\gamma _{2}$, $\ldots ,\gamma _{K}$
+(with at least one $\gamma _{k}\neq 0$), such that for all $t=1,\ldots ,T$:
+\[ \gamma _{0}+\gamma _{1}x_{1t}+\gamma _{2}x_{2t}+\ldots +\gamma _{K}x_{Kt}=0 \]
+In matrix notation:
+\[ rank(\mathbf{X})=K+1 \]
+(Implication: $T\geq K+1$)
+\end{description}
+
+Perfect multicollinearity with two regressors: If C2 is violated, there are,
+$\gamma _{0}$, $\gamma _{1}$, $\gamma_{2}$ (not all 0), such that
+\[ \gamma _{0}+\gamma _{1}x_{1t}+\gamma _{2}x_{2t}=0 \]
+for all $t=1,\ldots ,T$. Then
+\[ x_{2t}=-\left( \gamma _{0}/\gamma _{2}\right) -\left( \gamma _{1}/\gamma_{2}\right) x_{1t}=\delta _{0}+\delta _{1}x_{1t} \]
+with $\delta _{0}=-\left( \gamma _{0}/\gamma _{2}\right) $ and $\delta_{1}=-\left( \gamma _{1}/\gamma _{2}\right)$
+Hence, there are not really two regressors, since
+\begin{eqnarray*}
+y_{t} &=&\alpha +\beta _{1}x_{1t}+\beta _{2}x_{2t}+u_{t}\, \\
+&=&\underbrace{\left( \alpha +\beta _{2}\delta _{0}\right) }_{=\alpha'}
++\underbrace{\left( \beta _{1}+\beta _{2}\delta _{1}\right) }_{=\beta '}x_{1t}+u_{t}
+\end{eqnarray*}
+
+\section{Point estimation}
+
+The econometric model is:
+\begin{eqnarray*}
+\mathbf{y} &=&\mathbf{X\beta }+\mathbf{u} \\
+y_{t} &=&\alpha +\beta _{1}x_{1t}+\ldots +\beta _{K}x_{Kt}+u_{t}\text{ for }t=1,\ldots ,T
+\end{eqnarray*}
+The estimated model is:
+\begin{eqnarray*}
+\mathbf{\hat{y}} &=&\mathbf{X\hat{\beta}} \\
+\hat{y}_{t} &=&\hat{\alpha}+\hat{\beta}_{1}x_{1t}+\ldots +\hat{\beta}_{K}x_{Kt}\text{ for }t=1,\ldots ,T
+\end{eqnarray*}
+Define the residuals
+\begin{eqnarray*}
+\mathbf{\hat{u}} &=&\mathbf{y}-\mathbf{\hat{y}} \\
+\hat{u}_{t} &=&y_{t}-\hat{y}_{t}\text{ for }t=1,\ldots ,T
+\end{eqnarray*}
+How can we find an estimator $\mathbf{\hat{\beta}}$ in the multiple
+regression model?
+
+The sum of squared residuals is
+\begin{eqnarray*}
+S_{\hat{u}\hat{u}} &=&\mathbf{\hat{u}}'\mathbf{\hat{u}} \\
+&=&\sum \hat{u}_{t}^{2}
+\end{eqnarray*}
+
+Due to
+\begin{eqnarray*}
+\mathbf{\hat{u}} &=&\mathbf{y}-\mathbf{X\hat{\beta}} \\
+&=&y_{t}-\hat{\alpha}-\hat{\beta}_{1}x_{1t}-\ldots -\hat{\beta}_{K}x_{Kt}
+\end{eqnarray*}
+we have
+\begin{eqnarray*}
+S_{\hat{u}\hat{u}} &=&\left( \mathbf{y}-\mathbf{X\hat{\beta}}\right)'\left( \mathbf{y}-\mathbf{X\hat{\beta}}\right) \\
+&=&\sum \left( y_{t}-\hat{\alpha}-\hat{\beta}_1 x_{1t}-\ldots -\hat{\beta}_{K}x_{Kt}\right)^2
+\end{eqnarray*}
+First order conditions
+\begin{equation*}
+\frac{\partial S_{\hat{u}\hat{u}}}{\partial \mathbf{\hat{\beta}}}=\left[ 
+\begin{array}{l}
+\partial S_{\hat{u}\hat{u}}/\partial \hat{\alpha} \\ 
+\partial S_{\hat{u}\hat{u}}/\partial \hat{\beta}_{1} \\ 
+\vdots \\ 
+\partial S_{\hat{u}\hat{u}}/\partial \hat{\beta}_{K}
+\end{array}
+\right] =\mathbf{0}
+\end{equation*}
+
+Vector of derivatives
+\begin{eqnarray*}
+\frac{\partial S_{\hat{u}\hat{u}}}{\partial \mathbf{\hat{\beta}}} &=&\frac{%
+\partial }{\partial \mathbf{\hat{\beta}}}\left( \mathbf{y}-\mathbf{X\hat{%
+\beta}}\right) '\left( \mathbf{y}-\mathbf{X\hat{\beta}}\right) \\
+&=&\frac{\partial }{\partial \mathbf{\hat{\beta}}}\mathbf{y}'%
+\mathbf{y}-\frac{\partial }{\partial \mathbf{\hat{\beta}}}2\mathbf{y}%
+'\mathbf{X\hat{\beta}}+\frac{\partial }{\partial \mathbf{\hat{\beta}%
+}}\mathbf{\hat{\beta}X}'\mathbf{X\hat{\beta}} \\
+&=&-2\mathbf{X}'\mathbf{y+}2\mathbf{X}'\mathbf{X\hat{\beta}}
+\end{eqnarray*}
+See J.R. Magnus, H. Neudecker, Matrix Differential Calculus with
+Applications in Statistics und Econometrics, rev. ed., John Wiley \& Sons:
+Chichester, 1999, or: Phoebus J. Dhrymes, Mathematics for Econometrics, 3rd ed.,
+Springer: New York, 2000.
+
+Rules:
+$$\frac{\partial \beta'A}{\partial\beta} = \frac{\partial A'\beta}{\partial\beta'}=A$$
+or $\frac{\partial A\beta}{\partial\beta'}$ upper number of rows must be equal to lower number of columns. For quadratic functions:
+$$\frac{\partial \beta'A\beta}{\partial\beta} = A\beta + A' \beta = 2A\beta$$
+as $A=(X'X)^{-1'}=(X'X)^{-1}$ is symmetric.
+
+Solving the first order conditions yields the normal equations
+\[ \mathbf{\mathbf{X}'\mathbf{X}\hat{\beta}=X}'\mathbf{y} \]
+and thus
+\[ \mathbf{\hat{\beta}}=\left( \mathbf{X}'\mathbf{X}\right) ^{-1}
+\mathbf{X}'\mathbf{y} \]
+The terms are:
+\[ \mathbf{X}'\mathbf{X}\mathbf{=}\left[ 
+\begin{array}{llll}
+T & \sum x_{1t} & \ldots & \sum x_{Kt} \\ 
+\sum x_{1t} & \sum x_{1t}^{2} & \ldots & \sum x_{1t}x_{Kt} \\ 
+\vdots & \vdots & \ddots & \vdots \\ 
+\sum x_{Kt} & \sum x_{Kt}x_{1t} & \ldots & \sum x_{Kt}^{2}%
+\end{array}%
+\right] ,\quad \mathbf{X}'\mathbf{y}\mathbf{=}\left[ 
+\begin{array}{l}
+\sum y_{t} \\ 
+\sum x_{1t}y_{t} \\ 
+\vdots \\ 
+\sum x_{Kt}y_{t}%
+\end{array}%
+\right] \]
+Second-order derivatives:
+$$\frac{\partial^2 S}{\partial \beta \partial \beta'} = 2X'X$$ This matrix is positive definite, as for all vectors $a\neq0$: $a'X'Xa >0$. Hence we found the minimum.
+
+Meaning of the estimators $\hat{\alpha},\hat{\beta}_{1}$ and $\hat{\beta}_{2}$:
+
+Formal meaning
+\[ \frac{\partial \hat{y}_{t}}{\partial x_{1t}}=\hat{\beta}_{1}\;\;\text{and}\;\;\frac{\partial \hat{y}_{t}}{\partial x_{2t}}=\hat{\beta}_{2} \]
+Meaning of $\hat{\alpha}$: for $x_{1t}=x_{2t}=0$:
+\begin{eqnarray*}
+\ln \hat{g}_{t} &=&\hat{\alpha}=0.9543 \\
+\hat{g}_{t} &=&e^{0.9543}=2.5969
+\end{eqnarray*}
+
+Meaning of $\hat{\beta}_{1}$ and $\hat{\beta}_{2}$ in the barley-output-model:
+\[ \hat{\beta}_{1}=\frac{\partial \hat{y}_{t}}{\partial x_{1t}}=\frac{\partial
+\left( \ln \hat{g}_{t}\right) }{\partial \left( \ln p_{t}\right) } \]
+Because of
+\[ \frac{\partial \ln \hat{g}_{t}}{\partial \hat{g}_{t}}=\frac{1}{\hat{g}_{t}}\quad 
+\text{und\quad }\frac{\partial \ln p_{t}}{\partial p_{t}}=\frac{1}{p_{t}} \]
+we have
+\[ \hat{\beta}_{1}=\frac{\partial \hat{g}_{t}/\hat{g}_{t}}{\partial p_{t}/p_{t}} \]
+i.e.\ $\hat{\beta}_{1}$ is the estimated elasticity of the barley output
+with respect to the phosphate fertilizer
+
+Example:
+From the $T=30$ observations compute (rounded to two decimals)%
+\begin{eqnarray*}
+	T &=&30 \\
+	\sum x_{1t} &=&96.77 \\
+	\sum x_{2t} &=&129.72 \\
+	\sum y_{t} &=&120.42 \\
+	\sum x_{1t}^{2} &=&312.39 \\
+	\sum x_{1t}x_{2t} &=&418.46 \\
+	\sum x_{1t}y_{t} &=&388.57 \\
+	\sum x_{2t}^{2} &=&564.63 \\
+	\sum x_{2t}y_{t} &=&521.66
+\end{eqnarray*}%
+Compute%
+\begin{eqnarray*}
+	\mathbf{\hat{\beta}} &\mathbf{=}&\left[ 
+	\begin{array}{lll}
+		30 & 96.77 & 129.72 \\ 
+		96.77 & 312.39 & 418.46 \\ 
+		129.72 & 418.46 & 564.63%
+	\end{array}%
+	\right] ^{-1}\left[ 
+	\begin{array}{l}
+		120.42 \\ 
+		388.57 \\ 
+		521.66%
+	\end{array}%
+	\right] \\
+	&=&\left[ 
+	\begin{array}{l}
+		0.9543 \\ 
+		0.5965 \\ 
+		0.2626%
+	\end{array}%
+	\right] =\left[ 
+	\begin{array}{l}
+		\hat{\alpha} \\ 
+		\hat{\beta}_{1} \\ 
+		\hat{\beta}_{2}%
+	\end{array}%
+	\right]
+\end{eqnarray*}%
+The estimated model is%
+\[
+\hat{y}_{t}=0.9543+0.5965\cdot x_{1t}+0.2626\cdot x_{2t} 
+\]%
+Present the computations also in R using matrix notation.
+
+
+\subsection*{The coefficient of determination $R^{2}$}
+
+The total variation of $y$ can be decomposed in the same way as in the
+simple linear model,
+\begin{equation*}
+ \underbrace{S_{yy}}_{\text{\quotedblbase total variation\textquotedblright }}
+=\underbrace{S_{\hat{y}\hat{y}}}_{\text{``explained variation''}}
++\underbrace{S_{\hat{u}\hat{u}}}_{\text{``unexplained variation''}}
+\end{equation*}
+The coefficient of determination is defined as
+\begin{eqnarray*}
+R^{2} &=&\frac{\text{``explained variation''}}{\text{``total variation''}} \\
+&=&\frac{S_{\hat{y}\hat{y}}}{S_{yy}} \\
+&=&\frac{S_{yy}-S_{\hat{u}\hat{u}}}{S_{yy}}
+\end{eqnarray*}
+Graphical illustration for the simple and multiple linear regression model using Venn-diagrams:
+
+\unitlength 1mm 
+\linethickness{0.6pt}
+\ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi % GNUPLOT compatibility
+\begin{center}
+\begin{picture}(123.9,44)(-5,-12)
+\qbezier(10,20)(10,24)(13,27)
+\qbezier(13,27)(16,30)(20,30)
+\qbezier(20,30)(24,30)(27,27)
+\qbezier(27,27)(30,24)(30,20)
+\qbezier(10,20)(10,16)(13,13)
+\qbezier(13,13)(16,10)(20,10)
+\qbezier(20,10)(24,10)(27,13)
+\qbezier(27,13)(30,16)(30,20)
+
+\qbezier(5,10)(5,14)(8,17)
+\qbezier(8,17)(11,20)(15,20)
+\qbezier(15,20)(19,20)(22,17)
+\qbezier(22,17)(25,14)(25,10)
+\qbezier(5,10)(5,6)(8,3)
+\qbezier(8,3)(11,0)(15,0)
+\qbezier(15,0)(19,0)(22,3)
+\qbezier(22,3)(25,6)(25,10)
+
+\qbezier(60,20)(60,24)(63,27)
+\qbezier(63,27)(66,30)(70,30)
+\qbezier(70,30)(74,30)(77,27)
+\qbezier(77,27)(80,24)(80,20)
+\qbezier(60,20)(60,16)(63,13)
+\qbezier(63,13)(66,10)(70,10)
+\qbezier(70,10)(74,10)(77,13)
+\qbezier(77,13)(80,16)(80,20)
+
+\qbezier(55,10)(55,14)(58,17)
+\qbezier(58,17)(61,20)(65,20)
+\qbezier(65,20)(69,20)(72,17)
+\qbezier(72,17)(75,14)(75,10)
+\qbezier(55,10)(55,6)(58,3)
+\qbezier(58,3)(61,0)(65,0)
+\qbezier(65,0)(69,0)(72,3)
+\qbezier(72,3)(75,6)(75,10)
+
+\qbezier(65,10)(65,14)(68,17)
+\qbezier(68,17)(71,20)(75,20)
+\qbezier(75,20)(79,20)(82,17)
+\qbezier(82,17)(85,14)(85,10)
+\qbezier(65,10)(65,6)(68,3)
+\qbezier(68,3)(71,0)(75,0)
+\qbezier(75,0)(79,0)(82,3)
+\qbezier(82,3)(85,6)(85,10)
+
+\multiput(7,4)(-.05161111,-.04130556){36}{\line(-1,0){.05161111}}
+\multiput(27.7,26)(.04708333,.04211667){36}{\line(1,0){.04708333}}
+\multiput(57,4)(-.05161111,-.04130556){36}{\line(-1,0){.05161111}}
+\multiput(77.7,26)(.04708333,.04211667){36}{\line(1,0){.04708333}}
+\multiput(83,4)(.04216216,-.05021622){36}{\line(0,-1){.05021622}}
+
+\put(20,24){\makebox(0,0)[cc]{\small{a}}}
+\put(17,15){\makebox(0,0)[cc]{\small{b}}}
+
+\put(70,24){\makebox(0,0)[cc]{\small{A}}}
+\put(64,17){\makebox(0,0)[cc]{\small{B}}}
+\put(70,14){\makebox(0,0)[cc]{\small{C}}}
+\put(76,17){\makebox(0,0)[cc]{\small{D}}}
+\put(60,7){\makebox(0,0)[cc]{\small{E}}}
+\put(70,6){\makebox(0,0)[cc]{\small{F}}}
+\put(80,7){\makebox(0,0)[cc]{\small{G}}}
+
+\put(2,2){\makebox(0,0)[cc]{\small{$S_{xx}$}}}
+\put(32,29){\makebox(0,0)[cc]{\small{$S_{yy}$}}}
+\put(88,2){\makebox(0,0)[cc]{\small{$S_{22}$}}}
+\put(52,2){\makebox(0,0)[cc]{\small{$S_{11}$}}}
+\put(82,29){\makebox(0,0)[cc]{\small{$S_{yy}$}}}
+
+\put(14,-5){\makebox(0,0)[cc]{\small{(a)}}}
+\put(70,-5){\makebox(0,0)[cc]{\small{(b)}}}
+\end{picture}
+\end{center}
+
+\[ R^2=\frac{A+B+C}{A+B+C+D}.\]
+
+Note that $R^2$ always gets larger if we include variables (even if t-statistic is very small). Hence for model comparison we often rely on the corrected coefficient of determination which is defined as
+\begin{eqnarray*}
+	\overline{R}^{2} &=&1-\frac{S_{\widehat{u}\widehat{u}}\left/ \left(
+		T-K-1\right) \right. }{S_{yy}\left/ \left( T-1\right) \right. } \\
+	&=&1-\left( 1-R^{2}\right) \frac{T-1}{T-K-1}
+\end{eqnarray*}
+Note that in the denominator is the unbiased estimator for $\hat{\sigma}^2$ and in the nominator unbiased estimator for the variance of $y$.
+
+\subsection*{Properties of the OLS estimators $\hat\beta$}
+
+The estimator $\mathbf{\hat{\beta}}$ is a random vector. The expectation vector is
+\[ E(\mathbf{\hat{\beta}})=\mathbf{\beta }, \]
+i.e. the estimator is unbiased. Due to
+\[ \hat{\beta}=\left( X'X\right) ^{-1}X'y \]
+and
+\[ y=X\beta +u \]
+we get
+\begin{eqnarray*}
+\hat{\beta} &=&\left( X'X\right) ^{-1}X'\left( X\beta
++u\right) \\
+&=&\left( X'X\right) ^{-1}X'X\beta +\left( X^{\prime
+}X\right) ^{-1}X'u \\
+&=&\beta +\left( X'X\right) ^{-1}X'u.
+\end{eqnarray*}%
+Hence
+\begin{eqnarray*}
+E(\hat{\beta}) &=&E\left( \beta +\left( X'X\right) ^{-1}X'u\right) \\
+&=&\beta +\left( X'X\right) ^{-1}X'E\left( u\right) \\
+&=&\beta .
+\end{eqnarray*}
+
+The covariance matrix of $\mathbf{\hat{\beta}}$ is
+\begin{eqnarray*}
+Cov\left( \hat{\beta}\right) &=&E\left( \left( \hat{\beta}-E(\hat{\beta}%
+)\right) \left( \hat{\beta}-E(\hat{\beta})\right) '\right) \\
+&=&E\left( \left( \hat{\beta}-\beta \right) \left( \hat{\beta}-\beta \right)
+'\right) \\
+&=&E\left( \left( X'X\right) ^{-1}X'uu'X\left(
+X'X\right) ^{-1}\right) \\
+&=&\left( X'X\right) ^{-1}X'E\left( uu'\right)
+X\left( X'X\right) ^{-1} \\
+&=&\left( X'X\right) ^{-1}X'Cov\left( u\right) X\left(
+X'X\right) ^{-1} \\
+&=&\left( X'X\right) ^{-1}X'\sigma ^{2}IX\left( X^{\prime
+}X\right) ^{-1} \\
+&=&\sigma ^{2}\left( X'X\right) ^{-1}X'X\left( X^{\prime
+}X\right) ^{-1} \\
+&=&\sigma ^{2}\left( X'X\right) ^{-1}.
+\end{eqnarray*}%
+The variances $Var(\hat{\alpha})$ and $Var(\hat{\beta})$ and the covariance $%
+Cov(\hat{\alpha},\hat{\beta})$, derived for the simple linear regression model are simply special cases of this general result.
+
+BE CAREFUL: Do not mistake with $cov(u) = (Euu')=\sigma^2 I$!
+
+Special case: Covariance matrix in the two regressor model:
+\begin{eqnarray*}
+Var(\hat{\beta}_{1}) &=&\frac{\sigma ^{2}}{S_{11}\left( 1-R_{1\cdot 2}^{2}\right) } \\
+Var(\hat{\beta}_{2}) &=&\frac{\sigma ^{2}}{S_{22}\left( 1-R_{1\cdot 2}^{2}\right) } \\
+Var\left( \hat{\alpha}\right) &=&\sigma ^{2}/T+\bar{x}_{1}^{2}Var(\hat{\beta}_{1}) \\
+&&+2\bar{x}_{1}\bar{x}_{2}Cov(\hat{\beta}_{1},\hat{\beta}_{2})+\bar{x}_{2}^{2}Var(\hat{\beta}_{2}) \\
+Cov(\hat{\beta}_{1},\hat{\beta}_{2}) &=&\frac{-\sigma ^{2}R_{1\cdot 2}^{2}}{S_{12}\left( 1-R_{1\cdot 2}^{2}\right) }
+\end{eqnarray*}
+with
+\[ R_{1\cdot 2}^{2}=\frac{S_{12}^{2}}{S_{11}S_{22}}. \]
+
+\subsection*{Gauss-Markov-Theorem}
+
+The estimator $\hat{\beta}$ is linear in $\mathbf{y}$,
+since%
+\begin{eqnarray*}
+\hat{\beta} &=&(X'X)^{-1}X'y \\
+&=&Dy
+\end{eqnarray*}
+with $D=(X'X)^{-1}X'.$ 
+We will now show that $\mathbf{\hat{\beta}=}\left( \mathbf{X}^{\prime }\mathbf{X}\right)
+^{-1}\mathbf{X}^{\prime }\mathbf{y}$ is not only unbiased but also efficient. 
+
+Let $\check{\beta}$  be another linear unbiased estimator of $\beta $,
+\begin{eqnarray*}
+\check{\beta} &=&Cy \\
+&=&C(X\beta +u) \\
+&=&CX\beta +Cu.
+\end{eqnarray*}
+Unbiasedness requires
+\begin{eqnarray*}
+E(\check{\beta}) &=&E\left( CX\beta +Cu\right) \\
+&=&CX\beta \\
+&=&\beta ,
+\end{eqnarray*}
+i.e. the matrix $C$ must fulfill $CX=I$. Hence
+\begin{eqnarray*}
+\check{\beta} &=&CX\beta +Cu \\
+&=&\beta +Cu
+\end{eqnarray*}
+or
+\[ \check{\beta}-\beta =Cu. \]
+The covariance matrix of $\check{\beta}$ is
+\begin{eqnarray*}
+V(\check{\beta}) &=&E(Cu.u'C') \\
+&=&\sigma ^{2}CC'.
+\end{eqnarray*}%
+Now, compare the covariance matrices $V(\hat{\beta})$ and $V(\check{\beta})$ (using $CX=I$):
+\begin{eqnarray*}
+V(\check{\beta})-V(\hat{\beta}) &=&\sigma ^{2}CC'-\sigma
+^{2}(X'X)^{-1} \\
+&=&\sigma ^{2}\left( CC'-(X'X)^{-1}\right) \\
+&=&\sigma ^{2}\left( C-(X'X)^{-1}X'\right) \left(
+C-(X'X)^{-1}X'\right) ',
+\end{eqnarray*}
+as can be easily verified. The dimension of the matrix
+\[ A=C-(X'X)^{-1}X' \]
+is $(K+1) \times T$. The matrix $AA'$ is positive semi-definite, since for all $(K+1)$-vectors $a$:
+\[ a'A\underbrace{A'a}_{=b}=b^{\prime
+}b=\sum_{t=1}^{T}b_{t}^{2}\geq 0 \]
+Hence the OLS estimator is best linear unbiased estimator.
+\subsection*{Distribution of $\mathbf{y}$ and $\hat\beta$}
+
+From $\mathbf{y}=\mathbf{X\beta }+\mathbf{u}$ und $\mathbf{u}\sim N(\mathbf{0},\sigma ^{2}\mathbf{I}_{T})$ 
+we
+conclude that $\mathbf{y}$ is multivariate normally distributed. EExpectation vector and covariance matrix of endogenous variable $\mathbf{y}$:
+\begin{eqnarray*}
+E(\mathbf{y}) &=&E(\mathbf{X\beta }+\mathbf{u})=\mathbf{X\beta } \\
+\mathbf{V}(\mathbf{y}) &=&\mathbf{V}(\mathbf{X\beta }+\mathbf{u})=\mathbf{V}(\mathbf{u})=\sigma ^{2}\mathbf{I}_{T}
+\end{eqnarray*}
+Thus $\mathbf{y}\sim N(\mathbf{X\beta },\sigma ^{2}\mathbf{I}_{T})$.
+
+From $\mathbf{\hat{\beta}=}\left( \mathbf{X}'\mathbf{X}\right) ^{-1}\mathbf{X}'\mathbf{y}$ 
+we conclude that the estimator $\mathbf{\hat{\beta}}$ also has a multivariate normal distribution.
+
+Expectation vector and covariance matrix are already known
+\[ \mathbf{\hat{\beta}}\sim N\left( \mathbf{\beta },\sigma ^{2}\left( \mathbf{X}'\mathbf{X}\right) ^{-1}\right). \]
+
+\subsection*{Estimation of the error term variance}
+
+Problem: The error term variance $\sigma ^{2}$ is unknown. The covariance matrix $\mathbf{V}(\mathbf{\hat{\beta}})$ cannot be
+computed without $\sigma ^{2}$
+
+Solution: We need an estimator for $\sigma^2$. An estimator of $\sigma ^{2}$ is
+\[ \hat{\sigma}^{2}=\frac{S_{\hat{u}\hat{u}}}{T-K-1} \]
+This estimator is unbiased. Define
+\[ M=I-X(X'X)^{-1}X'.\]
+The matrix is symmetric and idempotent, i.e. $M=M'$ and $MM=M$. 
+Often, $M$ is called residual maker matrix, since
+\[ \hat{u}=Mu=My. \]
+$$\hat{u} = y-\hat{y} = y-X\hat{\beta}= y- X(X'X)^{-1}X'y =My$$
+Orthogonal to $X$:
+$$X'\hat{u} = X'y - X'X(X'X)^{-1}X'y = X'y -X'y = 0$$
+Hence: $$\hat{u} = M(X\beta +u) = Mu$$
+
+For the following derivations we need some rules of calculus for the trace of a matrix. The trace of a quadratic $(n\times n)$-Matrix $A$ is the sum of its diagonal elements:
+\[ tr(A)=\sum_{i=1}^n a_{ii}. \]
+For suitable Matrices $A$ and $B$ and a scalar $\lambda$):
+\begin{align*}
+tr(A+B) &= tr(A)+tr(B) \\
+tr(\lambda A) &= \lambda tr(A) \\
+tr(A') &= tr(A)\\
+tr(AB) &= tr(BA).
+\end{align*}
+Back to the proof:
+The sum of squared residuals is
+\begin{eqnarray*}
+\hat{u}'\hat{u} &=&u'M'Mu \\
+&=&u'Mu \\
+&=&tr(u'Mu) \\
+&=&tr(uu'M).
+\end{eqnarray*}%
+Hence
+\begin{eqnarray*}
+E(\hat{u}'\hat{u}) &=&E\left( tr(uu'M)\right) \\
+&=&tr(E(uu'M)) \\
+&=&tr(E(uu')M) \\
+&=&tr(\sigma ^{2}I_{T}M) \\
+&=&\sigma ^{2}tr(M) \\
+&=&\sigma ^{2}\left[ tr(I_{T})-tr(X(X'X)^{-1}X')\right] \\
+&=&\sigma ^{2}(T-K-1).
+\end{eqnarray*}%
+Thus
+\[
+E(\hat{\sigma}^{2})=\sigma ^{2}. 
+\]
+
+\subsection*{Interval estimation}
+
+Interval estimation of a single component $\hat{\beta}_{k}$ of $\mathbf{\hat{\beta}}$,
+\[ P\left( \hat{\beta}_{k}-c\leq \beta _{k}\leq \hat{\beta}_{k}+c\right) =1-a \]
+We know that
+\[ \hat{\beta}_{k}\sim N(\beta _{k},Var(\hat{\beta}_{k})), \]
+where $Var(\hat{\beta}_{k})$ is the $(k+1)$ diagonal element of 
+$\sigma^2(\mathbf{X}'\mathbf{X})^{-1}$. Problem: $\sigma ^{2}$ and $Var(\hat{\beta}_{k})$ are unknown and must be estimated first
+
+Interval estimation of $\beta_k$:
+\begin{itemize}
+\item Step 1: Estimation of  $\sigma ^{2}$ by $\hat{\sigma}^{2}$ and 
+$se(\hat{\beta}_{k})=\sqrt{Var(\hat{\beta}_{k})}$ by
+\[ \widehat{se}(\hat{\beta}_{k})=\sqrt{\widehat{Var}(\hat{\beta}_{k})}. \]
+\item Step 2: Standardization of $\hat{\beta}_{k}$
+\[ t=\frac{\hat{\beta}_{k}-E(\hat{\beta}_{k})}{\widehat{se}(\hat{\beta}_{k})}
+=\frac{\hat{\beta}_{k}-\beta _{k}}{\widehat{se}(\hat{\beta}_{k})}\sim t_{(T-K-1)} \]
+\item Step 3: Find the $t_{a/2}$-value
+\item Step 4: The $(1-\alpha )$-interval estimator is
+\[ \left[ \hat{\beta}_{k}-t_{a/2}\cdot \widehat{se}(\hat{\beta}_{k})\;;\;
+\hat{\beta}_{k}+t_{a/2}\cdot \widehat{se}(\hat{\beta}_{k})\right] \]
+\end{itemize}
+
+\subsection*{Interval estimation of linear combinations of $\hat{\beta}$}
+
+Let $\mathbf{r}$ be an arbitrary $(K+1)$-Vektor. How can we find a confidence interval of $\mathbf{r}'\mathbf{\beta }$ ?
+
+Fertilizer example: $\mathbf{r}=[0,1,1]'$, then $\mathbf{r}'\mathbf{\beta }=\beta _{1}+\beta _{2}$ (economies von scale?)
+
+The point estimator of $\mathbf{r}'\mathbf{\beta }$ is $\mathbf{r}'\mathbf{\hat{\beta}}$. The variance of $\mathbf{r}'\mathbf{\hat{\beta}}$ ist
+$\mathbf{r}'\mathbf{V}(\mathbf{\hat{\beta}})\mathbf{r}=\sigma ^{2}
+\mathbf{r}'(\mathbf{X}'\mathbf{X})^{-1}\mathbf{r}$.
+
+The confidence interval for $\mathbf{r}'\mathbf{\beta }$ is
+\[ \left[ \mathbf{r}'\mathbf{\hat{\beta}}-t_{a/2}\cdot \hat{\sigma}%
+\sqrt{\mathbf{r}'(\mathbf{X}'\mathbf{X})^{-1}\mathbf{r}}%
+\;;\;\mathbf{r}'\mathbf{\hat{\beta}}+t_{a/2}\cdot \hat{\sigma}\sqrt{%
+\mathbf{r}'(\mathbf{X}'\mathbf{X})^{-1}\mathbf{r}}\right] \]
+Special case of a single component
+\[ \beta _{k}=\mathbf{r}'\mathbf{\beta } \]
+for
+\[ \mathbf{r}=[0,\ldots ,0,1,0,\ldots ,0]' \]
+where the 1 is located at the $k^{th}$ position
+
+\section{Hypothesis tests: t-test}
+
+There are tests of a single linear combination ($t$-tests) and tests
+of multiple linear combinations ($F$-tests)
+
+\subsection*{$t$-Test}
+
+Testing a single linear combination of parameters (two-sided):
+
+ Remember: In the simple linear regression case
+\begin{eqnarray*}
+H_{0} &:&\beta =q \\
+H_{1} &:&\beta \neq q
+\end{eqnarray*}
+In the multiple linear model the null and alternative hypotheses are
+\begin{eqnarray*}
+H_{0} &:&r_{0}\alpha +r_{1}\beta _{1}+\ldots +r_{K}\beta _{K}=q\text{ } \\
+H_{1} &:&r_{0}\alpha +r_{1}\beta _{1}+\ldots +r_{K}\beta _{K}\neq q
+\end{eqnarray*}
+or
+\begin{eqnarray*}
+H_{0} &:&\mathbf{r}'\mathbf{\beta }=q \\
+H_{1} &:&\mathbf{r}'\mathbf{\beta }\neq q
+\end{eqnarray*}
+where
+\begin{equation*}
+\mathbf{r}=[r_{0},r_{1},\ldots ,r_{K}]'
+\end{equation*}
+
+The test procedure:
+\begin{enumerate}
+\item Set up $H_{0}$ and $H_{1}$ and fix the significance level $a$
+\item Estimate $se\mathbf{(\mathbf{r}^{\prime }\mathbf{\hat{\beta}})}$
+\item Compute the $t$-statistic
+\item Find the critical value $t_{1-a/2}$
+\item Test decision: Compare $t_{1-a/2}$ and $t$. Reject $H_0$,
+if $|t|>t_{1-a/2}$ ist.
+\end{enumerate}
+
+Left-sided $t$-test
+\begin{eqnarray*}
+H_{0} &:&\mathbf{\mathbf{r}'\beta }\geq q \\
+H_{1} &:&\mathbf{\mathbf{r}'\beta }<q
+\end{eqnarray*}
+Right-sided $t$-test
+\begin{eqnarray*}
+H_{0} &:&\mathbf{\mathbf{r}'\beta }\leq q \\
+H_{1} &:&\mathbf{\mathbf{r}'\beta }>q
+\end{eqnarray*}
+The critical values are lower quantiles of the $t$-distribution for
+the left-sided test and upper quantiles for the right-sided test
+
+\subsection*{$F$-Test}
+
+Simultaneous test of two or more linear combinations (restrictions) 
+Null hypothesis and alternative hypothesis
+\begin{eqnarray*}
+H_{0} &:&\mathbf{R\beta }=\mathbf{q} \\
+H_{1} &:&\mathbf{R\beta }\neq \mathbf{q}
+\end{eqnarray*}
+Examples:
+\begin{eqnarray*}
+H_{0} &:&\beta _{1}=\beta _{2}=\ldots =\beta _{K}=0 \\
+H_{0} &:&\beta _{1}=\beta _{2}=\ldots =\beta _{K} \\
+H_{0} &:&\beta _{1}+\ldots +\beta _{k}=1\text{ und }\beta _{1}=2\beta _{2} \\
+H_{0} &:&\beta _{1}=5\text{ und }\beta _{2}=\ldots =\beta _{K}=0
+\end{eqnarray*}
+
+Basic idea of the $F$-test: Compare the restricted and the
+unrestricted model
+
+Sum of squared residuals of the econometric model and the model under
+the null hypothesis
+\begin{eqnarray*}
+S_{\hat{u}\hat{u}} &=&\mathbf{\hat{u}}'\mathbf{\hat{u}}%
+=\sum_{t=1}^{T}\hat{u}_{t}^{2} \\
+S_{\hat{u}^{0}\hat{u}^{0}} &=&\mathbf{\hat{u}}^{0\prime }\mathbf{\hat{u}}%
+^{0}=\sum_{t=1}^{T}\left( \hat{u}_{t}^{0}\right) ^{2}
+\end{eqnarray*}%
+where $\mathbf{\hat{u}}^{0}$ are the residuals if the model is estimated
+under the restrictions of the null hypothesis
+
+Example: Null hypothesis
+\begin{equation*}
+y_{t}=\alpha +0\cdot x_{1t}+\ldots +0\cdot x_{Kt}+u_{t}=\alpha +u_{t}
+\end{equation*}
+
+Obviously, $S_{\widehat{u}\widehat{u}}^{0}\geq S_{\widehat{u}\widehat{u}}$; 
+ the null hypothesis is likely to be false if $S_{\widehat{u}\widehat{u}}^0$ is \textquotedblleft much larger\textquotedblright\ than
+$S_{\widehat{u}\widehat{u}}$
+
+The test statistic is
+\begin{equation*}
+F=\frac{\left. \left( S_{\widehat{u}\widehat{u}}^{0}-S_{\widehat{u}
+\widehat{u}}\right) \right/ L}{\left. S_{\widehat{u}\widehat{u}}\right/ \left(T-K-1\right) }
+\end{equation*}
+where $L$ is the number of restrictions in $H_{0}$
+If the null hypothesis is true, then
+\[ F\sim F_{(L,T-K-1)}. \]
+
+The five steps of the $F$-test
+\begin{enumerate}
+\item Set up $H_{0}$ and $H_{1}$ and choose the significance level $a$
+\item Calculate $S_{\widehat{u}\widehat{u}}$ and $S_{\widehat{u}\widehat{u}%
+}^{0}$ (more on the computation of $S_{\widehat{u}\widehat{u}}^{0}$ later)
+\item Compute the $F$-test statistic
+\item Find the critical value $F_{a}$, i.e. the upper $a$-quantile of the $%
+F_{L,T-K-1}$-distribution
+
+\item Reject $H_{0}$ if $F>F_{a}$
+\end{enumerate}
+For $L=1$ the $F$-test is identical to a two-sided $t$-test
+
+Careful: A combination of $t$-tests is \emph{not} the same as a single 
+$F$-test
+The decisions of $t$-tests and an $F$-test can be contradicting\marginpar{tFtests.R}
+Distinction between individual $t$-tests and a simultaneous $F$
+
+\textbf{Der restringierte KQ-Schätzer:}
+
+Estimate $\mathbf{\beta }$  subject to the restrictions $\mathbf{R\beta }=\mathbf{q}$ 
+ given in the null hypothesis. Optimization under constraints: Minimize
+\[
+S_{\hat{u}^{0}\hat{u}^{0}}(\mathbf{b})=\left( \mathbf{y}-\mathbf{Xb}\right)
+'\left( \mathbf{y}-\mathbf{Xb}\right) 
+\]
+with respect to $\mathbf{b}$ subject to  $\mathbf{Rb-q}=\mathbf{0.}$
+A standard Lagrange approach yields
+\begin{eqnarray*}
+\mathcal{L(}\mathbf{b},\mathbf{\lambda }) &=&\left( \mathbf{y}-\mathbf{Xb}%
+\right) '\left( \mathbf{y}-\mathbf{Xb}\right) +\mathbf{\lambda }%
+'\left( \mathbf{Rb-q}\right) \\
+&=&\mathbf{y}'\mathbf{y-2y}'\mathbf{Xb+b}'\mathbf{%
+X}'\mathbf{Xb+\lambda }'\mathbf{Rb}-\mathbf{\lambda }%
+'\mathbf{q}
+\end{eqnarray*}%
+where $\mathbf{\lambda }$ is a vector (having length $L$) of Lagrange
+multipliers. The first order conditions are
+\begin{eqnarray}
+\frac{\partial \mathcal{L}}{\partial \mathbf{b}} &=&\left( \mathbf{-2y}%
+'\mathbf{X}\right) '+2\mathbf{X}'\mathbf{Xb+}%
+\left( \mathbf{\mathbf{\lambda }'\mathbf{R}}\right) '%
+\mathbf{=0}  \label{L1} \\
+\frac{\partial \mathcal{L}}{\partial \mathbf{\lambda }} &=&\mathbf{Rb-q=0.}
+\label{L2}
+\end{eqnarray}
+The vector satisfying these conditions is the restricted least squares
+estimator, $\mathbf{\hat{\beta}}^{RLS}$. Rewriting (\ref{L1}) ergibt
+\begin{eqnarray}
+\mathbf{X}'\mathbf{X\mathbf{\hat{\beta}}}^{RLS} &\mathbf{=}&\mathbf{%
+X'y-\mathbf{R}'\mathbf{\lambda }}/2  \nonumber \\
+\mathbf{\mathbf{\hat{\beta}}}^{RLS} &=&\left( \mathbf{X}'\mathbf{X}%
+\right) ^{-1}\mathbf{X'y-}\left( \mathbf{X}'\mathbf{X}%
+\right) ^{-1}\mathbf{\mathbf{R}'\mathbf{\lambda }}/2  \nonumber \\
+&=&\mathbf{\hat{\beta}-}\left( \mathbf{X}'\mathbf{X}\right) ^{-1}%
+\mathbf{\mathbf{R}'\mathbf{\lambda }}/2.  \label{L3}
+\end{eqnarray}%
+This implies
+\[ \mathbf{R\mathbf{\hat{\beta}}}^{RLS}=\mathbf{R\hat{\beta}-R}\left( \mathbf{X}%
+'\mathbf{X}\right) ^{-1}\mathbf{\mathbf{R}'\mathbf{\lambda }}/2, \]
+but since $\mathbf{R\mathbf{\hat{\beta}}}^{RLS}=\mathbf{q}$s the
+restriction enforced in (\ref{L2}) we can also write
+\[
+\mathbf{R}\left( \mathbf{X}'\mathbf{X}\right) ^{-1}\mathbf{\mathbf{R%
+}'\mathbf{\lambda }}/2=\mathbf{R\hat{\beta}-q.} 
+\]
+The $(L\times L)$-Matrix $\mathbf{R}(\mathbf{X}'\mathbf{X})^{-1}\mathbf{R}'$ 
+is invertible and thus
+\[
+\mathbf{\mathbf{\lambda }}/2=\left( \mathbf{R}\left( \mathbf{X}'%
+\mathbf{X}\right) ^{-1}\mathbf{\mathbf{R}'}\right) ^{-1}\left( 
+\mathbf{R\hat{\beta}-q}\right) . 
+\]
+Substituting the Lagrange multipliers in (\ref{L3}) results in
+\begin{eqnarray}
+\mathbf{\mathbf{\hat{\beta}}}^{RLS} &=&\mathbf{\hat{\beta}-}\left( \mathbf{X}%
+'\mathbf{X}\right) ^{-1}\mathbf{\mathbf{R}'\mathbf{\lambda}}/2  \nonumber \\
+&=&\mathbf{\hat{\beta}-}\left( \mathbf{X}'\mathbf{X}\right) ^{-1}%
+\mathbf{\mathbf{R}'}\left( \mathbf{R}\left( \mathbf{X}'%
+\mathbf{X}\right) ^{-1}\mathbf{\mathbf{R}'}\right) ^{-1}\left( 
+\mathbf{R\hat{\beta}-q}\right) .  \label{RLS}
+\end{eqnarray}
+
+Residuals of the restricted model:
+$\mathbf{\hat{u}}^{0}=\mathbf{y}-\mathbf{X\hat{\beta}}^{RLS}$.
+
+An alternative way to write (or compute) the $F$-statistic
+\[
+F=\frac{\left. \left( S_{\widehat{u}\widehat{u}}^{0}-S_{\widehat{u}\widehat{u%
+}}\right) \right/ L}{\left. S_{\widehat{u}\widehat{u}}\right/ \left(
+T-K-1\right) } 
+\]
+is
+\[
+F=\frac{\left( \mathbf{R\hat{\beta}}-\mathbf{q}\right) '\left[ 
+\mathbf{R}\left( \mathbf{X}'\mathbf{X}\right) ^{-1}\mathbf{R}%
+'\right] ^{-1}\left( \mathbf{R\hat{\beta}}-\mathbf{q}\right) /L}{%
+\mathbf{\hat{u}}'\mathbf{\hat{u}}/\left( T-K-1\right) }. 
+\]%
+The denominator is obviously identical. To see the equality of the numerator
+use
+\begin{eqnarray*}
+\mathbf{\hat{u}}^{0} &=&\mathbf{y}-\mathbf{X\hat{\beta}}^{RLS} \\
+&=&\mathbf{y-X\mathbf{\hat{\beta}+}X\hat{\beta}}-\mathbf{X\hat{\beta}}^{RLS}\\
+&=&\mathbf{y-X\mathbf{\hat{\beta}+}X}\left( \mathbf{\hat{\beta}}-\mathbf{\hat{\beta}}^{RLS}\right) \\
+&=&\mathbf{\hat{u}+X}\left( \mathbf{\hat{\beta}}-\mathbf{\hat{\beta}}^{RLS}\right) .
+\end{eqnarray*}
+Hence
+\begin{eqnarray*}
+S_{\widehat{u}\widehat{u}}^{0} &=&\mathbf{\hat{u}}^{0\prime }\mathbf{\hat{u}}^{0} \\
+&=&\left( \mathbf{\hat{u}+X}\left( \mathbf{\hat{\beta}}
+-\mathbf{\hat{\beta}}^{RLS}\right) \right) '\left( \mathbf{\hat{u}+X}
+\left( \mathbf{\hat{\beta}}-\mathbf{\hat{\beta}}^{RLS}\right) \right) \\
+&=&\mathbf{\hat{u}}'\mathbf{\hat{u}+2\hat{u}}'\mathbf{X}%
+\left( \mathbf{\hat{\beta}}-\mathbf{\hat{\beta}}^{RLS}\right) +\left( 
+\mathbf{\hat{\beta}}-\mathbf{\hat{\beta}}^{RLS}\right) '\mathbf{X}%
+'\mathbf{X}\left( \mathbf{\hat{\beta}}-\mathbf{\hat{\beta}}%
+^{RLS}\right) \\
+&=&\mathbf{\hat{u}}'\mathbf{\hat{u}+}\left( \mathbf{\hat{\beta}}-%
+\mathbf{\hat{\beta}}^{RLS}\right) '\mathbf{X}'\mathbf{X}%
+\left( \mathbf{\hat{\beta}}-\mathbf{\hat{\beta}}^{RLS}\right)
+\end{eqnarray*}%
+since $\mathbf{\hat{u}}'\mathbf{X=0}$ (these are the normal
+equations), so
+\[ S_{\widehat{u}\widehat{u}}^{0}-S_{\widehat{u}\widehat{u}}=\left( \mathbf{%
+\hat{\beta}}-\mathbf{\hat{\beta}}^{RLS}\right) '\mathbf{X}'%
+\mathbf{X}\left( \mathbf{\hat{\beta}}-\mathbf{\hat{\beta}}^{RLS}\right) . \]
+From (\ref{RLS}) we have
+\[\mathbf{\hat{\beta}}-\mathbf{\hat{\beta}}^{RLS}=\left( \mathbf{X}'%
+\mathbf{X}\right) ^{-1}\mathbf{\mathbf{R}'}\left( \mathbf{R}\left( 
+\mathbf{X}'\mathbf{X}\right) ^{-1}\mathbf{\mathbf{R}'}%
+\right) ^{-1}\left( \mathbf{R\hat{\beta}-q}\right) . \]
+Inserting these terms it is easy to see that 
+\[S_{\widehat{u}\widehat{u}}^{0}-S_{\widehat{u}\widehat{u}}=\left( \mathbf{R%
+\hat{\beta}}-\mathbf{q}\right) '\left[ \mathbf{R}\left( \mathbf{X}%
+'\mathbf{X}\right) ^{-1}\mathbf{R}'\right] ^{-1}\left( 
+\mathbf{R\hat{\beta}}-\mathbf{q}\right) . \]
+Note the similarity to the $t$-test statistic
+\begin{equation*}
+t^{2}=\frac{\left( \mathbf{r}'\mathbf{\hat{\beta}}-q\right) ^{2}}{%
+\hat{\sigma}^{2}\left[ \mathbf{r}'\left( \mathbf{X}'%
+\mathbf{X}\right) ^{-1}\mathbf{r}\right] }.
+\end{equation*}
+
+\subsection*{Maximum likelihood estimation}
+
+ Repetition: If $\mathbf{X}$ is a $K$-dimensional random vector with
+multivariate normal distribution $N(\mathbf{\mu },\mathbf{\Sigma })$ then
+its joint density is
+\begin{equation*}
+f_{\mathbf{X}}\left( \mathbf{x}\right) =\left( 2\pi \right) ^{-K/2}\left(
+\det \mathbf{\Sigma }\right) ^{-1/2}\exp \left( -\frac{1}{2}\left( \mathbf{x}%
+-\mathbf{\mu }\right) '\mathbf{\Sigma }^{-1}\left( \mathbf{x}-%
+\mathbf{\mu }\right) \right).
+\end{equation*}
+Multiple linear regression model
+\begin{equation*}
+\mathbf{y}=\mathbf{X\beta }+\mathbf{u\quad }\text{mit }\mathbf{u}\sim
+N\left( \mathbf{0},\sigma ^{2}\mathbf{I}\right)
+\end{equation*}
+Distribution of the endogenous variables: 
+\[ \mathbf{y}\sim N\left( \mathbf{X\beta },\sigma ^{2}\mathbf{I}\right). \]
+Joint density of $\mathbf{y}$
+\begin{eqnarray*}
+&&f_{\mathbf{y}}\left( \mathbf{y}\right) \\
+&=&\left( 2\pi \right) ^{-\frac{T}{2}}\left( \det \sigma ^{2}\mathbf{I}%
+\right) ^{-\frac{1}{2}}\exp \left( -\frac{1}{2}\left( \mathbf{y}-\mathbf{%
+X\beta }\right) '\left( \sigma ^{2}\mathbf{I}\right) ^{-1}\left( 
+\mathbf{y}-\mathbf{X\beta }\right) \right) \\
+&=&\left( 2\pi \right) ^{-T/2}\left( \sigma ^{2T}\right) ^{-1/2}\exp \left( -%
+\frac{\left( \mathbf{y}-\mathbf{X\beta }\right) '\left( \mathbf{y}-%
+\mathbf{X\beta }\right) }{2\sigma ^{2}}\right).
+\end{eqnarray*}
+Log-likelihood function
+\begin{equation*}
+\ln L\left( \mathbf{\beta },\sigma ^{2}\right) =-\frac{T}{2}\ln \left( 2\pi
+\right) -\frac{T}{2}\ln \sigma ^{2}-\frac{\left( \mathbf{y}-\mathbf{X\beta }%
+\right) '\left( \mathbf{y}-\mathbf{X\beta }\right) }{2\sigma ^{2}}.
+\end{equation*}
+First order condition for a maximum
+\begin{equation*}
+\left[ 
+\begin{array}{c}
+\frac{\partial \ln L}{\partial \mathbf{\beta }} \\[2ex] 
+\frac{\partial \ln L}{\partial \sigma ^{2}}%
+\end{array}%
+\right] =\left[ 
+\begin{array}{c}
+\frac{\mathbf{X}'(\mathbf{y}-\mathbf{X}\mathbf{\beta })}{\sigma^2} \\[2ex] 
+\frac{-T}{2\sigma^2}+\frac{(\mathbf{y}-\mathbf{X\beta })'(\mathbf{y}-\mathbf{X\beta })}{2\sigma^4}\end{array}
+\right] =\left[ 
+\begin{array}{c}
+\mathbf{0} \\ 0
+\end{array}
+\right]
+\end{equation*}
+ Solution of the FOCs
+\[\frac{\mathbf{X}'\left( \mathbf{y}-\mathbf{X}'
+\mathbf{\beta }\right) }{\sigma ^{2}}=\mathbf{0} \]
+is obviously
+\[\hat{\beta}_{ML}=(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'
+\mathbf{y}. \]
+The ML estimator is identical to the OLS estimator. The second part of the
+FOCs concerns the error term variance. Inserting
+$\hat{\beta}_{ML}$ for $\beta $ yields
+\begin{eqnarray*}
+\frac{-T}{2\hat{\sigma}_{ML}^{2}}+\frac{\mathbf{\hat{u}}'
+\mathbf{\hat{u}}}{2\hat{\sigma}_{ML}^{4}} &=&0 \\
+-T+\frac{\mathbf{\hat{u}}'\mathbf{\hat{u}}}{\hat{\sigma}_{ML}^{2}}&=&0 \\
+\frac{\mathbf{\hat{u}}'\mathbf{\hat{u}}}{\hat{\sigma}_{ML}^{2}} &=&T\\
+\hat{\sigma}_{ML}^{2} &=&\frac{\mathbf{\hat{u}}'\mathbf{\hat{u}}}{T}.
+\end{eqnarray*}
+The ML estimator of $\mathbf{\beta }$ is identical to the OLS
+estimator, the ML estimator of $\sigma ^{2}$ is different and thus biased
+(but asymptotically unbiased)
+
+\subsection*{The classical tests (LR, Wald, LM)}
+
+Illustration of the basic test ideas\marginpar{threetests.R\\ classtest.R}.
+
+Generalization to multiple restrictions:
+\begin{eqnarray*}
+H_{0} &:&\mathbf{g}(\mathbf{\beta })=\mathbf{0} \\
+H_{1} &:&\mathbf{g}(\mathbf{\beta })\neq \mathbf{0}
+\end{eqnarray*}
+where $\mathbf{\beta }$ is the coefficient vector of a multiple linear
+regression model ; and $\mathbf{g}$ is a (possibly nonlinear) vector-valued function. 
+Special Case: Test of $L$ linear restrictions:
+\[ \mathbf{g}(\mathbf{\beta })=\mathbf{R\beta }-\mathbf{q}.\]
+
+\subsection*{Wald-Test}
+
+Idea: If  $\mathbf{g}(\mathbf{\hat{\beta}}_{ML})$ is significantly
+different from \textbf{0}, reject $H_{0}$
+
+Test statistic (for multiple restrictions)
+\begin{equation*}
+W=\mathbf{g}\left( \mathbf{\hat{\beta}}_{ML}\right) '\left[ 
+\widehat{Cov}\left( \mathbf{g}\left( \mathbf{\hat{\beta}}_{ML}\right)
+\right) \right] ^{-1}\mathbf{g}\left( \mathbf{\hat{\beta}}_{ML}\right) 
+\overset{d}{\rightarrow }U\sim \chi _{L}^{2},
+\end{equation*}
+if the null hypothesis is true
+
+Wald test statistic for $L$ linear restrictions  (write $\hat\beta$ for $\hat\beta_{ML}$ as they are the same):
+\[W=\mathbf{g}\left( \mathbf{\hat{\beta}}\right) '\left[ \widehat{Cov}%
+\left( \mathbf{g}\left( \mathbf{\hat{\beta}}\right) \right) \right] ^{-1}%
+\mathbf{g}\left( \mathbf{\hat{\beta}}\right) \]
+where $\mathbf{g}(\mathbf{\beta })=\mathbf{R\beta }-\mathbf{q}.$ The
+covariance matrix of  $\mathbf{g}(\mathbf{\hat{\beta}})$ is
+\begin{eqnarray*}
+Cov( \mathbf{g}( \mathbf{\hat{\beta}})) &=&Cov(\mathbf{R\hat{\beta}}-\mathbf{q}) \\
+&=&\mathbf{R}Cov(\mathbf{\hat{\beta}})\mathbf{R}' \\
+&=&\sigma ^{2}\mathbf{R}\left( \mathbf{X}'\mathbf{X}\right) ^{-1}%
+\mathbf{R}'
+\end{eqnarray*}%
+and
+\[\widehat{Cov}( \mathbf{g}( \mathbf{\hat{\beta}})) =%
+\hat{\sigma}_{ML}^{2}\mathbf{R}\left( \mathbf{X}'\mathbf{X}\right)
+^{-1}\mathbf{R}'. \]%
+Hence, the Wald statistic is
+\begin{eqnarray*}
+W &=&\left( \mathbf{R\hat{\beta}}-\mathbf{q}\right) '\left[ \hat{%
+\sigma}_{ML}^{2}\mathbf{R}\left( \mathbf{X}'\mathbf{X}\right) ^{-1}%
+\mathbf{R}'\right] ^{-1}\left( \mathbf{R\hat{\beta}}-\mathbf{q}%
+\right) \\
+&=&\frac{\left( \mathbf{R\hat{\beta}}-\mathbf{q}\right) '\left[ 
+\mathbf{R}\left( \mathbf{X}'\mathbf{X}\right) ^{-1}\mathbf{R}%
+'\right] ^{-1}\left( \mathbf{R\hat{\beta}}-\mathbf{q}\right) }{%
+\mathbf{\hat{u}}'\mathbf{\hat{u}/}T}.
+\end{eqnarray*}
+This term is almost identical to $L$ times the $F$-statistic
+\[F=\frac{\left( \mathbf{R\hat{\beta}}-\mathbf{q}\right) '\left[ 
+\mathbf{R}\left( \mathbf{X}'\mathbf{X}\right) ^{-1}\mathbf{R}%
+'\right] ^{-1}\left( \mathbf{R\hat{\beta}}-\mathbf{q}\right) /L}{%
+\mathbf{\hat{u}}'\mathbf{\hat{u}}/\left( T-K-1\right) }. \]
+
+\subsection*{Likelihood-ratio-Test (LR)}
+
+Idea: If the maximal likelihood under the restrictions
+$L(\mathbf{\hat{\beta}}_{R},\hat{\sigma}_{R}^{2})$ is significantly lower than the maximal
+likelihood without restrictions $L(\mathbf{\hat{\beta}}_{ML},\hat{\sigma}_{ML}^{2})$,then 
+reject $H_{0}$ ab.
+
+Test statistic
+\begin{equation*}
+LR=2\left( \ln L\left( \mathbf{\hat{\beta}}_{ML},\hat{\sigma}%
+_{ML}^{2}\right) -\ln L\left( \mathbf{\hat{\beta}}_{R},\hat{\sigma}%
+_{R}^{2}\right) \right) \overset{d}{\rightarrow }U\sim \chi _{L}^{2},
+\end{equation*}%
+if the null hypothesis is true
+
+The restricted estimators are (without proof)
+\begin{eqnarray*}
+\mathbf{\hat{\beta}}_{R} &=&\mathbf{\hat{\beta}}^{RLS} \\
+\hat{\sigma}_{R}^{2} &=&\mathbf{\hat{u}}^{0\prime }\mathbf{\hat{u}}^{0}/T.
+\end{eqnarray*}
+The log-likelihood function evaluated at the two points is,
+\begin{eqnarray*}
+\ln L(\mathbf{\hat{\beta}}_{ML},\hat{\sigma}_{ML}^{2}) &=&-\frac{T}{2}\ln
+\left( 2\pi \right) -\frac{T}{2}\ln \hat{\sigma}_{ML}^{2}-\frac{\left( 
+\mathbf{y}-\mathbf{X\hat{\beta}}_{ML}\right) '\left( \mathbf{y}-%
+\mathbf{X\hat{\beta}}_{ML}\right) }{2\hat{\sigma}_{ML}^{2}} \\
+&=&-\frac{T}{2}\ln \left( 2\pi \right) -\frac{T}{2}\ln \left( \frac{\mathbf{%
+\hat{u}}'\mathbf{\hat{u}}}{T}\right) -\frac{\mathbf{\hat{u}}%
+'\mathbf{\hat{u}}}{2\left( \frac{\mathbf{\hat{u}}'\mathbf{%
+\hat{u}}}{T}\right) } \\
+&=&-\frac{T}{2}\ln \left( 2\pi \right) -\frac{T}{2}\ln \left( \frac{\mathbf{%
+\hat{u}}'\mathbf{\hat{u}}}{T}\right) -\frac{T}{2} \\
+\ln L(\mathbf{\hat{\beta}}_{R},\hat{\sigma}_{R}^{2}) &=&-\frac{T}{2}\ln
+\left( 2\pi \right) -\frac{T}{2}\ln \hat{\sigma}_{R}^{2}-\frac{\left( 
+\mathbf{y}-\mathbf{X\hat{\beta}}_{R}\right) '\left( \mathbf{y}-%
+\mathbf{X\hat{\beta}}_{R}\right) }{2\hat{\sigma}_{R}^{2}}. \\
+&=&-\frac{T}{2}\ln \left( 2\pi \right) -\frac{T}{2}\ln \left( \frac{\mathbf{%
+\hat{u}}^{0\prime }\mathbf{\hat{u}}^{0}}{T}\right) -\frac{\mathbf{\hat{u}}%
+^{0\prime }\mathbf{\hat{u}}^{0}}{2\left( \frac{\mathbf{\hat{u}}^{0\prime }%
+\mathbf{\hat{u}}^{0}}{T}\right) } \\
+&=&-\frac{T}{2}\ln \left( 2\pi \right) -\frac{T}{2}\ln \left( \frac{\mathbf{%
+\hat{u}}^{0\prime }\mathbf{\hat{u}}^{0}}{T}\right) -\frac{T}{2}
+\end{eqnarray*}%
+The difference times 2 is
+\begin{eqnarray*}
+LR &=&T\left( \ln \left( \frac{\mathbf{\hat{u}}^{0\prime }\mathbf{\hat{u}}^{0}}{T}\right) 
+-\ln \left( \frac{\mathbf{\hat{u}}'\mathbf{\hat{u}}}{T}\right) \right) \\
+&=&T\ln \left( \frac{\mathbf{\hat{u}}^{0\prime }\mathbf{\hat{u}}^{0}}
+{\mathbf{\hat{u}}'\mathbf{\hat{u}}}\right)
+\end{eqnarray*}
+Since $\ln x\approx x-1$ for values near unity we can approximate the test
+statistic by
+\begin{eqnarray*}
+LR &\approx &T\left( \frac{\mathbf{\hat{u}}^{0\prime }\mathbf{\hat{u}}^{0}}
+{\mathbf{\hat{u}}'\mathbf{\hat{u}}}-1\right) \\
+&=&\frac{\mathbf{\hat{u}}^{0\prime }\mathbf{\hat{u}}^{0}
+-\mathbf{\hat{u}}'\mathbf{\hat{u}}}{\mathbf{\hat{u}}'\mathbf{\hat{u}/}T}.
+\end{eqnarray*}
+which is close to $L$ times the usual $F$-statistic%
+
+\[F=\frac{\left. \left( \mathbf{\hat{u}}^{0\prime }\mathbf{\hat{u}}^{0}-%
+\mathbf{\hat{u}}'\mathbf{\hat{u}}\right) \right/ L}{\left. \mathbf{%
+\hat{u}}'\mathbf{\hat{u}}\right/ \left( T-K-1\right) }. \]
+
+\subsection*{Lagrange-Multiplier-Test (LM)}
+
+Idea: If the slope of the log-likelihood function, evaluated at the restricted estimator, $\partial \ln L(\mathbf{\hat{\beta}}_{R})/\partial \mathbf{\beta }$ 
+is significantly
+different from \textbf{0}, reject $H_{0}$
+
+For test statistic we make use of the information matrix
+\[ I(\theta)=-E\left(\frac{\partial^2\ln L(\theta)}{\partial\theta\partial\theta'}\right)\]
+where $\theta=(\beta,\sigma)'$. 
+
+The vector of first-order derivatives is
+\[ \frac{\partial\ln L(\theta)}{\partial\theta}=\left[ 
+\begin{array}{c}
+\frac{\partial \ln L(\beta,\sigma)}{\partial \mathbf{\beta }} \\[2ex] 
+\frac{\partial \ln L(\beta,\sigma)}{\partial \sigma ^{2}}%
+\end{array}%
+\right] =\left[ 
+\begin{array}{c}
+\frac{\mathbf{X}'(\mathbf{y}-\mathbf{X}\mathbf{\beta })}{\sigma^2} \\[2ex] 
+\frac{-T}{2\sigma^2}+\frac{(\mathbf{y}-\mathbf{X\beta })'(\mathbf{y}-\mathbf{X\beta })}{2\sigma^4}\end{array}
+\right] =\left[ 
+\begin{array}{c}
+\mathbf{0} \\ 0
+\end{array}
+\right] \]
+
+The matrix of Second-order derivatives is
+\[ \frac{\partial^2\ln L(\theta)}{\partial\theta\partial\theta'} 
+=\left[\begin{array}{cc}
+-\frac{X'X}{\sigma^2} & -\frac{X'(y-X\beta)}{\sigma^4}\\[2ex]
+-\frac{(y-X\beta)'X}{\sigma^4} & \frac{T}{2\sigma^4}-\frac{(y-X\beta)'(y-X\beta)}{\sigma^6}
+\end{array}\right]. \]
+Due to $E(y-X\beta)=0$ and $E((y-X\beta)'(y-X\beta))=T\sigma^2$ we get
+\[ I(\theta)=\left[\begin{array}{cc}
+\frac{X'X}{\sigma^2} & 0 \\[2ex]
+0 & \frac{T}{2\sigma^4}
+\end{array}\right] \]
+and
+\[ I(\theta)^{-1}=\left[\begin{array}{cc}
+\sigma^2(X'X)^{-1} & 0 \\[2ex]
+0 & \frac{2\sigma^4}{T}
+\end{array}\right] \]
+Test statistic:
+\[ LM=
+\left( \frac{\partial \ln L(\mathbf{\hat{\theta}}_{R})}{\partial \mathbf{\theta }}\right)'
+\left[ I(\hat\theta_R) \right] ^{-1}
+\left( \frac{\partial \ln L(\mathbf{\hat{\theta}}_{R})}{\partial \mathbf{\theta }}\right) 
+\overset{d}{\rightarrow }U\sim \chi_L^2, \]
+under the null hypothesis $H_0$.
+
+Evaluating the score at $\hat\theta_R=(\hat\beta_R,\hat\sigma^2_R)'$, we get
+\begin{align*}
+\frac{\partial\ln L(\hat\theta_R)}{\partial\theta}
+&=\left[ \begin{array}{c}
+\frac{\partial \ln L(\hat\beta_R,\hat\sigma_R)}{\partial \beta} \\[2ex] 
+\frac{\partial \ln L(\hat\beta_R,\hat\sigma_R)}{\partial \sigma^2}
+\end{array}\right] \\
+&=\left[ \begin{array}{c}
+\frac{X'(y-X\hat\beta_R)}{\hat\sigma_R^2} \\[2ex] 
+\frac{-T}{2\hat\sigma_R^2}+\frac{(y-X\hat\beta_R)'(y-X\hat\beta_R)}{2\hat\sigma_R^4}\end{array}
+\right].
+\end{align*}
+However,
+\[ (y-X\hat\beta_R)'(y-X\hat\beta_R)=T\hat\sigma_R^2, \]
+such that the lower component of the score vector is 0. 
+
+Therefore, the simplified test statistic is given by
+\begin{align*}
+LM&=\left( \frac{\partial\ln L(\hat\beta_R)}{\partial\beta}\right)'
+\hat\sigma_R^2(X'X)^{-1}
+\left( \frac{\partial\ln L(\hat\beta_R)}{\partial\beta}\right) \\
+&= \frac{(y-X\hat\beta_R)'X(X'X)^{-1}X'(y-X\hat\beta_R)}{\hat\sigma_R^2}
+\end{align*}
+
+Because of%
+\[
+\hat{\beta}_{R}=\hat{\beta}-(X'X)^{-1}R'[R(X^{\prime
+}X)^{-1}R']^{-1}(R\hat{\beta}-q)
+\]%
+we can rewrite $\hat{u}^{0}=y-X\hat{\beta}_{R}$ to
+\begin{align*}
+\hat{u}^{0} &=y-X\hat{\beta}_{R} \\
+&=y-X\left( \hat{\beta}-(X'X)^{-1}R'[R(X'X)^{-1}R']^{-1}(R\hat{\beta}-q)\right)  \\
+&=y-X\hat{\beta}+X(X'X)^{-1}R'[R(X'X)^{-1}R']^{-1}(R\hat{\beta}-q) \\
+&=\hat{u}+X(X'X)^{-1}R'[R(X'X)^{-1}R']^{-1}(R\hat{\beta}-q).
+\end{align*}
+Taking into account that $X'\hat{u}=0$ (normal equations) we rewrite the numerator as
+\begin{align*}
+\hat{u}'^0 X(X'X)^{-1}X'\hat{u}^0 &=(R\hat\beta-q)'[R(X'X)^{-1}R']^{-1}R(X'X)^{-1}X'X\\
+&\qquad(X'X)^{-1}X'X(X'X)^{-1}R'[R(X'X)^{-1}R']^{-1}(R\hat\beta-q) \\
+&=(R\hat\beta-q)'[R(X'X)^{-1}R']^{-1}(R\hat\beta-q),
+\end{align*}
+such that
+\[ LM=\frac{(R\hat\beta-q)'[R(X'X)^{-1}R']^{-1}(R\hat{\beta}-q)}{\hat u'^0\hat u^0/T}. \]
+Now we clearly see the similarity to the $F$-Test and the two other classical tests.
+
+\section{Forecasting}
+
+ The approach is similar to forecasting in the simple linear regression
+Let $\mathbf{x}_{0}=[1,x_{10},x_{20},\ldots ,x_{K0}]'$ denote
+the vector of exogenous variables
+
+Point forecast%
+\[\hat{y}_{0}=\mathbf{x}_{0}'\mathbf{\hat{\beta}}.\]
+Variance of the forecast error
+\begin{equation*}
+Var\left( \hat{y}_{0}-y_{0}\right) =\sigma ^{2}\left( 1+\mathbf{x}%
+_{0}'\left( \mathbf{X}'\mathbf{X}\right) ^{-1}\mathbf{x}%
+_{0}\right)
+\end{equation*}
+
+\section{Presentation of the results}
+
+In the literature, the results of regression analyses are often
+presented as follows
+\begin{equation*}
+\begin{array}{cccccc}
+\hat{y}= & \hat{\alpha} & + & \hat{\beta}_{1}x_{1} & +\ldots + & \hat{\beta}_{K}x_{K} \\ 
+& (\widehat{se}(\hat{\alpha})) &  & (\widehat{se}(\hat{\beta}_{1})) &  & (\widehat{se}(\hat{\beta}_{K}))
+\end{array}
+\end{equation*}
+Sometimes you find $t$-values in the parentheses, i.e. the values of
+the test statistics for the tests $H_{0}:\beta _{k}=0$ vs $H_{1}:\beta
+_{k}\neq 0$
+
+Often, $R^{2}$ and $\hat{\sigma}$ and the value of the test statistic
+of the $F$ test
+\begin{equation*}
+H_{0}:\beta _{1}=\ldots =\beta _{K}=0\quad \text{vs\quad }H_{1}:\text{not }%
+H_{0}
+\end{equation*}
+are reported additionally
+
+Fertilizer example:
+\begin{equation*}
+\begin{array}{llllll}
+\hat{y}= & 0.95432 & + & 0.59652x_{1} & + & 0.26255x_{2} \\ 
+& \!\!(0.46943) &  & \!\!(0.13788) &  & \!\!(0.03400)%
+\end{array}%
+\end{equation*}
+Additional results:
+\begin{eqnarray*}
+R^{2} &=&0.743 \\
+\hat{\sigma}^{2} &=&0.00425 \\
+\hat{\sigma} &=&0.0652
+\end{eqnarray*}
+Test statistics:
+\begin{equation*}
+\begin{array}{lll}
+H_{0}:\beta _{1}=0 & \longrightarrow & 4.326 \\ 
+H_{0}:\beta _{2}=0 & \longrightarrow & 7.723 \\ 
+H_{0}:\beta _{1}=\beta _{2}=0 & \longrightarrow & 38.98%
+\end{array}%
+\end{equation*}%
+
+Examples of computer output (R, Stata, SPSS, matlab, Excel)\marginpar{Slides 22-30}
+\newpage
+
+\section{Omitted or irrelevant variables}
+
+Assumption A1: No relevant exogenous variable is omitted from the
+econometric model, and all exogenous variables included in the model are
+relevant
+
+ What happens if relevant variables are missing? What happens if there are irrelevant variables included in the model?
+
+Example: Wage structure in a firm with 20 employees; what are the
+determinants of the wage $y_{t}$? \marginpar{Slide 31}
+
+Data: Education $x_{1t};$ age $x_{2t};$ firm tenure $x_{3t}$
+
+Three potential models (M2 is the true model):
+\begin{eqnarray*}
+(M1)\hspace{0.5cm}y_{t} &=&\alpha +\beta x_{1t}+u_{t}' \\
+(M2)\hspace{0.5cm}y_{t} &=&\alpha +\beta _{1}x_{1t}+\beta _{2}x_{2t}+u_{t}\\
+(M3)\hspace{0.5cm}y_{t} &=&\alpha +\beta _{1}x_{1t}+\beta _{2}x_{2t}+\beta_{3}x_{3t}+u_{t}''
+\end{eqnarray*}
+Estimation results for the three variables.\marginpar{Slide 32}
+
+\subsection*{Omitted variables}
+
+Graphical representation: What happens if we omit the relevant variable 2?
+\begin{center}
+\input{plots/abb13-01}
+\end{center}
+
+Consider the model M1, where the relevant variable $x_2$ is missing.
+\[ (M1)\qquad y_{t} =\alpha +\beta x_{1t}+u_{t}' \]
+The error terms
+\begin{eqnarray*}
+u_{t}' &=&\beta _{2}x_{2t}+u_{t} \\
+E(u_{t}') &=&E(\beta _{2}x_{2t}+u_{t}) \\
+&=&\beta _{2}x_{2t}+E(u_{t}) \\
+&=&\beta _{2}x_{2t}+0 \\
+&\neq &0
+\end{eqnarray*}
+If a relevant exogenous variable is omitted, assumption B1 is violated!
+
+Consequence for point estimation:
+\begin{align*}
+E(\hat\beta_1') &= E\left(\frac{S_{1y}}{S_{11}}\right)\\
+&= E\left(\frac{\sum_t (x_{1t}-\bar x_1)(y_t-\bar y)}{\sum_t (x_{1t}-\bar x_1)^2}\right)\\
+&= E\left(\frac{\sum_t (x_{1t}-\bar x_1)y_t}{\sum_t (x_{1t}-\bar x_1)^2}\right)\\
+&= E\left(\frac{\sum_t (x_{1t}-\bar x_1)(\alpha+\beta_1 x_{1t}+\beta_2 x_{2t}+u_t)}{\sum_t (x_{1t}-\bar x_1)^2}\right)\\
+&= E\left(\frac{\beta_1 S_{11}+\beta_2 S_{12}+\sum_t (x_{1t}-\bar x_1)u_t}{S_{11}}\right)\\
+&= \beta_1+\beta_2 \frac{S_{12}}{S_{11}}+\frac{\sum_t (x_{1t}-\bar x_1)E(u_t)}{S_{11}}\\
+&= \beta_1+\beta_2 \frac{S_{12}}{S_{11}}
+\end{align*}
+meaning that \ $\hat\beta_1$ is biased. The direction of the bias is dependent on the sign of $\beta_2$ and $S_{12}$ ab.
+
+Consequence for interval estimation:
+\[ [\hat\beta_1'-t_{a/2}\cdot \widehat{se}(\hat\beta_1')\;;
+\;\hat\beta_1'+t_{a/2}\cdot \widehat{se}(\hat\beta_1')] \]
+meaning it is not correctly centered. Further
+\[ se(\hat{\beta}_{1}')=\sqrt{var( \hat{\beta}_1') } \]
+with 
+\[ var(\hat\beta_1') =\frac{\sigma^2}{S_{11}}. \]
+The estimator
+\[ \hat{\sigma}^{2}=\frac{S_{\widehat{u}'\widehat{u}'}}{T-2}\]
+is biased. The unbiased estimator is
+\[ \hat{\sigma}^{2}=\frac{S_{\widehat{u}\widehat{u}}}{T-3} \]
+ Conclusion: The coverage probability of the confidence intervals is
+not $1-\alpha $
+
+Hypothesis tests are also biased: The probability of an error of the
+first kind does not equal the significance level
+
+If a relevant exogenous variable is omitted, then 
+\begin{itemize}
+	\item the point estimators are biased and inconsistent (we show that later)
+	
+	\item the interval estimators and hypothesis tests are no longer valid
+\end{itemize}
+
+In matrix notation: True model is $y_t = \alpha + \beta_1 x_{1t} + \beta_2 x_{2t} + u_t$ or in matrix notation
+$$y = X_a \beta_a + X_2 \beta_2 + u$$
+where $$
+X_a = \begin{pmatrix}
+1 & x_{11}\\
+\vdots & \vdots\\
+1 & x_{1T}
+\end{pmatrix}, \qquad 
+X_2 = \begin{pmatrix}
+x_{21}\\
+\vdots\\
+x_{2T}
+\end{pmatrix},\quad
+\beta_a = \begin{pmatrix}
+\alpha\
+\beta_1
+\end{pmatrix}
+$$
+If we omit $x_{2t}$ we estimate
+\begin{align*}
+\hat{\beta}_a &= (X_a'X_a)^{-1} X_a'y\\
+&= (X_a'X_a)^{-1} X_a'(X_a \beta_a + X_2 \beta_2+u)\\
+&= (X_a'X_a)^{-1} X_a'X_a\beta_a + (X_a'X_a)^{-1} X_a'X_2 \beta_2 + (X_a'X_a)^{-1} X_a'u
+\end{align*}
+Taking the expectation and noting that $E(u)=0$ we get
+\begin{align*}
+E(\hat{\beta}_a) &= \beta_a + (X_a'X_a)^{-1} X_a'X_2 \beta_2
+\end{align*}
+Hence the bias is equal to
+\begin{align*}
+bias = E(\hat{\beta}_a) - \beta_a = (X_a'X_a)^{-1} X_a'X_2 \beta_2
+\end{align*}
+Note that if $X_a'X_2=0$ there is no bias. So looking into $X'X$ is a good indicator. That is $X = (X_a X_2)$, $X'X = \begin{pmatrix} X_a'X_a & X_a' X_2\\ X_2' X_a & X_2'X_2\end{pmatrix}$
+
+\subsection*{Irrelevant variables}
+
+The error term in the misspecified model M3 is
+\[ u_{t}''=u_{t}-\beta _{3}x_{3t} \]
+and since $\beta _{3}=0$:
+\[ u_{t}''=u_{t} \]
+Consequently,
+\begin{eqnarray*}
+E(\widehat{\alpha }_{1}^{\prime \prime }) &=&\alpha \\
+E(\hat{\beta}_1'') &=&\beta_1 \\
+E(\hat{\beta}_2'') &=&\beta_2 \\
+E(\hat{\beta}_3'') &=&\beta_3=0.
+\end{eqnarray*}
+The variances of the estimators are
+\begin{eqnarray*}
+Var(\hat{\beta}_{1}) &=&\frac{\sigma ^{2}}{S_{11}\left( 1-R_{1\cdot
+2}^{2}\right) } \\
+Var(\hat{\beta}_{1}^{\prime \prime }) &=&\frac{\sigma ^{2}}{S_{11}\left(
+1-R_{1\cdot 2}^{2}-R_{1\cdot 3}^{2}\right) }
+\end{eqnarray*}
+The estimated error term variance is
+\[ \widehat{\sigma }^{2}=\frac{S_{\widehat{u}''\widehat{u}''}}{T-4} \]
+Conclusion: Omitted relevant variables are a serious problem, redundant variables are not (but they inflate the standard errors)
+
+\subsection*{Diagnosis}
+How can we find the correct model?
+
+The coeffcient of determination $R^{2}$ does not help select a model
+
+Adjusted $R^{2}$
+\begin{eqnarray*}
+\overline{R}^{2} &=&1-\frac{S_{\widehat{u}\widehat{u}}\left/ \left(
+T-K-1\right) \right. }{S_{yy}\left/ \left( T-1\right) \right. } \\
+&=&1-\left( 1-R^{2}\right) \frac{T-1}{T-K-1}
+\end{eqnarray*}
+Further model selection criteria: trade-off between biasedness and inefficiency. Another important criteria is the Akaike information criterion (AIC)
+\[ AIC=\ln \left( \frac{S_{\widehat{u}\widehat{u}}}{T}\right) +\frac{2(K+1)}{T}. \]
+The smaller AIC the better the model
+
+We can also use $t$-test for single variables to select the correct model or an $F$-test for multiple variables
+
+\section{Functional form}
+
+Assumption A2: The true functional dependence between $\mathbf{X}$ and 
+$\mathbf{y}$ is linear
+
+Milk example: Milk production $m$ depends on amount of concentrated
+feed $f$.\marginpar{Slide 32}
+
+scatterplot shows that linear relationship is infeasible.\marginpar{milch.R}
+
+ A misspecified model returns useless results
+
+Some nonlinear dependencies:
+\begin{eqnarray*}
+\text{Semi-logarithmisch} &\text{:}&m_{t}=\alpha +\beta \ln f_{t}+u_{t} \\
+\text{Invers} &\text{:}&m_{t}=\alpha +\beta \left( 1/f_{t}\right) +u_{t} \\
+\text{Exponential} &\text{:}&\ln m_{t}=\alpha +\beta f_{t}+u_{t} \\
+\text{Logarithmisch} &\text{:}&\ln m_{t}=\alpha +\beta \ln f_{t}+u_{t} \\
+\text{Quadratisch} &:&m_{t}=\alpha +\beta _{1}f_{t}+\beta _{2}f_{t}^{2}+u_{t}
+\end{eqnarray*}
+
+Approach I: Estimation of a nonlinear regression
+\[ y_{t}=g(x_{t})+u_{t} \]
+with criterion function
+\[ \sum_{t=1}^{T}\left( y_{t}-g(x_{t})\right)^2. \]
+Optimization by numerical methods
+
+Approach II: Linearization of the model; then linear regression
+\begin{eqnarray*}
+y_{t} &=&\alpha +\beta x_{t}+u_{t} \\
+y_{t} &=&\ln m_{t} \\
+x_{t} &=&\ln f_{t}
+\end{eqnarray*}
+
+\subsection*{Diagnosis: Regression Specification Error Test (RESET)}
+
+Higher order Taylor approximation
+\[ y_{t}=f(x_{t})=\alpha +\beta _{1}x_{t}+\beta _{2}x_{t}^{2}+\beta
+_{3}x_{t}^{3}+\ldots \]
+Test: Are the higher orders (jointly) significant?  $F$-test of
+\[ H_0: \beta _{2}=\beta _{3}=\ldots =0. \]
+If we reject $H_0$ then there is evidence for a nonlinear relationship.
+
+Problem: What happens if there are many exogenous variables?
+
+ Basic idea of the RESET Test: $\widehat{y}_{t}^{2}$, $\widehat{y}_{t}^{3}$,
+\ldots\ are included as additional exogenous variables,
+\[ y_{t}=\alpha +\beta _{1}x_{t}+\gamma _{2}\widehat{y}_{t}^{2}+\gamma _{3}
+\widehat{y}_{t}^{3}+u_{t} \]
+If $\gamma _{2}$ and/or $\gamma _{3}$ are significant, then there are
+nonlinearities
+
+The null hypothesis is
+\[ H_0: \gamma _{2}=\gamma _{3}=0 \]
+(maybe even higher orders). The test is a common F test and implemented in many statistical software packages
+
+RESET in the linear model:
+\begin{enumerate}
+\item Estimate the linear model and calculate $S_{\widehat{u}\widehat{u}}$
+and the fitted $\widehat{y}_{t}$
+\item Add $L$ powers of  $\hat{y}_{t}$ to the linear model
+\[ y_{t}=\alpha +\beta _{1}x_{t}+\gamma _{2}\hat{y}_{t}^{2}+\gamma _{3}\hat{y}_{t}^{3}+u_{t} \]
+Estimate the extended model and calculate the sum of squared residuals 
+$S_{\widehat{u}\widehat{u}}^{\ast }$.
+
+ The null hypothesis is $H_{0}:\gamma _{2}=\gamma _{3}=0$. Compute the $F$-test statistic
+\[ F_{(L,T-K^{\ast }-1)}=\frac{(S_{\widehat{u}\widehat{u}}-S_{\widehat{u}\widehat{u}}^*)/L}
+{S_{\widehat{u}\widehat{u}}^{\ast }/(T-K^*-1)}, \]
+where $K^*$ is the number of exogenous variables in the extended model
+
+\item If $F>F_{a}$ ist (significance level $a,$ degress of freedom $L$ and $%
+T-K^{\ast }-1$) then $H_{0}$ is rejected and the linear model is discarded 
+
+\end{enumerate}
+
+Milk example\marginpar{reset.R}
+
+\subsection*{Qualitative exogenous variables}
+
+Assumption A3: The parameters $\mathbf{\beta }$ are constant for all $T$ observations $(\mathbf{x}_{t},y_{t})$
+
+Example: The wage $y_{t}$ depends on education $x_{1t}$ and age $x_{2t}$,
+\[ y_{t}=\alpha +\beta _{1}x_{1t}+\beta _{2}x_{2t}+u_{t}. \]
+
+The wage equations for males and females might be different:
+\begin{eqnarray*}
+y_{t} &=&\alpha _{M}+\beta _{M1}x_{1t}+\beta _{M2}x_{2t}+u_{t} \\
+y_{t} &=&\alpha _{F}+\beta _{F1}x_{1t}+\beta _{F2}x_{2t}+u_{t}
+\end{eqnarray*}
+What happens if the difference is neglected?\marginpar{qualitative.R}
+
+Dummy variable
+\[ D_{t}=\left\{ 
+\begin{array}{ll}
+0 & \quad \text{wenn männlich} \\ 
+1 & \quad \text{wenn weiblich}
+\end{array} \right. \]
+Extended model
+\[ y_{t}=\alpha +D_{t}\gamma +\beta _{1}x_{1t}+\delta _{1}D_{t}x_{1t}
++\beta_{2}x_{2t}+\delta _{2}D_{t}x_{2t}+u_{t}. \]
+Model for men ($D_{t}=0$):
+\[ y_{t}=\alpha +\beta _{1}x_{1t}+\beta _{2}x_{2t}+u_{t}. \]
+Model for women ($D_{t}=1$):
+\[ y_{t}=\left( \alpha +\gamma \right) +\left( \beta _{1}+\delta _{1}\right)
+x_{1t}+\left( \beta _{2}+\delta _{2}\right) x_{2t}+u_{t} \]
+If the qualitative variable has more than two values, we need more
+than one dummy variable. Example:  Religion (protestant, catholic, other)
+\begin{eqnarray*}
+D_{Pt} &=&\left\{ 
+\begin{array}{ll}
+0 & \quad \text{for other} \\ 
+1 & \quad \text{for protestant} \\ 
+0 & \quad \text{for catholic}
+\end{array}%
+\right. \\
+D_{Ct} &=&\left\{ 
+\begin{array}{ll}
+0 & \quad \text{for other} \\ 
+0 & \quad \text{for protestant} \\ 
+1 & \quad \text{for catholic}
+\end{array} \right.
+\end{eqnarray*}
+Meaning of the coefficients; testing structural stability
+
+Estimation of the model: 
+
+Use the ordinary $t$- or $F$-tests to detect differences in the
+coefficients, e.g.
+\[ H_{0}:\gamma =\delta _{1}=\delta _{2}=0 \]
+Very often, the model includes only a level effect, i.e.
+\[ y_{t}=\alpha +\gamma D_{t}+\beta _{1}x_{1t}+\beta _{2}x_{2t}+u_{t} \]
+Then use a $t$-test for $\gamma $
+
+Estimation of the wage equation model
+\[ y_{t}=\alpha +D_{t}\gamma +\beta _{1}x_{1t}+\delta _{1}D_{t}x_{1t}
++\beta_{2}x_{2t}+\delta _{2}D_{t}x_{2t}+u_{t} \]
+ Compare with separat estimation of the two models: \marginpar{wages.R}
+\begin{align*}
+y_{t}&=\alpha _{M}+\beta _{M1}x_{1t}+\beta _{M2}x_{2t}+u_{t} &&\text{für Männer} \\ 
+y_{t}&=\alpha _{F}+\beta _{F1}x_{1t}+\beta _{F2}x_{2t}+u_{t} &&\text{für Frauen}
+\end{align*}
+The point estimates and the sum of squared residuals are identical
+(why?)
+The standard errors differ (why?)
+
+For simplicity we only consider one exogenous variable
+\[ y_{t}=\alpha +\gamma D_{t}+\beta x_{t}+\delta D_{t}x_{t}+u_{t}. \]
+Order the observations such that $D_{t}=0$ for $t=1,\ldots ,T_{1}$ and 
+$D_{t}=1$ for $t=T_{1}+1,\ldots ,T$.
+
+The joint estimation minimizes (with respect to $\alpha ,\beta ,\gamma,\delta $)
+\begin{equation*}
+S\left( \alpha ,\beta ,\gamma ,\delta \right) =\sum_{t=1}^{T_{1}}\left(
+y_{t}-\alpha -\beta x_{t}\right) ^{2}+\sum_{t=T_{1}+1}^{T}\left(
+y_{t}-\left( \alpha +\gamma \right) -\left( \beta +\delta \right)
+x_{t}\right) ^{2}.
+\end{equation*}
+The first order conditions for the joint estimation are
+\begin{eqnarray*}
+\frac{\partial S}{\partial \alpha } &=&-\sum_{t=1}^{T_{1}}\left(
+y_{t}-\alpha -\beta x_{t}\right) -\sum_{t=T_{1}+1}^{T}\left( y_{t}-\left(
+\alpha +\gamma \right) -\left( \beta +\delta \right) x_{t}\right) =0 \\
+\frac{\partial S}{\partial \beta } &=&-\sum_{t=1}^{T_{1}}\left( y_{t}-\alpha
+-\beta x_{t}\right) x_{t}-\sum_{t=T_{1}+1}^{T}\left( y_{t}-\left( \alpha
++\gamma \right) -\left( \beta +\delta \right) x_{t}\right) x_{t}=0 \\
+\frac{\partial S}{\partial \gamma } &=&-\sum_{t=T_{1}+1}^{T}\left(
+y_{t}-\left( \alpha +\gamma \right) -\left( \beta +\delta \right)
+x_{t}\right) =0 \\
+\frac{\partial S}{\partial \delta } &=&-\sum_{t=T_{1}+1}^{T}\left(
+y_{t}-\left( \alpha +\gamma \right) -\left( \beta +\delta \right)
+x_{t}\right) x_{t}=0.
+\end{eqnarray*}
+ence, the point estimates in the joint estimation are identical to
+those of the separat estimations
+
+If the point estimates are identical, then so are the residuals; and
+if the residuals are identical, then so are the sums of squared residuals
+
+As to the standard errors, in the joint model we estimate
+\[ \hat{\sigma}^{2}=S_{\hat{u}\hat{u}}/\left( T-4\right) \]
+while in the separat estimations we estimate
+\begin{eqnarray*}
+\hat{\sigma}_{0}^{2} &=&S_{\hat{u}\hat{u}}^{0}/\left( T_{1}-2\right) \\
+\hat{\sigma}_{1}^{2} &=&S_{\hat{u}\hat{u}}^{1}/\left( \left( T-T_{1}\right)-2\right)
+\end{eqnarray*}
+
+Remarks:
+\begin{itemize}
+\item What happens if the dummy variables are not 0/1-coded but 1/2-coded?
+\item Consider the model
+\[ y_{t}=\alpha +\gamma D_{1t}+\delta D_{2t}+\beta x_{t}+u_{t} \]
+where
+\begin{eqnarray*}
+D_{1t} &=&\left\{ 
+\begin{array}{ll}
+0 & \quad \text{for males} \\ 
+1 & \quad \text{for females}
+\end{array}
+\right. \\
+D_{2t} &=&\left\{ 
+\begin{array}{ll}
+0 & \quad \text{for German citizenship} \\ 
+1 & \quad \text{else}
+\end{array} \right.
+\end{eqnarray*}
+\item Interaction terms
+\end{itemize}
+
+\setcounter{section}{16}
+\section{Heteroskedastizität}
+
+Annahme B2: $Var(u_t)=\sigma^2$ für alle $t=1,\ldots,T$.
+
+Graphische Darstellung der Beispieldaten [rentexample.R].
+
+Welche Eigenschaften hat der OLS-Schätzer $\hat\beta$, wenn
+die Annahme verletzt ist?
+
+Der Schätzer $\hat\beta=(X'X)^{-1}X'y$ ist weiterhin unverzerrt, denn
+\begin{align*}
+\hat\beta &= (X'X)^{-1}X'(X\beta+u) \\
+&=(X'X)^{-1}X'X\beta +(X'X)^{-1}X'u \\
+&=\beta +(X'X)^{-1}X'u.
+\end{align*}
+Also ist
+\begin{align*}
+E(\hat\beta) &=E(\beta +(X'X)^{-1}X'u) \\
+&=\beta +(X'X)^{-1}X'E(u) \\
+&=\beta.
+\end{align*}
+An keiner Stelle wurde die Annahme B2 verwendet. Das Ergebnis
+gilt also auch, wenn B2 verletzt ist.
+
+Über die Kovarianzmatrix von $\hat\beta$ lässt sich im allgemeinen
+Fall recht wenig sagen. Es gilt
+\begin{align*}
+Cov(\hat\beta) &= E((\hat\beta-E(\hat\beta))(\hat\beta-E(\hat\beta))') \\
+&= E((\hat\beta-\beta)(\hat\beta-\beta)') \\
+&=E((X'X)^{-1}X'uu'X(X'X)^{-1}) \\
+&=(X'X)^{-1}X'E(uu')X(X'X)^{-1} \\
+&=(X'X)^{-1}X'Cov(u) X(X'X)^{-1}.
+\end{align*}
+Falls $Cov(u)=\sigma^2I$ (also im Fall von Homoskedastizität) kann man
+diesen Ausdruck weiter vereinfachen. Im Fall der Heteroskedastizität 
+jedoch nicht. Nur unter bestimmten Annahmen über die genaue Form
+der Heteroskedastizität wären weitere Umformungen möglich.
+
+Die Normalität von $\hat\beta$ gilt weiterhin, denn $\hat\beta$ ist
+immer noch eine lineare Funktion der normalverteilten endogenen
+Variable.
+
+Wir betrachten nun das einfache lineare Modell 
+\[ y_t=\alpha+\beta x_t+u_t \]
+und machen nun eine (restriktive und willkürliche) Annahme über die
+Varianz der Störterme:
+\[ \sigma_t^2=\sigma^2 x_t. \]
+Wir gehen also davon aus, dass die Störterme umso stärker streuen,
+je weiter die Beobachtungen vom Zentrum entfernt sind.
+
+Das Modell wird nun wie folgt transformiert:
+\begin{align*}
+\frac{y_{t}}{\sqrt{x_{t}}} &=\alpha \frac{1}{\sqrt{x_{t}}}+\beta \frac{x_{t}}{\sqrt{x_{t}}}
++\underbrace{\frac{u_{t}}{\sqrt{x_{t}}}}_{\text{error term}}\\
+y_{t}^{\ast} &=\alpha z_{t}^{\ast }+\beta x_{t}^{\ast }+u_{t}^{\ast}.
+\end{align*}
+
+Der neue Fehlerterm 
+\[ u_{t}^{\ast }=\frac{u_{t}}{\sqrt{x_{t}}}. \]
+hat folgende Eigenschaften:
+\begin{align*}
+E(u_{t}^{\ast }) &=E\left( \frac{u_{t}}{\sqrt{x_{t}}}\right) \\
+&=\frac{E(u_{t}) }{\sqrt{x_{t}}} \\
+&=0,
+\end{align*}
+\begin{align*}
+Var(u_{t}^{\ast }) &= Var\left(\frac{u_{t}}{\sqrt{x_{t}}}\right)\\
+&=\frac{1}{x_t}Var(u_t) \\
+&=\frac{1}{x_t}\sigma^2 x_t \\
+&=\sigma^2
+\end{align*}
+und
+\begin{align*}
+Cov(u_{s}^{\ast },u_{t}^{\ast}) &= Cov\left( 
+\frac{u_{s}}{\sqrt{x_{s}}},\frac{u_{t}}{\sqrt{x_{t}}}\right) \\
+&= \frac{1}{\sqrt{x_{s}}\sqrt{x_{t}}}Cov(u_s,u_t) \\
+&= 0.
+\end{align*}
+Außerdem sind die transformierten Störterme normalverteilt,
+da sie lineare Transformationen der $u_{t}$ sind.
+
+Das transformierte Modell erfüllt also alle A-, B- und C-Annahmen!
+
+KQ-Schätzung des transformierten Modells:
+\begin{align*}
+\hat\alpha^{\ast} &= \frac{S_{z^{\ast }y^{\ast }}}{S_{z^{\ast}z^{\ast }}} \\
+\hat\beta^{\ast } &= \frac{S_{x^{\ast }y^{\ast }}}{S_{x^{\ast}x^{\ast }}} \\
+&= \frac{\sum \left(x_t^{\ast }-\overline{x}^{\ast }\right) 
+	\left(y_t^{\ast }-\overline{y}\right)}{\sum \left(x_t^{\ast }-\overline{x}^{\ast }\right)^2} \\
+&= \frac{\sum \frac{1}{x_{t}}\left( x_{t}-\overline{x}\right) \left( y_{t}-\overline{y}\right) }
+{\sum \frac{1}{x_{t}}\left( x_{t}-\overline{x}\right)^{2}}
+\end{align*}
+
+Die üblichen Schätzer
+\begin{align*}
+\hat{\beta} &=\frac{\sum \left( x_{t}-\overline{x}\right) 
+	\left( y_{t}-\overline{y}\right) }{\sum \left( x_{t}-\overline{x}\right) ^{2}} \\
+\hat{\alpha} &=\bar{y}-\hat{\beta}\bar{x}
+\end{align*}
+sind anders und daher ineffizient (Gauß-Markov-Theorem),
+
+Die Störtermvarianz 
+\[ Var(u_t^*)=\sigma^2 \]
+kann man unverzerrt schätzen durch
+\[ \hat{\sigma}^2=\frac{S_{_{\hat{u}^{\ast }\hat{u}^{\ast }}}}{T-2}. \] 
+
+Aus $\sigma_t^2=\sigma^2 x_t$ folgt, dass 
+\[ \hat{\sigma}_{t}^{2}=\hat{\sigma}^{2}\cdot x_{t} \]
+ein unverzerrter Schätzer von $Var(u_{t})$ ist.
+
+Herleitung der Varianz von $\hat\beta$: Betrachte das einfache lineare Modell
+\[ y_{t}=\alpha +\beta x_{t}+u_{t} \]
+mit $Var(u_{t})=\sigma ^{2}x_t$. Der KQ-Schätzer von $\beta $ ist
+\begin{align*}
+\hat\beta &=\frac{S_{xy}}{S_{xx}} \\
+&=\frac{\sum \left( x_{t}-\bar{x}\right) y_{t}}{\sum \left( x_{t}-\bar{x}\right) ^{2}} \\
+&=\frac{\sum \left( x_{t}-\bar{x}\right) \left( \alpha +\beta x_{t}+u_{t}\right)}
+{\sum \left( x_{t}-\bar{x}\right) ^{2}} \\
+&=\frac{\sum \left( x_{t}-\bar{x}\right) \left( \alpha +\beta x_{t}\right) 
+}{\sum \left( x_{t}-\bar{x}\right)^2}+\frac{\sum \left( x_{t}-\bar{x}\right) u_{t}}
+{\sum \left( x_{t}-\bar{x}\right)^2}.
+\end{align*}
+Also ist
+\begin{align*}
+Var(\hat\beta) &=Var\left( \frac{\sum \left( x_{t}-\bar{x}\right) u_{t}}
+{\sum \left( x_{t}-\bar{x}\right) ^{2}}\right) \\
+&=\frac{1}{S_{xx}^{2}}Var\left( \sum \left( x_{t}-\bar{x}\right)u_{t}\right) \\
+&=\frac{1}{S_{xx}^{2}}\sum Var\left( \left( x_{t}-\bar{x}\right)u_{t}\right) \\
+&=\frac{1}{S_{xx}^{2}}\sum \left( x_{t}-\bar{x}\right) ^{2}Var\left(u_{t}\right) \\
+&=\frac{\sum \left( x_{t}-\bar{x}\right) ^{2}\sigma _{t}^{2}}{S_{xx}^{2}}.
+\end{align*}
+
+Achtung: Die üblichen Formeln
+\[ Var(\hat{\beta})=\frac{\sigma ^{2}}{S_{xx}} \]
+und 
+\[ \hat{\sigma}^{2}=\frac{S_{\hat{u}\hat{u}}}{T-2} \]
+sind unter Heteroskedastizität falsch!
+
+Wie kann man aufdecken, ob Heteroskedastizität ein Problem sein könnte?
+Wir behandeln zwei Testverfahren, nämlich den Goldfeld-Quandt-Test und 
+den White-Test. Wir starten mit dem Goldfeld-Quandt-Test.
+
+\subsection*{Goldfeld-Quandt-Test}
+
+\begin{itemize}
+	\item Schritt 1: Ordne die Beobachtungen aufsteigend nach den $x_t$-Werten
+	(oder nach einer anderen ``Heteroskedastizitätsquelle'')
+	\item Schritt 2: Definiere zwei Gruppen:
+	\begin{itemize}
+		\item $T_{1}$ Beobachtungen mit niedrigen $x_{t}$-Werten;
+		\item $T_{2}$ Beobachtungen mit hohen $x_{t}$-Werten.
+	\end{itemize}
+	Oft wählt man so, dass $T_{1}+T_{2}=T$.
+	\item Schritt 3: Wir nehmen an, dass $\sigma _{2}^{2}>\sigma _{1}^{2}$; also
+	\begin{eqnarray*}
+		H_{0} &:&\sigma _{2}^{2}=\sigma _{1}^{2} \\
+		H_{1} &:&\sigma _{2}^{2}>\sigma _{1}^{2}
+	\end{eqnarray*}
+	\item Schritt 4: Separate KQ-Schätzung für beide Gruppen; berechne $S_{\hat{u}\hat{u}}^{1}$
+	und $S_{\hat{u}\hat{u}}^2$.
+	\item Schritt 5: Goldfeld und Quandt (1972) zeigen, dass unter $H_{0}$ 
+	\[ F=\frac{S_{\hat{u}\hat{u}}^2/(T_2-K-1)}{S_{\hat{u}\hat{u}}^1/(T_1-K-1)} \]
+	einer $F_{(T_{2}-K-1,T_{1}-K-1)}$-Verteilung folgt.
+	\item Schritt 6: Vergleiche $F$ mit dem kritischen Wert $F_a$. Wenn $F>F_{a}$,
+	lehne $H_{0}$ ab.
+\end{itemize}
+
+Numerische Illustration: rentexample.R
+
+\begin{enumerate}
+	\item Ordne die Beobachtungen nach der $x_{t}$-Variable.
+	\item Gruppe Z: Zentrum($T_Z=5$); Gruppe P: Peripherie ($T_P=7$)
+	\item Nullhypothese: $H_{0}:\sigma _{P}^{2}\leq \sigma _{Z}^{2}$
+	\item Summe der quadrierten Residuen
+	\[ S_{\hat{u}\hat{u}}^{Z}=0.246 \]
+	und 
+	\[ S_{\hat{u}\hat{u}}^{P}=4.666 \]
+	\item Also gilt
+	\[ F=\frac{4.666/5}{0.246/3}=11.4 \]
+	\item Auf dem Niveau $a=5\%$ ist der kritische Wert 9.01. Die Nullhypothese
+	wird also verworfen. Die Daten sprechen für Heteroskedastizität.
+\end{enumerate}
+
+\subsection*{White test}
+
+Der Goldfeld-Quandt-Test ist dann gut anwendbar, wenn man eine einzelne
+Variable als "`Treiber"' für die Heteroskedastizität identifizieren kann.
+Wenn man keine konkrete Vorstellung von der Form der Heteroskedastizität
+hat, hilft der White-Test weiter. Wir betrachten das lineare Modell
+mit zwei exogenen Variablen,
+\[ y_{t}=\alpha +\beta _{1}x_{1t}+\beta _{2}x_{2t}+u_{t} \]
+
+Der White-Test ist ein LM-Test und wird wie folgt durchgeführt.
+\begin{itemize}
+	\item Schritt 1: $H_{0}$: Homoskedastizität gegen $H_1$: Heteroskedastizität.
+	\item Schritt 2: Berechne die KQ-Residuen $\hat{u}_{t}$
+	\item Schritt 3: Schätze die Hilfsregression
+	\[ \hat{u}_t^2 = \gamma_0+\gamma_1 x_{1t}+\gamma_2 x_{2t}
+	+\gamma_3 x_{1t}^2+\gamma_4 x_{2t}^2 +\gamma_5 x_{1t}x_{2t}+v_t. \]
+	\item Schritt 4: Unter $H_{0}$ gilt
+	\[ R^{2}\cdot T\sim \chi_r^2, \]
+	wobei $r$ die Anzahl der Steigungskoeffizienten in der Hilfsregression ist 
+	(in diesem Beispiel also $r=5$).
+	\item Wenn die Teststatistik $T\cdot R^2$ größer ist als der kritische Werte
+	der $\chi_r^2$-Verteilung, wird $H_{0}$ verworfen.
+\end{itemize}
+Eine Ablehnung erfolgt, wenn die quadrierten Residuen zumindest teilweise
+durch die exogenen Variablen erklärt werden können.
+
+Illustration [rentexample.R]
+
+Was ist zu tun, wenn Heteroskedastizität vorliegt?
+
+\begin{itemize}
+	\item Möglichkeit 1: Passe die Schätzmethode an $\longrightarrow $ VKQ oder geschätzte VKQ
+	\item Möglichkeit 2: Benutze weiterhin die KQ-Methode, aber passe die Berechnung
+	der Standardfehler an $\longrightarrow $ Whites heteroskedastizitätskonsistente 
+	Kovarianzmatrixschätzung
+\end{itemize}
+
+\subsection*{Verallgemeinerte Kleinste-Quadrate-Methode (VKQ)}
+
+Die verallgemeinerte Kleinste-Quadrate-Methode wird auch oft 
+generalised least squares method (GLS) genannt.  Ausgangspunkt ist das
+Regressionsmodell
+\[ y=X\beta+u, \]
+wobei wir nun davon ausgehen, dass die Kovarianzmatrix der Störterme
+nicht $Cov(u)=\sigma ^{2}I$ ist, sondern 
+\[ Cov(u)=\sigma^2\Omega. \]
+
+Beispiel: Wenn $\sigma _{t}^{2}=\sigma ^{2}x_{kt}$, dann ist
+\[ \Omega=\left[ 
+\begin{array}{lll}
+x_{k1} & \ldots & 0 \\ 
+\vdots & \ddots & \vdots \\ 
+0 & \ldots & x_{kT}%
+\end{array}%
+\right] \]
+
+Transformation des Modells: Da $\Omega$ positiv definit ist, 
+gibt es eine $(T\times T)$-Matrix $P$ mit
+\[ P'P=\Omega^{-1}. \]
+
+Beispiel: Wenn
+\[ \Omega=\left[ 
+\begin{array}{lll}
+x_{k1} & \ldots & 0 \\ 
+\vdots & \ddots & \vdots \\ 
+0 & \ldots & x_{kT}%
+\end{array}%
+\right], \]
+dann ist
+\[ P=\left[ 
+\begin{array}{lll}
+1/\sqrt{x_{k1}} & \ldots & 0 \\ 
+\vdots & \ddots & \vdots \\ 
+0 & \ldots & 1/\sqrt{x_{kT}}%
+\end{array}%
+\right]. \]
+
+Aus $P'P=\Omega^{-1}$ folgt, dass
+\begin{align*}
+P'P &=\Omega^{-1} \\
+P\Omega P'PP^{-1} &= P\Omega\Omega^{-1}P^{-1} \\
+P\Omega P'&=I.
+\end{align*}
+
+Multipliziert man $P$ von links an $y=X\beta+u$,
+so ergibt sich
+\begin{align*}
+Py &=PX\beta+Pu \\
+y^{\ast } &=X^{\ast }\beta+u^{\ast }.
+\end{align*}
+
+Eigenschaften des transformierten Störtermvektors:
+Der Erwartungswertvektor ist
+\begin{align*}
+E(u^{\ast }) &=E(Pu) \\
+&=PE(u) \\
+&=0
+\end{align*}
+und die Kovarianzmatrix ist
+\begin{align*}
+V(u^{\ast }) &=E(u^{\ast }u^{\ast \prime }) \\
+&=E(Puu'P') \\
+&=PE(uu')P' \\
+&=P\sigma ^{2}\Omega P' \\
+&=\sigma ^{2}I.
+\end{align*}
+Außerdem ist der Vektor $u^*$ normalverteilt, da er eine lineare Transformation
+von normalverteilten Größen ist (nämlich $Pu$).
+
+Folgerung: Das transformierte Modell erfüllt alle A-, B- und C-Annahmen!
+
+Der GLS-Schätzer ist der OLS-Schätzer des transformierten Modells,
+\begin{align*}
+\hat\beta^{GLS} &=(X^{\ast\prime }X^{\ast })^{-1}X^{\ast\prime }y^{\ast } \\
+&=( X'P'PX) ^{-1}X'P'Py \\
+&=( X'\Omega ^{-1}X) ^{-1}X'\Omega ^{-1}y.
+\end{align*}
+
+Die Kovarianzmatrix des GLS-Schätzers ist
+\begin{align*}
+V(\hat\beta^{GLS}) &=\sigma ^{2}(X^{\ast \prime }X^{\ast })^{-1} \\
+&=\sigma^2\left( X'P'PX\right) ^{-1} \\
+&=\sigma^2\left( X'\Omega ^{-1}X\right) ^{-1}.
+\end{align*}
+Vergleich mit der gewöhnlichen Kovarianzmatrix (im OLS-Fall)
+\begin{align*}
+V(\hat\beta) &= E\left[ \left( \hat\beta-\beta \right) \left( \hat\beta-\beta \right) '\right] \\
+&=E\left[ \left( X'X\right) ^{-1}X'u\left( \left(X'X\right) ^{-1}X'u\right) '\right] \\
+&=E\left[ \left( X'X\right) ^{-1}X'uu'X^{\prime}\left( X'X\right) ^{-1}\right] \\
+&=\left( X'X\right) ^{-1}X'E\left[ uu'\right]X'\left( X'X\right) ^{-1} \\
+&=\sigma ^{2}\left( X'X\right) ^{-1}X'\Omega X^{\prime}\left( X'X\right) ^{-1}.
+\end{align*}
+
+Man schätzt $\sigma ^{2}$ durch
+\[ \hat{\sigma}^{2}=\frac{\hat{u}^{\ast \prime }\hat{u}^{\ast}}{T-K-1}
+=\frac{\hat{u}^{\prime }\Omega^{-1}\hat{u}}{T-K-1}. \]
+
+Würde man die Heteroskedastizität ignorieren, würde man mit
+\begin{align*}
+V(\hat{\beta}) &=\sigma ^{2}(X'X)^{-1} \\
+\hat{\sigma}^{2} &=\frac{\hat{u}^{\prime }\hat{u}}{T-K-1}
+\end{align*}
+rechnen. In diesem Fall wären die Intervallschätzer und die Hypothesentests nicht
+korrekt.
+
+Was kann man tun, wenn $\Omega$ unbekannt ist?
+
+Beispiel:
+\[ W=\sigma ^{2}\Omega=\left[ 
+\begin{array}{llllll}
+\sigma _{I}^{2} & 0 & \ldots & \ldots & \ldots & 0 \\ 
+0 & \ddots &  &  &  & \vdots \\ 
+\vdots &  & \sigma _{I}^{2} &  &  & \vdots \\ 
+\vdots &  &  & \sigma _{II}^{2} &  & \vdots \\ 
+\vdots &  &  &  & \ddots & 0 \\ 
+0 & \ldots & \ldots & \ldots & 0 & \sigma _{II}^{2}
+\end{array} \right]. \]
+
+Ansatz: Feasible Generalized Least Squares (FGLS),
+geschätzte verallgemeinerte Kleinste-Quadrate (GVKQ).
+
+Man geht in zwei Stufen vor. Zuerst schätzt man die unbekannten Größen
+in $W=\sigma ^{2}\Omega$. Anschließend ist der
+FGLS-Schätzer 
+\[ \hat{\beta}^{FGLS}=(X'\hat{W}^{-1}X)^{-1}X'\hat{W}^{-1}y. \]
+Die geschätzte Kovarianzmatrix ist dann
+\[ \hat{V}(\hat{\beta}^{FGLS})=(X'\hat{W}^{-1}X)^{-1}. \]
+
+Was kann man tun, wenn man überhaupt keine Informationen über die
+Form der Heteroskedastizität hat?
+
+\subsection*{Whites heteroskedastizitätskonsistenter Kovarianzmatrixschätzer}
+
+Davidson und MacKinnon, chap. 5.5. Das ökonometrische Modell lautet
+\[ y=X\beta+u. \]
+Die Kovarianzmatrix sei $V(u)=W$ mit
+\[ W=diag(\sigma_1^2,\ldots ,\sigma_T^2).  \]
+Der OLS-Schätzer
+\[ \hat{\beta}=(X'X)^{-1}X'y \]
+hat die Kovarianzmatrix
+\[ Cov(\hat\beta)=(X'X)^{-1}X'WX'(X'X)^{-1}. \]
+Eine konsistente Schätzung von $W$ ist nicht möglich. 
+White (1980) hat jedoch gezeigt, dass eine konsistente Schätzung von
+\begin{align*}
+\Sigma &=\frac{1}{T}X^{\prime }WX \\
+&=\frac{1}{T}\sum_{t=1}^{T}\sigma _{t}^{2}x_{t}x_{t}^{\prime }
+\end{align*}
+möglich ist, wobei $x_t$ die $t$-te Zeile der Matrix $X$ ist (als Spaltenvektor geschrieben).
+
+Ein konsistenter Schätzer von $\Sigma$ ist
+\[ \hat{\Sigma}=\frac{1}{T}\sum_{t=1}^{T}\hat{u}_t^2 x_t x_t'. \]
+Die geschätzte Kovarianzmatrix ist
+\[ \hat{V}(\hat\beta)=(X'X)^{-1}X'\hat{W}X(X'X)^{-1} \]
+mit
+\[ \hat{W}=\left[ 
+\begin{array}{lll}
+\hat{u}_{1}^{2} &  &  \\ 
+& \ddots &  \\ 
+&  & \hat{u}_{T}^{2}%
+\end{array}%
+\right] \]
+Wegen seiner Form nennt man diesen Schätzer auch Sandwich-Schätzer.
+
+Illustration [rentexample.R]
+
+\section{Autokorrelation}
+
+Annahme B3: Die Störterme sind unkorreliert,
+\[ Cov(u_{t},u_{s})=0 \]
+für alle $t\neq s$.
+
+Beispiel: [waterfilter.R]: Die Nachfragefunktion nach Wasserfiltern sei
+\[y_{t}=\alpha +\beta x_{t}+u_{t}, \]
+mit $y_{t}$ verkaufter Menge, $x_{t}$ Preis für die Monate
+Januar 2001 bis Dezember 2002.
+
+Wir nehmen an, dass die Autokorrelation folgende Form hat:
+\[ u_{t}=\rho u_{t-1}+e_{t} \]
+mit $-1<\rho <1$. Dabei sei
+\[ e_{t}\sim NID(0,\sigma _{e}^{2}) \]
+
+Eigenschaften der Störterme $u_{t}$:
+
+Der Erwartungswert (von dem wir annehmen, dass er zeitinvariant ist)
+beträgt
+\begin{align*}
+E(u_{t}) &= E(\rho u_{t-1}+e_{t}) \\
+&=\rho E(u_{t-1}) \\
+E(u_{t}) &=0.
+\end{align*}
+Die Varianz (von der wir ebenfalls annehmen, dass sie zeitinvariant
+ist) beträgt
+\begin{align*}
+Var(u_{t}) &=Var(\rho u_{t-1}+e_{t}) \\
+&=\rho ^{2}Var(u_{t-1})+\sigma _{e}^{2} \\
+Var(u_{t}) &=\sigma _{e}^{2}/\left( 1-\rho ^{2}\right)
+\end{align*}
+und die Kovarianz (der Ordnung 1) ist
+\begin{align*}
+Cov(u_{t},u_{t-1}) &=E(u_{t}u_{t-1}) \\
+&=E\left( \left( \rho u_{t-1}+e_{t}\right) u_{t-1}\right) \\
+&=\rho E(u_{t-1}^{2})+E(e_{t}u_{t-1}) \\
+&=\rho \cdot Var(u_{t})\\
+&=\rho\sigma _{e}^{2}/\left( 1-\rho ^{2}\right)
+\end{align*}
+Für höhere Ordnung ergibt sich rekursiv
+\[ Cov(u_{t},u_{t-j}) =\rho ^{j}\left( \frac{\sigma _{e}^{2}}{1-\rho ^{2}} \right). \]
+
+Folgerung: B1, B2 und B4 sind weiterhin erfüllt. Nur B3 ist verletzt!
+
+Transformation des Modells:
+
+Betrachte
+\[ y_{t}=\alpha +\beta x_{t}+u_{t} \]
+mit
+\[ u_{t}=\rho u_{t-1}+e_{t} \]
+und $e_{t}\sim UN(0,\sigma _{e}^{2})$. Addiert man
+\[ -\rho y_{t-1}=-\rho \alpha -\rho \beta x_{t-1}-\rho u_{t-1}, \]
+so erhält man
+\begin{align*}
+y_{t}-\rho y_{t-1} &=\alpha -\rho \alpha +\beta x_{t}-\rho \beta x_{t-1}+u_{t}-\rho u_{t-1} \\
+&=\alpha \left( 1-\rho \right) +\beta \left( x_{t}-\rho x_{t-1}\right)+e_{t}\\
+y_{t}^* &= \alpha^* +\beta x_t^*+e_t
+\end{align*}
+Der Störterm des transformierten Modells erfüllt alle Modellannahmen (insbesondere
+B1 bis B4). Allerding muss man für die Transformation den Wert von $\rho$ kennen.
+
+Da die Schätzer für $\alpha$ und $\beta$ des transformierten Modells anders 
+aussehen als die KQ-Schätzer, sind die KQ-Schätzer ineffizient.
+Außerdem sind die üblichen KQ-Formeln
+\[ Var(\hat{\beta})=\frac{\sigma ^{2}}{S_{xx}} \]
+und 
+\[ \hat{\sigma}^{2}=\frac{S_{\hat{u}\hat{u}}}{T-2} \]
+nicht korrekt. Die Folgen sind also identisch zum Fall der Heteroskedastizität.
+
+Diagnose von Autokorrelation:
+
+Einfachster Weg: Graph der Residuen $\hat{u}_{t}$ über die Zeit oder Streudiagramm
+der Paare $(\hat{u}_{t-1},\hat{u}_{t})$.\marginpar{Beispiel}
+
+Schätzung von $\rho$: Wegen $u_{t}=\rho u_{t-1}+e_{t}$ kann man $\rho $ 
+durch die Regression
+\[ \widehat{u}_{t}=\rho \widehat{u}_{t-1}+e_{t}^{\ast } \]
+schätzen. Der KQ-Schätzer lautet
+\[ \hat{\rho}=\frac{\sum_{t=2}^T\widehat{u}_t\widehat{u}_{t-1}}{\sum_{t=2}^T\widehat{u}_{t-1}^2}. \]
+
+Achtung: Wegen der Zweistufigkeit ist der gewöhnliche $t$-Test nicht gültig.
+
+\subsection*{Durbin-Watson-Test}
+
+Schritt 1: Aufstellen der Hypothesen
+\begin{eqnarray*}
+	H_{0} &:&\rho \leq 0 \\
+	H_{1} &:&\rho >0
+\end{eqnarray*}
+Schritt 2: Berechne die Durbin-Watson-Teststatistik
+\[ d=\frac{\sum_{t=2}^{T}(\widehat{u}_{t}-\widehat{u}_{t-1})^2}{\sum_{t=1}^T\widehat{u}_t^2} \]
+Umschreiben der Teststatistik ergibt
+\begin{align*}
+d &=\frac{\sum_{t=2}^{T}\left( \widehat{u}_{t}-\widehat{u}_{t-1}\right)^2}
+{\sum_{t=1}^{T}\widehat{u}_{t}^{2}} \\
+&=\frac{\sum_{t=2}^{T}\left( \widehat{u}_{t}^{2}-2\widehat{u}_{t}\widehat{u}_{t-1}+\widehat{u}_{t-1}^2\right) }
+{\sum_{t=1}^{T}\widehat{u}_{t}^{2}} \\
+&=\frac{\sum_{t=2}^{T}\widehat{u}_{t}^{2}}{\sum_{t=1}^{T}\widehat{u}_t^2}
+-2\frac{\sum_{t=2}^{T}\widehat{u}_{t}\widehat{u}_{t-1}}{\sum_{t=1}^{T}\widehat{u}_t^2}
++\frac{\sum_{t=2}^{T}\widehat{u}_{t-1}^{2}}{\sum_{t=1}^{T}\widehat{u}_t^2}
+\end{align*}
+Also gilt
+\[ \frac{\sum_{t=2}^{T}\widehat{u}_{t}^{2}}{\sum_{t=1}^{T}\widehat{u}_{t}^{2}}
+\approx 1\quad \text{und\quad }\frac{\sum_{t=2}^{T}\widehat{u}_{t-1}^{2}}{\sum_{t=1}^{T}\widehat{u}_{t}^{2}}\approx 1. \]
+Außerdem ist
+\[ \frac{\sum_{t=2}^{T}\widehat{u}_{t}\widehat{u}_{t-1}}
+{\sum_{t=1}^{T}\widehat{u}_{t}^{2}}\approx \frac{\sum_{t=2}^{T}\widehat{u}_{t}\widehat{u}_{t-1}}
+{\sum_{t=2}^{T}\widehat{u}_{t-1}^{2}}=\hat{\rho}. \]
+Folglich ist
+\[ d\approx 2\left( 1-\hat{\rho}\right) . \]
+
+Schritt 3: Finde den kritischen Wert $d_{a}$ (mit Hilfe von Computersoftware).
+Wenn $d<d_{a}$, wird $H_{0}$ verworfen.
+
+Problem: Der kritische Wert $d_{a}$ hängt von $X$ ab. Wenn die Software den
+tatsächlichen kritischen Wert $d_{a}$ nicht bestimmen kann, gibt es Tabellen
+für eine Abschätzung des kritischen Werts und eine Obergrenze $d_{a}^{H}$ 
+und eine Untergrenze $d_{a}^{L}$ für $d_{a}$.
+
+Schritt 4: Vergleiche die Teststatistik $d$ mit $d_{a}^{L}$ und $d_{a}^{H}$.
+
+Entscheidungregeln:
+\begin{itemize}
+	\item Wenn $d<d_{0,05}^{L}$, lehne $H_{0}:\rho \leq 0$ ab.
+	\item Wenn $d>d_{0,05}^{H}$, lehne $H_{0}:\rho \leq 0$ nicht ab.
+	\item Wenn $d_{0,05}^{L}\leq d\leq d_{0,05}^{H}$, muss die Entscheidung offen bleiben.
+\end{itemize}
+
+Nachteile des Durbin-Watson-Tests:
+\begin{itemize}
+	\item In manchen Fällen ist keine Entscheidung möglich.
+	\item Eine verzögerte endogene Variable ist nicht erlaubt (dazu später mehr).
+	\item Der Test ist nur auf $AR(1)$-Prozesse zugeschnitten.
+\end{itemize}
+Es gibt eine Reihe von alternativen Tests auf Autokorrelation, die auch
+in vielen Software-Programmen verfügbar sind.
+
+\subsection*{GLS und Autokorrelation}
+
+Im Regressionsmodell
+\[ y=X\beta+u \]
+hat die Kovarianzmatrix der Störterme bei Autokorrelation die Form
+$V(u)=\sigma^2\Omega$ mit
+\[ \mathbf{\Omega }=\left[ 
+\begin{array}{cccc}
+1 & \rho & \ldots & \rho ^{T-1} \\ 
+\rho & 1 & \ldots & \rho ^{T-2} \\ 
+\vdots & \vdots & \ddots & \vdots \\ 
+\rho ^{T-1} & \rho ^{T-2} & \ldots & 1%
+\end{array} \right]. \]
+Es gibt eine Matrix $P$, die $P'P=\Omega^{-1}$ erfüllt. Mit dieser
+Matrix wird das Modell transformiert. Man kann nachprüfen, dass
+\[ P=\frac{1}{\sqrt{1-\rho ^{2}}}\left[ 
+\begin{array}{ccccc}
+\sqrt{1-\rho ^{2}} & 0 & 0 & \ldots & 0 \\ 
+-\rho & 1 & 0 & \ldots & 0 \\ 
+0 & -\rho & 1 & \ldots & 0 \\ 
+\vdots & \ddots & \ddots & \ddots & \vdots \\ 
+0 & \ldots & 0 & -\rho & 1%
+\end{array}\right]. \]
+Der GLS-Schätzer ist der gleiche wie im Fall der Heteroskedastizität,
+\[ \hat{\beta}^{GLS}=(X'\Omega^{-1}X)^{-1}X'\Omega^{-1}y \]
+und die Kovarianzmatrix lautet
+\[ V(\hat{\beta}^{GLS})=\sigma ^{2}(X'\Omega^{-1}X)^{-1}. \]
+Als Schätzer für die Varianz der Störterme (bzw. die Skalierung der
+Kovarianzmatrix der Störterme) dient
+\[ \hat{\sigma}^{2}=\frac{\hat{u}'\Omega^{-1}\hat{u}}{T-K-1}. \]
+Achtung: GLS ist nicht möglich, weil $\rho$ (und damit $P$) unbekannt ist.
+
+Hildreth-Lu-Ansatz: Definiere ein feines Gitter für $\rho $ über das Intervall 
+$[-1;1]$; wähle das $\rho $, für das $\hat{\sigma}^{2}(1-\rho^2)=\hat{\sigma}_e^2$ minimal ist.
+
+Cochrane-Orcutt-Ansatz: Schätze $\hat{\rho}$ aus den OLS-Residuen.
+Führe GLS mit $\hat{\rho}$ durch. Iteriere bis die Schätzung konvergiert.
+
+Es ist auch möglich, eine Kovarianzmatrixschätzung durchzuführen, die sowohl heteroskedastizitätskonsistent
+als auch autokorrelationskonsistent ist (Newey and West, Econometrica 1987). Die 
+Vorgehensweise ist ähnlich zum HC-Schätzer nach White.
+
+\section{Nicht normalverteilt Störterme}
+
+Annahme B4: Die Störterme sind normalverteilt.
+
+Wir haben diese Annahme gebraucht, um die Normalverteilt der Schätzer
+$\hat\beta$ herzuleiten, um die $t$-Verteilung der Teststatistik
+des $t$-Tests herzuleiten und um die $F$-Verteilung der
+Teststatistik des $F$-Tests herzuleiten.
+
+Erinnerung: Der Schätzer $\hat{\beta}$ ist ein linearer Schätzer,
+\begin{eqnarray*}
+	\hat{\beta} &=&(X'X)^{-1}X'y \\
+	&=&Cy
+\end{eqnarray*}
+Für eine einzelne Komponente von $\hat{\beta}$ bedeutet das,
+\[ \hat{\beta}_{k}=\sum_{t=1}^{T}c_{kt}y_t. \]
+Die Zufallsvariablen $y_{1},\ldots ,y_{T}$ sind stochastisch unabhängig.
+Folglich ist $\hat{\beta}_{k}$ die Summe von unabhängigen (aber nicht
+unbedingt identisch verteilten) Zufallsvariablen.
+
+Zentraler Grenzwertsatz: Die Summe von vielen i.i.d. Zufallsvariablen ist
+approximativ normalverteilt. Der zentrale Grenzwertsatz gilt (unter
+bestimmten Bedingungen) auch, wenn die Summanden nicht identisch
+verteilt sind.
+
+Ferner gilt: Der Zufallsvektor $\hat{\beta}$ ist approximativ multivariat
+normalverteilt,
+\[ \hat{\beta}\overset{appr}{\sim }N\left(\beta,\sigma^2(X'X)^{-1}\right) \]
+Für die approximative Normalität müssen einige (schwache) 
+Regularitätsbedingungen erfüllt sein. Die Normalität kann unter Umständen
+nicht gelten (aber gewöhnlich tut sie es).
+
+Simulation [b4.R]: Trinkgeldbeispiel (aus dem letzten Semester):
+\[ y_{t}=0.5+0.1\cdot x_{t}+u_{t} \]
+erfülle alle A-, B-, C-Annahmen außer B4.
+Wir nehmen an, dass die Störterme die Dichtefunktion
+\[ f_{u_{t}}(u) =\exp(-(u+1)) \]
+haben.
+
+Wegen
+\[ \hat{\beta}\overset{appr}{\sim }N\left(\beta,\sigma^2(X'X)^{-1}\right) \]
+gilt für eine einzelne Komponente $\hat{\beta}_{k}$
+\[ \frac{\hat{\beta}_{k}-\beta _{k}}{SE(\hat{\beta}_{k})}\overset{d}{\longrightarrow }U\sim N(0,1) \]
+für $k=1,\ldots ,K$.
+
+Folglich sind Konfidenzintervalle für $t$-Tests asymptotisch gültig
+(man benutzt die Quantile der $N(0,1)$ anstelle der $t$-Verteilung).
+Auch die $F$-Tests sind asymptotisch gültig (sie konvergieren gegen die
+$\chi^2$-Verteilung).
+
+\section*{Stochastische Konvergenz}
+
+Definition: Die reelle Folge $\{a_{n}\}_{n\in \mathbb{N}}$
+konvergiert gegen ihren Limes $a$, wenn für jedes (beliebig kleine) $\varepsilon >0$
+ein $N(\varepsilon)$ existiert, so dass $|a_{n}-a|<\varepsilon $ für
+alle $n\geq N(\varepsilon)$.
+
+Notation: $\lim_{n\rightarrow \infty}a_{n}=a$ oder $a_{n}\rightarrow a$.
+
+Beispiele:
+\begin{equation*}
+\begin{array}{l}
+\lim_{n\rightarrow \infty }1/n=0 \\ 
+\lim_{n\rightarrow \infty }\left[(n^2+n+6) /(3n^2-2n+2) \right] =1/3
+\end{array}
+\end{equation*}
+
+Beispiel: Graph der konvergenten Folge $(n^{2}+n+6)/(3n^{2}-2n+2)$
+
+Fragen:
+\begin{itemize}
+	\item Wie kann man die Idee von Konvergenz auf Folgen von
+	Zufallsvariablen übertragen?
+	\item Was ist eine Folge von Zufallsvariablen?
+	\item Welche Folgen von Zufallsvariablen treten in der
+	Ökonometrie typischerweise auf?
+\end{itemize}
+
+Definition: Seien $X_{1},X_{2},\ldots $ Zufallsvariablen
+\[ X_i:\Omega \rightarrow \mathbb{R}. \]
+Wir nennen $X_{1},X_{2},\ldots $ eine Folge von Zufallsvariablen.
+$X_{1},X_{2},\ldots $ sind (abzählbar unendlich viele) multivariate
+Zufallsvariable.
+
+Formal handelt es sich um eine Folge von Funktionen
+(\emph{nicht} von reellen Zahlen).
+
+Definition: Die Folge $X_{1},X_{2},\ldots $ konvergiert \emph{fast sicher
+	(almost surely)} gegen eine Zufallsvariable $X$, wenn
+\[ P(\{\omega :\lim_{n\rightarrow \infty }X_{n}(\omega)=X(\omega)\}) =1. \]
+
+Notation:
+\begin{eqnarray*}
+	X_{n} &\overset{f.s.}{\rightarrow }&X \\
+	X_{n} &\overset{a.s.}{\rightarrow }&X
+\end{eqnarray*}
+
+Diese Art von Konvergenz spielt in der Ökonometrie meist keine große Rolle.
+
+Definition: Die Folge $X_{1},X_{2},\ldots $ konvergiert \emph{nach Wahrscheinlichkeit (in probability)}
+gegen eine Zufallsvariable $X$, wenn
+\[ \lim_{n\rightarrow \infty }P\left( |X_{n}-X|<\varepsilon \right) =1. \]
+
+Notation:
+\begin{eqnarray*}
+	X_{n} &\overset{p}{\rightarrow }&X \\
+	\textrm{plim }X_{n} &=&X
+\end{eqnarray*}
+
+Die Art von Konvergenz spielt in der Ökonometrie eine sehr wichtige Rolle.
+
+Spezialfall: Konvergenz nach Wahrscheinlichkeit gegen eine Konstante $a$ 
+liegt vor wenn, 
+\[ \lim_{n\rightarrow \infty }P\left( |X_{n}-a|<\varepsilon \right) =1. \]
+
+Notation:
+\begin{eqnarray*}
+	X_{n} &\overset{p}{\rightarrow }&a \\
+	\textrm{plim }X_{n} &=&a
+\end{eqnarray*}
+
+Dies ist der Fall, den wir in der Ökonometrie am häufigsten benötigen.
+
+Definition: Die Folge $X_{1},X_{2},\ldots $ (mit den Verteilungsfunktionen
+$F_{1},F_{2},\ldots $) konvergiert \emph{nach Verteilung (in distribution, in law)}
+gegen eine Zufallsvariable $X$ (mit Verteilungsfunktion $F$), wenn
+\[ \lim_{n\rightarrow \infty }F_{n}(x)=F(x) \]
+für alle $x\in \mathbb{R}$, an denen $F(x)$ stetig ist.
+
+Notation:
+\[ X_{n}\overset{d}{\rightarrow }X \]
+
+Es gibt noch weitere Definitionen von stochastischer Konvergenz, die
+wir aber nicht betrachten. 
+
+Beziehungen zwischen den Arten von Konvergenz.
+\[ X_{n}\overset{f.s.}{\rightarrow }X\quad 
+\Rightarrow \quad X_{n}\overset{p}{\rightarrow }X\quad 
+\Rightarrow \quad X_{n}\overset{d}{\rightarrow }X. \]
+
+\section*{Grenzwertsätze}
+
+Es gibt zwei wichtige Klassen von Grenzwertsätzen, nämlich zum einen
+die Gesetze der großen Zahlen (laws of large numbers) und zum anderen
+die zentralen Grenzwertsätze (central limit theorems).
+
+Sei $X_{1},X_{2},\ldots $ eine Folge von Zufallsvariablen.
+Definiere eine neue Folge $\bar{X}_{1},\bar{X}_{2},\ldots $ mit
+\[ \bar{X}_{n}=\frac{1}{n}\sum_{i=1}^{n}X_{i}. \]
+
+Starkes Gesetz der großen Zahl:
+Sei $X_{1},X_{2},\ldots $ eine Folge von Zufallsvariablen mit
+$\mu _{i}=E(X_{i})<\infty $ und $Var(X_{i})<\infty $ für $i=1,2,\ldots $
+Wenn $\sum_{k=1}^{\infty }Var(X_{k})/k^{2}<\infty ,$ dann gilt
+\[ P\left( \lim_{n\rightarrow \infty }\left( \bar{X}_{n}-\frac{1}{n}%
+\sum_{i=1}^{n}\mu _{i}\right) =0\right) =1. \]
+
+Spezialfall: i.i.d.-Folge, $\bar{X}_{n}\overset{f.s.}{\rightarrow }\mu$.
+
+Schwaches Gesetz der großen Zahl (Chebyshev):
+Sei $X_{1},X_{2},\ldots $ eine Folge von unabhängigen Zufallsvariablen
+mit $\mu _{i}=E(X_{i})<\infty $ und $Var(X_{i})<c<\infty $. Dann ist
+\[ \lim_{n\rightarrow \infty }P\left( \left\vert \bar{X}_{n}-\frac{1}{n}%
+\sum_{i=1}^{n}\mu _{i}\right\vert <\varepsilon \right) =1. \]
+
+Spezialfall: i.i.d.-Folge, $\textrm{plim }\bar{X}_{n}=\mu $.
+
+Schwaches Gesetz der großen Zahl (Khinchin):
+Sei $X_{1},X_{2},\ldots $ eine Folge von i.i.d. Zufallsvariablen mit 
+$E(X_{i})=\mu$. Dann gilt:
+\[ \lim_{n\rightarrow \infty }P\left( \left\vert \bar{X}_{n}-\mu \right\vert
+<\varepsilon \right) =1 .\]
+
+Es gibt auch Gesetze der großen Zahl für stochastische Prozesse, 
+z.B. für Martingaldifferenzenfolgen. Die Gesetze der großen Zahl
+können leicht auf den multivariaten Fall übertragen werden.
+
+
+Zentraler Grenzwertsatz:
+
+Sei $X_{1},X_{2},\ldots $ eine Folge von Zufallsvariablen.
+Betrachte die Folge der standardisierten kumulativen Summen
+\[ Z_{n}=\frac{S_{n}-E(S_{n})}{\sqrt{Var(S_{n})}}\qquad \text{mit\quad }
+S_{n}=\sum_{i=1}^{n}X_{i} \]
+
+Wie ist $Z_{n}$ für $n\rightarrow \infty $ verteilt?
+Wir machen nur wenige Annahmen über die Verteilung der $X_{i}$s.
+
+ZGS (Lindeberg-Levy):
+
+Sei $X_{1},X_{2},\ldots $ eine Folge von i.i.d. Zufallsvariablen mit
+$E(X_{i})=\mu$ und $Var(X_{i})=\sigma ^{2}<\infty $. Mit
+$F_{n}(z)=P(Z_{n}\leq z)$ bezeichnen wir die Verteilungsfunktion
+von $Z_{n}$. Dann gilt
+\[ \lim_{n\rightarrow \infty }F_{n}(z)=\int_{-\infty }^{z}\frac{1}{\sqrt{2\pi }}%
+\exp \left( -\frac{1}{2}u^{2}\right) du. \]
+
+Konvergenz nach Verteilung: $Z_{n}\overset{d}{\rightarrow }Z\sim N(0,1)$.
+
+ZGS (Liapunov):
+
+Sei $X_{1},X_{2},\ldots $ eine Folge von unabhängigen Zufallsvariablen
+mit $E(X_{i})=\mu _{i}$, $Var(X_{i})=\sigma _{i}^{2}<\infty $,
+und $E(|X_{i}|^{2+\delta })<\infty $ für (beliebig kleines) $\delta >0$.
+Definiere $c_{n}=\sqrt{\sum_{i=1}^{n}\sigma _{i}^{2}}$. Wenn
+\[ \lim_{n\rightarrow \infty }\left( \frac{1}{c_{n}^{2+\delta }}%
+\sum_{i=1}^{n}E\left( |X_{i}-\mu _{i}|\right) ^{2+\delta }\right) =0, \]
+dann gilt $Z_{n}\overset{d}{\rightarrow }Z\sim N(0,1)$.
+
+Bedeutung der Annahme: keine einzelne Zufallsvariable dominiert die Summe.
+Jedes $(X_{i}-\mu _{i})/\sigma _{i}$ liefert nur einen kleinen Anteil
+zu der Summe $(S_{n}-E(S_{n}))/c_{n}$.
+
+Häufige Notation (im i.i.d.\ Fall):
+\begin{align*}
+S_{n}&\overset{appr}{\sim }N(n\mu ,n\sigma ^{2}) \\
+\bar{X}_{n}&\overset{appr}{\sim }N(\mu ,\sigma ^{2}/n)
+\end{align*}
+
+Wir können die Summe als normalverteilt betrachten (wenn $n$ groß genug ist).
+
+Nützliche Rechenregeln für stochastische Konvergenz:
+Wenn $\textrm{plim }X_{n}=a$ und $\textrm{plim }Y_{n}=b$, dann gilt
+\begin{align*}
+\textrm{plim }(X_{n}\pm Y_{n}) &= a\pm b \\
+\textrm{plim }(X_{n}Y_{n}) &= ab \\
+\textrm{plim }\left( \frac{X_{n}}{Y_{n}}\right) &=\frac{a}{b},\textrm{ wenn }b\neq 0
+\end{align*}
+
+Wenn eine Funktion $g$ an der Stelle $a$ stetig ist, dann gilt
+\[ \textrm{plim }g(X_n) =g(a). \]
+
+Wenn $Y_{n}\overset{d}{\rightarrow }Z$ und $h$ ist eine stetige Funktion, dann
+\[ h(Y_n) \overset{d}{\rightarrow }h(Z). \]
+
+Cram\'{e}rs Theorem: Wenn $X_{n}\overset{p}{\rightarrow }a$ und 
+$Y_{n}\overset{d}{\rightarrow }Z$, dann
+\begin{align*}
+X_{n}+Y_{n}&\overset{d}{\rightarrow }a+Z \\
+X_{n}Y_{n}&\overset{d}{\rightarrow }aZ
+\end{align*}
+
+Cram\'{e}rs Theorem ist sehr nützlich, wenn es unbekannte Parameter in
+einer asymptotischen Verteilung gibt, die man konsistent schätzen kann
+(dazu später mehr).
+
+Beispiel für Cram\'{e}rs Theorem:
+
+Sei $X_{1},\ldots ,X_{n}$ eine Zufallsstichprobe aus $X$; wir wissen, dass
+\begin{align*}
+S_{n}^{\ast 2} &=\frac{1}{n-1}\sum_{i=1}^{n}\left( X_{i}-\bar{X}\right) ^{2}\overset{p}{\rightarrow }\sigma ^{2} \\
+S_{n}^{2} &=\frac{1}{n}\sum_{i=1}^{n}\left( X_{i}-\bar{X}\right) ^{2}\overset{p}{\rightarrow }\sigma ^{2}
+\end{align*}
+Also 
+\[ \frac{\sigma }{S_{n}^{\ast }}\overset{p}{\rightarrow }1\quad \text{und\quad }
+\frac{\sigma }{S_{n}}\overset{p}{\rightarrow }1. \]
+Laut ZGS
+\[ \sqrt{n}\frac{\bar{X}_{n}-\mu }{\sigma }\overset{d}{\rightarrow }Z\sim N(0,1). \]
+Wegen
+\[ \sqrt{n}\frac{\bar{X}_{n}-\mu }{S_{n}}=\sqrt{n}\frac{\bar{X}_{n}-\mu }
+{\sigma }\cdot \frac{\sigma }{S_{n}} \]
+und $\sigma /S_{n}\overset{p}{\rightarrow }1$ ergibt sich
+\[ \sqrt{n}\frac{\bar{X}_{n}-\mu }{S_{n}}\overset{d}{\rightarrow }Z\cdot
+1=Z\sim N\left( 0,1\right). \]
+Für $\sqrt{n}(\bar{X}_{n}-\mu )/S_{n}^{\ast }$ geht man analog vor.
+
+\section{Stochastische exogene Variable}
+
+Annahme C1: Die Matrix $X$ ist nicht stochastisch.
+
+Was passiert, wenn $X$ (zumindest einige Elemente) stochastisch ist?
+Wir unterscheiden drei Fälle:
+
+\begin{enumerate}
+	\item $X$ und $u$ sind stochastisch unabhängig.
+	\item Kontemporäre Unkorreliertheit: $Cov(x_{kt},u_{t})=0$ für alle $t,k$
+	\item $X$ und $u$ sind kontemporär korreliert.
+\end{enumerate}
+
+Exkurs zu bedingten Erwartungen und Erwartungswerten
+
+Sei $(X,Y)$ gemeinsam stetig verteilt mit der Dichtefunktion $f_{X,Y}(x,y)$.
+Die Randdichten sind
+\begin{eqnarray*}
+	f_{X}(x) &=&\int_{-\infty }^{\infty }f_{X,Y}(x,y)dy \\
+	f_{Y}(y) &=&\int_{-\infty }^{\infty }f_{X,Y}(x,y)dx.
+\end{eqnarray*}
+Die bedingte Dichte von $X$ gegeben $Y=y$ ist
+\[ f_{X|Y=y}\left( x\right) =\frac{f_{X,Y}(x,y)}{f_{Y}(y)}. \]
+Der bedingte Erwartungswert von $X$ gegeben $Y=y$ ist
+\[ E(X|Y=y) =\int_{-\infty }^{\infty }xf_{X|Y=y}\left( x\right) dx. \]
+Die bedingte Erwartung von $X$ gegeben $Y$,
+\[ E(X|Y), \]
+ist eine Zufallsvariable mit der Realisation $E(X|Y=y)$ wenn $Y=y$ ist.
+
+Der bedingte Erwartungswert $E(X|Y=y)$ ist eine reelle Zahl (für gegebenes $y$).
+Die bedingte Erwartung $E(X|Y)$ ist eine Zufallsvariable.
+
+Nützliche Rechenregeln für bedingte Erwartungen:
+
+\begin{enumerate}
+	\item Gesetz der iterierten Erwartung (law of iterated expectations): 
+	\[ E(E(X|Y)) =E(X) \]
+	\item Unabhängigkeit: Wenn $X$ und $Y$ unabhängig sind, dann gilt
+	\[ E(X|Y) =E(X) \]
+	\item Linearität: Für $a_{1},a_{2}\in \mathbb{R}$, gilt
+	\[ E(a_{1}X_{1}+a_{2}X_{2}|Y) =a_{1}E(X_{1}|Y)+a_{2}E(X_{2}|Y) \]
+	\item Bedingte Zufallsvariablen können wir Konstanten behandelt werden,
+	\[ E(f(X)g(Y)|Y) =g(Y)E(f(X)|Y) \]
+\end{enumerate}
+
+\subsection*{Stochastische exogene Variable, Fall 1}
+
+Wir betrachten das Modell $y=X\beta+u$ mit $X$ und $u$ stochastisch 
+unabhängig.
+
+Die Schätzer $\hat{\beta}$ und $\hat{\sigma}^{2}$ sind weiterhin unverzerrt,
+\begin{align*}
+\hat\beta &=\beta +(X'X)^{-1}X'u \\
+E(\hat\beta) &=\beta +E\left( \left( X'X\right) ^{-1}X^{\prime}\right) E\left( u\right) \\
+&=\beta.
+\end{align*}
+
+Die Varianz der Störterme wird geschätzt durch
+\begin{align*}
+\hat{\sigma}^{2} &=\hat{u}'\hat{u}/(T-K-1) \\
+E(\hat{\sigma}^{2}) &=E\left[ E\left( \hat{\sigma}^{2}|X\right) \right] \\
+&=E\left[ E\left( \hat{u}'\hat{u}/(T-K-1)|X\right) \right] \\
+&=E\left[ \frac{1}{T-K-1}E\left( \hat{u}'\hat{u}|X\right) \right]\\
+&=E\left[ \frac{1}{T-K-1}\sigma ^{2}\left( T-K-1\right) \right] \\
+&=\sigma^2.
+\end{align*}
+
+Die Kovarianzmatrix von $\hat\beta$ ist
+\begin{align*}
+V(\hat\beta) &=E\left( \left( \hat\beta-\beta \right) \left( \hat\beta-\beta \right) '\right) \\
+&=E\left( \left( X'X\right) ^{-1}X'uu'X\left(X'X\right) ^{-1}\right) \\
+&=E\left[ E\left( \left( X'X\right) ^{-1}X'uu^{\prime}X\left( X'X\right) ^{-1}|X\right) \right] \\
+&=E\left[ \left( X'X\right) ^{-1}X'E\left( uu^{\prime}|X\right) X\left( X'X\right) ^{-1}\right] \\
+&=E\left[ \left( X'X\right) ^{-1}X'\sigma ^{2}IX\left(X'X\right) ^{-1}\right] \\
+&=\sigma ^{2}E\left[ \left( X'X\right) ^{-1}\right].
+\end{align*}
+
+Ein unverzerrter Schätzer dieser Kovarianzmatrix ist
+\begin{align*}
+\hat{V}(\hat\beta) &=\hat{\sigma}^{2}\left( X^{\prime}X\right) ^{-1} \\
+E(\hat{V}(\hat\beta)) &=E\left( \hat{\sigma}^{2}\left( X'X\right) ^{-1}\right) \\
+&=E\left[ E\left( \hat{\sigma}^{2}\left( X'X\right) ^{-1}|X\right) \right] \\
+&=E\left[ E\left( \hat{\sigma}^{2}|X\right) \left( X'X\right) ^{-1}\right] \\
+&=E\left[ \sigma ^{2}\left( X'X\right) ^{-1}\right] \\
+&=\sigma ^{2}E\left[ \left( X'X\right) ^{-1}\right] \\
+&=V(\hat\beta).
+\end{align*}
+
+Der Schätzer $\hat\beta$ ist konsistent, denn
+\begin{align*}
+\textrm{plim }\hat\beta &=\textrm{plim}\left[ \beta +\left( X^{\prime}X\right) ^{-1}X'u\right] \\
+&=\textrm{plim}\left( \beta \right) +\textrm{plim}\left( \left( X^{\prime}X\right) ^{-1}X'u\right) \\
+&=\beta +\textrm{plim}\left( \left( \frac{X'X}{T}\right) ^{-1}\frac{X'u}{T}\right)
+\end{align*}
+Wir brauchen nun zusätzliche Annahmen. Wir nehmen an, dass
+\begin{align*}
+\textrm{plim}\left( \frac{X'X}{T}\right) &=Q_{XX} \\
+\lim_{T\rightarrow \infty }E\left( \frac{X'X}{T}\right) &=Q_{XX}
+\end{align*}
+Mit diesen Annahmen werden Trends ausgeschlossen (und zwar sowohl
+deterministische Trends als auch stochastische Trends).
+
+Unter dieser Annahme gilt
+\[ \textrm{plim}\left(\frac{X'u}{T}\right) =0. \]
+
+Für den Beweis der Konvergenz nach Wahrscheinlichkeit einer 
+Folge von Zufallsvariablen gegen eine Konstante $a$ reicht es aus
+zu zeigen, dass der Erwartungswert gegen $a$ und die Varianz
+gegen 0 konvergieren (diese Bedingung ist nicht notwendig,
+aber hinreichend).
+
+Wegen der Unabhängigkeit gilt
+\[ E(X'u/T) =E(X)'E(u) /T=0. \]
+Außerdem ist
+\begin{align*}
+V\left( X'u/T\right) &=\frac{1}{T^{2}}E\left( X^{\prime}u u'X\right) \\
+&=\frac{1}{T^{2}}E\left( E\left( X'u{}u'X|X\right) \right)\\
+&=\frac{1}{T^{2}}E\left( X'E\left( u{}u'|X\right) X\right)\\
+&=\frac{1}{T^{2}}E\left( X'\sigma ^{2}IX\right) \\
+&=\frac{1}{T}\sigma ^{2}E\left( \frac{X'X}{T}\right) ,
+\end{align*}
+also
+\[ \lim_{T\rightarrow \infty }V\left( X'u/T\right) =0. \]
+Damit ist die Konvergenz nach Wahrscheinlichkeit von $X'u/T$ gegen
+0 bewiesen. Also gilt
+\begin{align*}
+\textrm{plim}\left( \left( \frac{X'X}{T}\right) ^{-1}\frac{X'u}{T}\right) 
+&=\textrm{plim}\left( \left( \frac{X'X}{T}\right) ^{-1}\right) \textrm{plim}\left( \frac{X'u}{T}\right) \\
+&=\left( \textrm{plim}\left( \frac{X'X}{T}\right) \right) ^{-1}\textrm{plim}\left( \frac{X'u}{T}\right) \\
+&=Q_{XX}^{-1}\cdot 0 \\
+&=0.
+\end{align*}
+Daraus folgt, dass $\hat\beta$ ein konsistenter Schätzer für $\beta$ ist.
+
+Wir beweisen nun die Konsistenz von $\hat{\sigma}^{2}=\hat{u}'\hat{u}/(T-K-1)$. 
+Asymptotisch spielt es keine Rolle ob wir durch $T-K-1$ oder $T$ dividieren,
+\begin{align*}
+\textrm{plim }\hat{\sigma}^{2} &=\textrm{plim}\left( \hat{u}'\hat{u}/\left( T-K-1\right) \right) \\
+&=\textrm{plim}\left( \hat{u}'\hat{u}/T\right) .
+\end{align*}
+Aus dem letzten Semester kennen wir bereits die sogenannte 
+Residuenmacher-Matrix (oder Dach-Matrix) $M=I-X(X'X)^{-1}X'$. 
+\begin{align*}
+\hat{u}'\hat{u} &= u'Mu \\
+&=u'u-u'X\left( X'X\right) ^{-1}X'u.
+\end{align*}
+Also
+\begin{align*}
+\textrm{plim}\left( \hat{u}'\hat{u}/T\right) &=\textrm{plim}\left( u'u/T\right) -\textrm{plim}\left( u'X/T\right) 
+\textrm{plim}\left( X'X/T\right) ^{-1}\textrm{plim}\left(X'u/T\right) \\
+&=\sigma^2-0\cdot Q_{XX}^{-1}\cdot 0 \\
+&=\sigma^2.
+\end{align*}
+Ein konsistenter Schätzer für $\sigma ^{2}Q_{XX}^{-1}$ ist
+\begin{align*}
+\textrm{plim }\left( \hat{\sigma}^{2}\left( \frac{X'X}{T}\right)^{-1}\right) 
+&=\textrm{plim }\left( \hat{\sigma}^{2}\right) \textrm{plim }\left( \frac{X'X}{T}\right) ^{-1} \\
+&=\sigma ^{2}Q_{XX}^{-1}
+\end{align*}
+Da asymptotisch 
+\[ \sqrt{T}\left( \hat\beta-\beta \right) \sim N\left( 0,\sigma^{2}Q_{XX}^{-1}\right), \]
+können wir die Verteilung von $\hat\beta$ approximieren durch
+\[ \hat\beta\sim N\left( \beta ,\sigma ^{2}Q_{XX}^{-1}/T\right) .\]
+Ein geeigneter Schätzer für $\sigma _{u}^{2}Q_{XX}^{-1}/T$ ist
+\begin{align*}
+\hat{V}(\hat\beta) &=\hat{\sigma}^{2}\left( X^{\prime}X/T\right) ^{-1}/T \\
+&=\hat{\sigma}^{2}\left( X'X\right) ^{-1}.
+\end{align*}
+Also ändert sich letztlich nichts! Wenn $X$ und $u$ stochastisch unabhängig
+sind, können wir alle Methoden weiterhin anwenden.
+
+\subsection*{Stochastische exogene Variable, Fall 2}
+
+Im Fall 2 sind der Störtermvektor und die Matrix der exogenen Variablen
+kontemporär unkorreliert, aber sie könnten über die Zeit hinweg
+korreliert sein. Typischer Fall: Verzögerte endogene Variable als Regressor.
+
+Die Unverzerrtheit geht in diesem Fall verloren, aber die Konsistenz und
+die asymptotische Normalverteilung bleiben weiterhin erhalten.
+
+Um die Konsistenz zu beweisen, geht man praktisch genauso vor wie in
+Fall 1. Zu zeigen ist insbesondere, dass
+\[ \textrm{plim }\left( \frac{X'u}{T}\right) =0 \]
+auch gilt, wenn $X$ und $u$ nicht unabhängig sind. Betrachte den
+Zufallsvektor $X'u/T$ elementweise,
+\[ X'u/T=\left[ 
+\begin{array}{c}
+\frac{1}{T}\sum u_{t} \\ 
+\frac{1}{T}\sum x_{1t}u_{t} \\ 
+\vdots \\ 
+\frac{1}{T}\sum x_{Kt}u_{t}
+\end{array}
+\right]. \]
+Wenn ein Gesetz der großen Zahl gilt (und das nehmen wir einfach an), dann ist
+\[ \textrm{plim }\frac{1}{T}\sum x_{kt}u_{t}=E(x_{k}u). \]
+Wegen der kontemporären Unkorreliertheit ist $E(x_{k}u)=E(x_{k})E(u)=0$.
+Damit ergibt sich das Resultat unmittelbar.
+
+Schlussfolgerung: Wenn kontemporäre Korrelation vorliegt, kommt es kaum
+zu Problemen, wenn die Stichprobe nur groß genug ist.
+
+\subsection*{Stochastische exogene Variable, Fall 3}
+
+In diesem Fall sind der Störterm und die exogenen Variablen auch 
+kontemporär miteinander korreliert.
+
+Graphisches Beispiel: Streudiagramm mit korrelierten Störtermen.
+
+Wodurch kann es zu kontemporärer Korrelation kommen?
+
+Fehler in den Variablen (Errors-in-variables). Beispiel: 
+\[ y_{t}=\alpha +\beta x_{t}^{\ast }+e_{t}, \]
+wobei $x_{t}^{\ast }$ nicht direkt beobachtet werden kann. Stattdessen
+beobachten wir eine verrauschte Version der exogenen Variablen.
+Die Annahme C1 ist also verletzt.
+\[ x_{t}=x_{t}^{\ast }+v_{t}. \]
+Annahme: $E(e_{t}v_{t})=0$ für alle $s,t$; beide Störterme sollen
+B1, B2, B3 erfüllen.
+
+Das beobachtete Modell ist
+\begin{align*}
+y_{t} &=\alpha +\beta \left( x_{t}-v_{t}\right) +e_{t} \\
+&=\alpha +\beta x_{t}+\underbrace{\left( e_{t}-\beta v_{t}\right) }_{=u_{t}}
+\end{align*}
+Eigenschaften von $u_{t}$: 
+
+B1
+\[ E(u_{t})=0 \]
+B2
+\[ V(u_{t})=\sigma _{e}^{2}+\beta ^{2}\sigma _{v}^{2} \]
+B3
+\begin{align*}
+Cov(u_{t},u_{s}) &=E(u_{t}u_{s}) \\
+&=E\left( \left( e_{t}-\beta v_{t}\right) \left( e_{s}-\beta v_{s}\right)\right) \\
+&=0,
+\end{align*}
+aber die Störterme sind kontemporär korreliert mit der beobachteten
+exogenen Variable,
+\begin{align*}
+Cov(x_{t},u_{t}) &=E\left( x_{t}u_{t}\right) \\
+&=E\left( \left( x_{t}^{\ast }+v_{t}\right) \left( e_{t}-\beta v_{t}\right)\right) \\
+&=E\left( x_{t}^{\ast }e_{t}-\beta x_{t}^{\ast }v_{t}+v_{t} e_{t}-\beta v_{t}^{2}\right) \\
+&=-\beta \sigma _{v}^{2} \\
+&\neq 0.
+\end{align*}
+
+Simultanes Gleichungssystem: Die exogene Variable ist im Rahmen eines umfassenden
+ökonomischen Modells selbst endogen (das behandeln wir später noch ausführlicher).
+
+Einfaches Beispiel: Makroökonomische Konsumfunktion
+\[ c_{t}=\alpha +\beta y_{t}+u_{t} \]
+und
+\[ y_{t}=c_{t}+i_{t}. \]%
+Dann gilt
+\begin{align*}
+Cov\left( y_{t},u_{t}\right) &=E\left( y_{t}u_{t}\right) \\
+&=E\left( \left( c_{t}+i_{t}\right) u_{t}\right) \\
+&=E\left( \left( \alpha +\beta y_{t}+u_{t}+i_{t}\right) u_{t}\right) \\
+&=E\left( \alpha u_{t}+\beta u_{t}y_{t}+u_{t}^{2}+u_{t}i_{t}\right) \\
+&=\beta E(y_{t}u_{t})+\sigma _{u}^{2} \\
+E\left( y_{t}u_{t}\right) &=\sigma _{u}^{2}/\left( 1-\beta \right) \\
+&\neq 0.
+\end{align*}
+Also kommt es zu kontemporärer Korrelation zwischen Störterm und
+endogener Variable.
+
+Was sind die Folgen kontemporärer Korrelation für den OLS-Schätzer $\hat{\beta}$?
+
+Der Schätzer ist verzerrt,
+\[ E(\hat{\beta}) \neq \beta. \]
+Schlimmer noch: Der Schätzer ist  inkonsistent. Sei
+\[ \textrm{plim}\left( \frac{X'u}{T}\right) =:q, \]
+dann ist
+\begin{align*}
+\textrm{plim }\hat\beta &=\beta +\textrm{plim}\left( \left( \frac{X'X}{T}\right) ^{-1}\frac{X'u}{T}\right) \\
+&=\beta +\textrm{plim}\left( \frac{X'X}{T}\right) ^{-1}\textrm{plim}\left( \frac{X'u}{T}\right) \\
+&=\beta +Q_{XX}^{-1}q \\
+&\neq \beta .
+\end{align*}
+Folglich hilft auch ein großer Stichprobenumfang nicht! Inkonsistenz
+eines Schätzer ist ein gravierendes Problem. Wie kann man das
+Problem lösen?
+
+\section*{Instrumentvariablen (IV-Schätzung)}
+
+Wir betrachten das übliche Modell
+\[ y=X\beta+u \]
+mit kontemporärer Korrelation zwischen $X$ und $u$.
+
+Als Instrumentvariable (oder Instrument) bezeichnet man eine
+Zufallsvariable $Z$, die kontemporär unkorreliert ist mit $u$, aber
+kontemporär korreliert ist mit $X$.
+
+Sei $Z$ eine $(T\times (L+1))$-Matrix von Instrumenten und
+\[ P=Z(Z'Z)^{-1}Z'. \]
+Die Matrix $P$ is symmetrisch und idempotent, d.h.~$P'P=PP=P$.
+Es muss gelten $L\geq K$ (oft ist $L=K$).
+
+Wir transformieren das Modell zu
+\[ Py=PX\beta+Pu. \]
+Der KQ-Schätzer von $\beta$ im transformierten Modell, 
+\begin{align*}
+\hat{\beta}^{IV} &=(X'P'PX)^{-1}X'P'Py \\
+&=(X'PX)^{-1}X'Py
+\end{align*}
+heißt IV-Schätzer.
+
+Im Spezialfall $L=K$ gilt
+\begin{align*}
+\hat{\beta}^{IV} &=(X'Z(Z'Z)^{-1}Z'X)^{-1}X'Z(Z'Z)^{-1}Z'y \\
+&=(Z'X)^{-1}(Z'Z)(X'Z)^{-1}X'Z(Z'Z)^{-1}Z'y \\
+&=(Z'X)^{-1}Z'y
+\end{align*}
+und in der einfachen linearen Regression ($L=K=1$)
+\[ \hat{\beta}^{IV}=\frac{\sum \left( z_{t}-\bar{z}\right) \left( y_{t}-\bar{y}\right)}
+{\sum \left( z_{t}-\bar{z}\right) \left( x_{t}-\bar{x}\right) }. \]
+
+Folgende Annahmen treffen wir über $Z$:
+
+\begin{itemize}
+	\item Konvergenz:
+	\[ \textrm{plim }\frac{Z'Z}{T}=\lim_{T\rightarrow\infty}
+	E\left( \frac{Z'Z}{T}\right) =Q_{ZZ} \]
+	mit $Q_{ZZ}$ positiv definit.
+	\item Asymptotische Korrelation mit exogenen Variablen
+	\[ \textrm{plim }\frac{Z'X}{T}=Q_{ZX} \]
+	mit
+	\[ \text{rang}(Q_{ZX})=K+1. \]
+	\item Asymptotische Unkorreliertheit mit den Störtermen
+	\[ \textrm{plim }\frac{Z'u}{T}=\lim_{T\rightarrow\infty }
+	E\left( \frac{Z'u}{T}\right) =0 \]
+\end{itemize}
+
+Unter diesen Annahmen ist der IV-Schätzer konsistent, aber nicht
+erwartungstreu. Um die Konsistenz zu zeigen, formen wir zuerst
+den Schätzer etwas um,
+\begin{align*}
+\hat\beta^{IV} &= (X'PX)^{-1}X'Py \\
+&=\beta +(X'PX)^{-1}X'Pu.
+\end{align*}
+Also gilt
+\begin{align*}
+\textrm{plim }\hat\beta^{IV} &= \beta +\textrm{plim}\left[(X'PX)^{-1}X'Pu\right] \\
+&=\beta +\textrm{plim}\left[(X'Z(Z'Z)^{-1}Z'X)^{-1}X'Z(Z'Z)^{-1}Z'u\right] \\
+&=\beta +\textrm{plim}\left[\left(\frac{X'Z}{T}\left(\frac{Z'Z}{T}\right)^{-1}\frac{Z'X}{T}\right)^{-1}
+\frac{X'Z}{T}\left(\frac{Z'Z}{T}\right) ^{-1}\frac{Z'u}{T}\right] \\
+&=\beta +(Q_{ZX}'Q_{ZZ}^{-1}Q_{ZX})^{-1}Q_{ZX}'Q_{ZZ}^{-1}0 \\
+&=\beta.
+\end{align*}
+Für den Beweis wird sowohl die asymptotische Unkorreliertheit von 
+$X$ und $u$ als auch die asymptotische Korreliertheit von $X$ und $Z$
+benötigt. Wenn die Instrumente schwach sind (d.h., $Q_{ZX}=0$),
+gilt die Herleitung nicht mehr.
+
+Der IV-Schätzer ist asymptotisch normalverteilt. Aus
+\[ \hat\beta^{IV}-\beta =(X'PX)^{-1}X'Pu \]
+folgt
+\[ \sqrt{T}(\hat\beta^{IV}-\beta) =\left( \frac{X'PX}{T}\right) ^{-1}\cdot T^{-1/2}X'Pu. \]
+Der Term auf der rechten Seite kann wie folgt umgeschrieben werden,
+\begin{align*}
+T^{-1/2}X'Pu &= T^{-1/2}X'Z(Z'Z)^{-1}Z'u \\
+&= \left( \frac{X'Z}{T}\right) \left( \frac{Z'Z}{T}\right)^{-1}T^{-1/2}Z'u.
+\end{align*}
+Für $T\rightarrow \infty $ konvergieren die Terme $\left(\frac{X'Z}{T}\right)$
+und $\left( \frac{Z'Z}{T}\right)^{-1}$ nach Wahrscheinlichkeit gegen $Q_{XZ}$ und 
+$Q_{ZZ}^{-1}$. Der Faktor $T^{-1/2}Z'u$ kann elementweise geschrieben werden als:
+\[ T^{-1/2}Z'u=\left[ 
+\begin{array}{c}
+\sqrt{T}\frac{1}{T}\sum_{t=1}^{T}u_{t} \\ 
+\sqrt{T}\frac{1}{T}\sum_{t=1}^{T}Z_{1t}u_{t} \\ 
+\sqrt{T}\frac{1}{T}\sum_{t=1}^{T}Z_{2t}u_{t} \\ 
+\vdots \\ 
+\sqrt{T}\frac{1}{T}\sum_{t=1}^{T}Z_{Lt}u_{t}
+\end{array}
+\right] . \]
+Nach dem zentralen Grenzwertsatz und weil $E(Z_{kt}u_{t})=0$ ist,
+ist dieser Vektor asymptotisch normalverteilt mit Erwartungswertvektor 0 und
+Kovarianzmatrix
+\[ \sigma ^{2}\textrm{plim}\frac{Z'Z}{T}=\sigma ^{2}Q_{ZZ}. \]
+Folglich gilt
+\begin{align*}
+T^{-1/2}X'Pu &= \left( \frac{X'Z}{T}\right) \left( \frac{Z'Z}{T}\right) ^{-1}T^{-1/2}Z'u \\
+&\rightarrow N\left( 0,Q_{XZ}Q_{ZZ}^{-1}\sigma ^{2}Q_{ZZ}Q_{ZZ}^{-1}Q_{XZ}'\right) \\
+&= N\left( 0,\sigma ^{2}Q_{XZ}Q_{ZZ}^{-1}Q_{XZ}'\right) .
+\end{align*}
+und schließlich
+\begin{align*}
+\sqrt{T}(\hat\beta^{IV}-\beta) 
+&=\left( \frac{X'PX}{T}\right)^{-1}\cdot T^{-1/2}X'Pu \\
+&=\left( \frac{X'Z}{T}\left( \frac{Z'Z}{T}\right) ^{-1}\frac{Z'X}{T}\right) ^{-1}\cdot T^{-1/2}X'Pu \\
+&\rightarrow N\left( 0,\left( Q_{X'Z}Q_{ZZ}^{-1}Q_{XZ}^{\prime}\right) ^{-1}
+\sigma ^{2}Q_{XZ}Q_{ZZ}^{-1}Q_{XZ}'\left(Q_{X'Z}Q_{ZZ}^{-1}Q_{XZ}'\right) ^{-1}\right) \\
+&= N\left( 0,\sigma ^{2}\left( Q_{X'Z}Q_{ZZ}^{-1}Q_{XZ}^{\prime}\right) ^{-1}\right) .
+\end{align*}
+Ein Schätzer für die Kovarianzmatrix 
+\[ V(\hat\beta^{IV})=\sigma ^{2}\left( Q_{X^{\prime}Z}Q_{ZZ}^{-1}Q_{XZ}'\right) ^{-1}/T \]
+ist
+\begin{align*}
+\hat{V}(\hat\beta^{IV}) 
+&=\hat{\sigma}^{2}\left( \left( \frac{X'Z}{T}\right) \left( \frac{Z'Z}{T}\right) ^{-1}
+\left( \frac{Z^{\prime}X}{T}\right) \right) ^{-1}/T \\
+&=\hat{\sigma}^{2}\left( X'Z\left( Z'Z\right)^{-1}Z'X\right) ^{-1} \\
+&=\hat{\sigma}^{2}\left( X'PX\right) ^{-1}
+\end{align*}
+mit
+\begin{align*}
+\hat{\sigma}^{2} &=\hat{u}^{IV\prime }\hat{u}^{IV}/(T-K-1) \\
+\hat{u}^{IV} &= y-X\hat\beta^{IV}.
+\end{align*}
+
+Hausman test (Durbin-Wu-Hausman test)
+
+Die Hypothesen lauten
+\begin{align*}
+H_{0} &:\textrm{plim }\frac{X'u}{T}=0 \\
+H_{1} &:\textrm{plim }\frac{X'u}{T}\neq 0.
+\end{align*}
+Testidee: Unter $H_{0}$ sind sowohl der OLS- als auch der IV-Schätzer
+konsistent, aber unter $H_{1}$ ist nur der IV-Schätzer konsistent.
+Lehne $H_0$ ab, wenn $\hat{\beta}^{IV}$ \quotedblbase zu weit\textquotedblright\ 
+von $\hat{\beta}$ abweicht.
+
+Die Teststatistik ist
+\[ (\hat{\beta}^{IV}-\hat{\beta})'
+\left[\hat{V}(\hat{\beta}^{IV})-\hat{V}(\hat{\beta})\right]^{-1}
+(\hat{\beta}^{IV}-\hat{\beta}). \]
+Unter $H_{0}$ folgt die Teststatistik einer $\chi_{K^*}^2$-Verteilung,
+wobei $K^*$ die Zahl der Spalten in $Z$ ist, die nicht in $X$ enthalten
+sind (also die ``echten Instrumente'').
+
+\section*{Multikollinearität}
+
+Perfekte Multikollinearität beruht praktisch immer auf einem Denkfehler
+bei der Variablendefinition, z.B.\ bei Dummy-Variablen oder Anteilen.
+
+Bei imperfekter Multikollinearität lassen sich die Einflüsse der
+einzelnen exogenen Variablen auf die endogene Variable schlecht
+voneinander trennen. Ein wirkliches Problem liegt aber nicht vor,
+da alle Modellannahmen weiterhin erfüllt sind.
+
+\section{Dynamische Modelle}
+
+Notation und Begriffe:
+\begin{itemize}
+	\item Stochastischer Prozess: $x_{1},\ldots ,x_{T}$
+	\item Momentfunktionen: $E(x_{t})$, $Var(x_{t})$, $Cov(x_{t},x_{t+\tau })$
+	\item (Schwache) Stationarität
+	\begin{eqnarray*}
+		E(x_{t}) &=&\mu \\
+		Var(x_{t}) &=&\sigma_x^2 \\
+		Cov(x_{t},x_{t+\tau }) &=&\gamma _{\tau }
+	\end{eqnarray*}
+	\item Integrationsordnung des Prozesses, $I(d)$
+\end{itemize}
+
+Das einfachste dynamische Modell hat verzögerte exogene Variable
+\[ y_{t}=\alpha +\beta _{0}x_{t}+\beta _{1}x_{t-1}+\ldots +\beta_{K}x_{t-K}+v_{t} \]
+Aus den Parametern ergeben sich der kurzfristige und der langfristige Multiplikator.
+Im ungestörten langfristigen Gleichgewicht gilt
+\begin{align*}
+y_{t-1} &=\tilde{y}=\alpha +\beta _{0}\tilde{x}+\ldots +\beta _{K}\tilde{x}\\
+&=\alpha +\tilde{x}\sum_{k=0}^{K}\beta _{k}.
+\end{align*}
+Eine Erhöhung von $\tilde{x}$ um eine Einheit in Periode $t$ ergibt
+\begin{align*}
+y_{t} &=\alpha +\beta _{0}\left( \tilde{x}+1\right) +\beta _{1}\tilde{x}+\ldots +\beta _{K}\tilde{x} \\
+&=\alpha +\tilde{x}\sum_{k=0}^{K}\beta _{k}+\beta _{0} \\
+&=y_{t-1}+\beta _{0}.
+\end{align*}
+Daher wird $\beta _{0}$ kurzfristiger Multiplikator genannt.
+
+Im neuen ungestörten Gleichgewicht ist langfristig
+\begin{align*}
+y_{t+K} &=\alpha +\beta _{0}\left( \tilde{x}+1\right) +\beta _{1}\left( 
+\tilde{x}+1\right) +\ldots +\beta _{K}\left( \tilde{x}+1\right) \\
+&=\alpha +\tilde{x}\sum_{k=0}^{K}\beta _{k}+\sum_{k=0}^{K}\beta _{k} \\
+&=y_{t-1}+\sum_{k=0}^{K}\beta _{k}.
+\end{align*}%
+Daher heißt $\sum_{k=0}^{K}\beta _{k}$ langfristiger Multiplikator.
+
+Bei der Schätzung dieses dynamischen Modells kommt es zu mehreren Problemen:
+\begin{itemize}
+	\item es gibt viele Parameter,
+	\item Multikollinearität,
+	\item eine präzise Schätzung der einzelnen Komponenten $\beta _{k}$ ist nicht möglich.
+\end{itemize}
+
+Anmerkung: Die Varianz des langfristigen Multiplikators kann selbst dann
+klein sein, wenn alle Komponenten $\hat{\beta}_{k}$ eine große Varianz haben,
+denn
+\[
+Var\left( \sum_{k=1}^{K}\hat\beta_{k}\right) =\sum_{k=1}^{K}Var\left( \hat{%
+	\beta}_{k}\right) +2\sum_{j=0}^{K}\sum_{k=0}^{j-1}Cov\left( \hat\beta_{j},%
+\hat\beta_{k}\right) . 
+\]
+Wenn die Kovarianzen negativ sind, bleibt die Varianz der Summe klein.
+Eine Umparametrisierung des Modells hilft bei der Schätzung des
+langfristigen Multiplikators. Wir schreiben:
+\begin{align*}
+y_{t} &=\alpha +\beta _{0}x_{t}+\beta _{1}x_{t-1}+\ldots +\beta_{K}x_{t-K}+v_{t} \\
+&=\alpha +\beta _{0}x_{t}\underline{-\beta _{0}x_{t-1}+\beta _{0}x_{t-1}}+\beta _{1}x_{t-1} \\
+&+\ldots +\beta _{K}x_{t-K}+v_{t} \\
+&=\alpha +\beta _{0}\Delta x_{t}+\beta _{0}x_{t-1}+\beta _{1}x_{t-1} \\
+&+\ldots +\beta _{K}x_{t-K}+v_{t} \\
+&=\alpha +\beta _{0}\Delta x_{t}+\left( \beta _{0}+\beta _{1}\right) x_{t-1}%
+\underline{-\left( \beta _{0}+\beta _{1}\right) x_{t-2}+\left( \beta
+	_{0}+\beta _{1}\right) x_{t-2}}+\beta _{2}x_{t-2} \\
+&+\ldots +\beta _{K}x_{t-K}+v_{t} \\
+&=\alpha +\beta _{0}\Delta x_{t}+\left( \beta _{0}+\beta _{1}\right) \Delta
+x_{t-1}+\left( \beta _{0}+\beta _{1}+\beta _{2}\right) x_{t-2}+\beta_{3}x_{t-3} \\
+&+\ldots +\beta _{K}x_{t-K}+v_{t} \\
+y_{t} &=\alpha +\delta _{0}\Delta x_{t}+\delta _{1}\Delta x_{t-1}+\delta
+_{2}\Delta x_{t-2}+\ldots +\delta _{K-1}\Delta x_{t-k+1}+\delta
+_{K}x_{t-K}+u_{t},
+\end{align*}
+wobei
+\begin{align*}
+\delta _{0} &=\beta _{0} \\
+\delta _{1} &=\beta _{0}+\beta _{1} \\
+\delta _{2} &=\beta _{0}+\beta _{1}+\beta _{2} \\
+&\vdots \\
+\delta _{K} &=\beta _{0}+\ldots +\beta _{K}.
+\end{align*}
+In dieser Schreibweise erhält man den Standardfehler des langfristigen 
+Multiplikators sofort.
+
+Um die Zahl der zu schätzenden Parameter zu verringern, kann
+man eine funktionale Form für den Verlauf von 
+$\beta _{0},\beta _{1},\ldots ,\beta _{K}$ annehmen.
+Typische Annahmen sind:
+\begin{itemize}
+	\item Polynom-Lags (Almon lags)
+	\item Geometrische Lags (Koyck lags)
+\end{itemize}
+
+\subsection*{Polynom-Lags}
+
+Wir gehen davon aus, dass $\beta_{k}$ polynomial in $k$ ist, z.B.
+eine quadratische Funktion
+\begin{equation*}
+\beta _{k}=\eta _{0}+\eta _{1}k+\eta _{2}k^{2}
+\end{equation*}
+für $k=0,\ldots ,K$. Es gibt nun weniger als $K$ Parameter, denn
+\begin{align*}
+y_{t} &=\alpha +\sum_{k=0}^{K}\beta _{k}x_{t-k}+v_{t} \\
+&=\alpha +\sum_{k=0}^{K}\left( \eta _{0}+\eta _{1}k+\eta _{2}k^{2}\right)x_{t-k}+v_{t} \\
+&=\alpha +\eta _{0}\sum_{k=0}^{K}x_{t-k}+\eta _{1}\sum_{k=0}^{K}kx_{t-k} \\
+&\qquad +\eta _{2}\sum_{k=0}^{K}k^{2}x_{t-k}+v_{t} \\
+&=\alpha +\eta _{0}x_{1t}^{\ast }+\eta _{1}x_{2t}^{\ast }+\eta_{2}x_{3t}^{\ast }+v_{t}.
+\end{align*}
+Die Gültigkeit der Restriktionen kann man wie üblich testen.
+
+\subsection*{Geometrische Lags}
+
+Die $\beta _{k}$ hängen nun wie folgt von $k$ ab:
+\[ \beta _{k}=\beta _{0}\lambda ^{k} \]
+mit $0<\lambda <1$. Es ist üblich, dass man $K=\infty $ setzt,
+\begin{align*}
+y_{t} &=\alpha +\beta _{0}x_{t}+\beta _{1}x_{t-1}+\beta _{2}x_{t-2}+\ldots+v_{t} \\
+&=\alpha +\beta _{0}x_{t}+\beta _{0}\lambda x_{t-1}+\beta _{0}\lambda^{2}x_{t-2}+\ldots +v_{t}.
+\end{align*}
+Der kurzfristige Multiplikator beträgt $\beta _{0}$. Der
+langfristige Multiplikator ist 
+\begin{align*}
+\sum_{k=0}^{\infty }\beta _{k} &=\beta _{0}\sum_{k=0}^{\infty }\lambda ^{k}\\
+&=\beta _{0}\frac{1}{1-\lambda }.
+\end{align*}
+Koyck transformation: 
+\[ y_{t}=\alpha +\beta _{0}x_{t}+\beta _{0}\lambda x_{t-1}
++\beta _{0}\lambda^{2}x_{t-2}+\ldots +v_{t} \]
+minus
+\[ \lambda y_{t-1}=\lambda \alpha +\beta _{0}\lambda x_{t-1}
++\beta _{0}\lambda^{2}x_{t-2}+\ldots +\lambda v_{t-1} \]
+ergibt 
+\begin{align*}
+y_{t}-\lambda y_{t-1} &=\left( \alpha -\lambda \alpha \right) +\beta
+_{0}x_{t}+\left( v_{t}-\lambda v_{t-1}\right) \\
+y_{t} &=\alpha _{0}+\beta _{0}x_{t}+\lambda y_{t-1}+u_{t}.
+\end{align*}
+Eine OLS-Schätzung ist problematisch, weil B3 und C1 verletzt sind.
+
+Modell mit rationaler Lag-Verteilung
+\begin{align*}
+y_{t} &=\alpha _{0}+\beta _{0}x_{t}+\mu _{1}x_{t-1}+\ldots +\mu _{K}x_{t-K}\\
+&+\lambda _{1}y_{t-1}+\ldots +\lambda _{M}y_{t-M}+u_{t}.
+\end{align*}
+Spezialfall $K=M=1$
+\[ y_{t}=\alpha _{0}+\beta _{0}x_{t}+\mu x_{t-1}+\lambda y_{t-1}+u_{t} \]
+Aus
+\[ y_{t}=\alpha _{0}+\beta _{0}x_{t}+\mu x_{t-1}+\lambda y_{t-1}+u_{t} \]
+folgt
+\[ y_{t}-\lambda y_{t-1}=\alpha _{0}+\beta _{0}x_{t}+\mu x_{t-1}+u_{t} \]
+Langfristiges (ungestörtes) Gleichgewicht
+\[ y^{\ast }=\frac{\alpha _{0}}{1-\lambda }+\frac{\beta _{0}+\mu }{1-\lambda }x^{\ast }. \]
+
+\subsection*{Fehlerkorrekturmodell}
+
+Das Fehlerkorrekturmodell kann wie folgt hergeleitet werden. Subtrahiere
+$y_{t-1}$ von
+\[ y_{t}=\alpha _{0}+\beta _{0}x_{t}+\mu x_{t-1}+\lambda y_{t-1}+u_{t}.\]
+Es gilt
+\begin{align*}
+y_{t}-y_{t-1} &=\alpha _{0}+\beta _{0}x_{t}+\mu x_{t-1}+\lambda y_{t-1}-y_{t-1}+u_{t} \\
+\Delta y_{t} &=\alpha _{0}+\beta _{0}x_{t}+\mu x_{t-1}-\left( 1-\lambda\right) y_{t-1}+u_{t} \\
+&=\alpha _{0}+\beta _{0}x_{t}\underline{-\beta _{0}x_{t-1}+\beta _{0}x_{t-1}%
+}+\mu x_{t-1}-\left( 1-\lambda \right) y_{t-1}+u_{t} \\
+&=\alpha _{0}+\beta _{0}\Delta x_{t}+\left( \beta _{0}+\mu \right)
+x_{t-1}-\left( 1-\lambda \right) y_{t-1}+u_{t} \\
+&=\beta _{0}\Delta x_{t}+\left[ -\left( 1-\lambda \right) y_{t-1}+\alpha
+_{0}+\left( \beta _{0}+\mu \right) x_{t-1}\right] +u_{t} \\
+&=\beta _{0}\Delta x_{t}-\left( 1-\lambda \right) \left[ y_{t-1}-\frac{%
+	\alpha _{0}}{1-\lambda }-\frac{\beta _{0}+\mu }{1-\lambda }x_{t-1}\right]+u_{t}.
+\end{align*}
+
+Fehlerkorrekturdarstellung
+\[ \Delta y_{t}=\beta _{0}\Delta x_{t}-\left( 1-\lambda \right) e_{t-1}+u_{t} \]
+mit dem Ungleichgewichtsterm
+\[ e_{t-1}=y_{t-1}-\frac{\alpha _{0}}{1-\lambda }+\frac{\beta _{0}+\mu }{1-\lambda }x_{t-1}. \]
+Wenn $x_{t}$ und $y_{t}$ beide $I(1)$ sind und wenn $e_{t-1}$ außerdem $I(0)$
+ist, dann heißen $x_{t}$ und $y_{t}$ kointegriert.
+
+Schätzung des Fehlerkorrekturmodells:
+\begin{enumerate}
+	\item Bestimme die Integrationsordnung von $x_{t}$ und $y_{t}$.
+	\item Schätze per OLS
+	\[ y_{t-1}=\frac{\alpha _{0}}{1-\lambda }-\frac{\beta _{0}+\mu }{1-\lambda }x_{t-1}+e_{t-1} \]
+	und berechne die Residuen $\hat{e}_{t-1}$.
+	\item Bestimme die Integrationsordnung von $\hat{e}_{t-1}$.
+	\item Wenn Kointegration vorliegt, schätze
+	\[ \Delta y_{t}=\beta _{0}\Delta x_{t}-\left( 1-\lambda \right) \hat{e}_{t-1}+u_{t} \]
+\end{enumerate}
+
+\section{Simultane Gleichungssysteme}
+
+Ein einfaches Beispiel: In einer Pharma-Firma betrachten wir die 
+Werbeausgaben $w_{t}$, die verkaufte Menge $a_{t}$, den Produktpreis $p_{t}$
+und den Werbepreis (pro Seite) $q_{t}$.
+
+Modellgleichungen:
+\begin{align*}
+a_{t} &=\alpha +\beta _{1}w_{t}+\beta _{2}p_{t}+u_{t} \\
+w_{t} &=\gamma +\delta _{1}a_{t}+\delta _{2}q_{t}+v_{t}
+\end{align*}
+
+Die Fehlerterme sollen alle B-Annahmen erfüllen. Außerdem nehmen wir
+an, dass $Cov(u_t,v_t) =\sigma _{uv}$ und $Cov(u_s,v_t)=0$ für $s\neq t$.
+In der ersten Gleichung sind $u_{t}$ und $w_{t}$ korreliert!
+Folglich sind die OLS-Schätzer inkonsistent.
+
+Strukturelle Form versus reduzierte Form:
+
+Aus der strukturellen Form
+\begin{align*}
+a_{t} &=\alpha +\beta _{1}w_{t}+\beta _{2}p_{t}+u_{t} \\
+w_{t} &=\gamma +\delta _{1}a_{t}+\delta _{2}q_{t}+v_{t}
+\end{align*}
+leiten wir die reduzierte Form ab: Das System
+\begin{align*}
+a_{t} &=\alpha +\beta _{1}w_{t}+\beta _{2}p_{t}+u_{t} \\
+w_{t} &=\gamma +\delta _{1}a_{t}+\delta _{2}q_{t}+v_{t}
+\end{align*}
+löst man nach den endogenen Variablen $a_{t}$ und $w_{t}$ auf.
+Die erste Gleichung ist
+\begin{align*}
+a_{t} &=\alpha +\beta _{1}w_{t}+\beta _{2}p_{t}+u_{t} \\
+&=\alpha +\beta _{1}\left( \gamma +\delta _{1}a_{t}+\delta
+_{2}q_{t}+v_{t}\right) +\beta _{2}p_{t}+u_{t} \\
+&=\alpha +\beta _{1}\gamma +\beta _{1}\delta _{1}a_{t}+\beta _{1}\delta
+_{2}q_{t}+\beta _{1}v_{t}+\beta _{2}p_{t}+u_{t} \\
+a_{t}\left( 1-\beta _{1}\delta _{1}\right) &=\alpha +\beta _{1}\gamma
++\beta _{1}\delta _{2}q_{t}+\beta _{2}p_{t}+u_{t}+\beta _{1}v_{t} \\
+a_{t} &=\frac{\alpha +\beta _{1}\gamma }{1-\beta _{1}\delta _{1}}+\frac{%
+	\beta _{2}}{1-\beta _{1}\delta _{1}}p_{t}+\frac{\beta _{1}\delta _{2}}{%
+	1-\beta _{1}\delta _{1}}q_{t}+\frac{u_{t}+\beta _{1}v_{t}}{1-\beta
+	_{1}\delta _{1}}
+\end{align*}
+Analog ergibt sich für die zweite Gleichung
+\[ w_{t}=\frac{\gamma +\delta _{1}\alpha }{1-\beta _{1}\delta _{1}}+\frac{\beta
+	_{2}\delta _{1}}{1-\beta _{1}\delta _{1}}p_{t}+\frac{\delta _{2}}{1-\beta
+	_{1}\delta _{1}}q_{t}+\frac{\delta _{1}u_{t}+v_{t}}{1-\beta _{1}\delta _{1}}.\]
+Wir definieren eine neue Notation für die Parameter,
+\begin{align*}
+a_{t} &=\pi _{1}+\pi _{2}p_{t}+\pi _{3}q_{t}+u_{t}^{\ast } \\
+w_{t} &=\pi _{4}+\pi _{5}p_{t}+\pi _{6}q_{t}+v_{t}^{\ast }
+\end{align*}
+mit
+\begin{align*}
+\pi _{1} &=\frac{\alpha +\beta _{1}\gamma }{1-\beta _{1}\delta _{1}} \\
+\pi _{2} &=\frac{\beta _{2}}{1-\beta _{1}\delta _{1}} \\
+\pi _{3} &=\frac{\beta _{1}\delta _{2}}{1-\beta _{1}\delta _{1}} \\
+\pi _{4} &=\frac{\gamma +\delta _{1}\alpha }{1-\beta _{1}\delta _{1}} \\
+\pi _{5} &=\frac{\beta _{2}\delta _{1}}{1-\beta _{1}\delta _{1}} \\
+\pi _{6} &=\frac{\delta _{2}}{1-\beta _{1}\delta _{1}}.
+\end{align*}
+In der reduzierten Form stehen alle endogenen Variablen auf der linken
+Seite und alle exogenen Variablen auf der rechten Seite.
+
+Die Gleichungen der reduzierten Form kann man mit OLS schätzen.
+
+Die Schätzer $\hat{\pi}_{1},\ldots ,\hat{\pi}_{6}$ können zurück
+transformiert werden in die Schätzer $\hat{\alpha},\hat{\beta}_{1},\hat{\beta}_{2},
+\hat{\gamma},\hat{\delta}_{1},\hat{\delta}_{2}$, und zwar
+\begin{align*}
+\beta _{1} &=\frac{\pi _{3}}{\pi _{6}} \\
+\delta _{1} &=\frac{\pi _{5}}{\pi _{2}}.
+\end{align*}
+Umschreiben ergibt
+\begin{align*}
+\alpha &=\pi _{1}-\frac{\pi _{3}\pi _{4}}{\pi _{6}} \\
+\gamma &=\pi _{4}-\frac{\pi _{1}\pi _{5}}{\pi _{2}} \\
+\beta _{2} &=\pi _{2}-\frac{\pi _{3}\pi _{5}}{\pi _{6}} \\
+\delta _{2} &=\pi _{6}-\frac{\pi _{3}\pi _{5}}{\pi _{2}}.
+\end{align*}
+
+Die Schätzer $\hat{\alpha},\hat{\beta}_{1},\hat{\beta}_{2},
+\hat{\gamma},\hat{\delta}_{1},\hat{\delta}_{2}$ sind konsistent.
+
+Manchmal lassen sich die strukturellen Parameter nicht aus den
+reduzierten Parametern herleiten (Identifikationsproblem), z.B.
+hat die kleinere strukturelle Form
+\begin{align*}
+a_{t} &=\alpha +\beta _{1}w_{t}+\beta _{2}p_{t}+u_{t} \\
+w_{t} &=\gamma +\delta _{1}a_{t}+v_{t}
+\end{align*}
+die reduzierte Form
+\begin{align*}
+a_{t} &=\pi _{1}+\pi _{2}p_{t}+u_{t}^{\ast } \\
+w_{t} &=\pi _{3}+\pi _{4}p_{t}+v_{t}^{\ast }.
+\end{align*}
+Nun gibt es fünf strukturelle Parameter, aber nur vier
+reduzierte Parametern. Eine eindeutige Rücktransformation
+ist also unmöglich.
+
+Manchmal gibt es auch mehr reduzierte Parameter als strukturelle
+Parameter. 
+
+Abzählkriterium: Sei
+\begin{align*}
+\dot{K} &=\text{Anzahl der exogenen Variablen im Gesamtmodell} \\
+K^{\ast } &=\text{Anzahl der exogenen Variablen in der betrachteten Gleichung} \\
+M^{\ast } &=\text{Anzahl der endogenen Variablen in der betrachteten Gleichung.}
+\end{align*}
+Eine Gleichung ist
+\begin{eqnarray*}
+	\text{unteridentifiziert, wenn }M^{\ast }-1 &>&\dot{K}-K^{\ast } \\
+	\text{exakt identifiziert, wenn }M^{\ast }-1 &=&\dot{K}-K^{\ast } \\
+	\text{überidentifiziert, wenn }M^{\ast }-1 &<&\dot{K}-K^{\ast }.
+\end{eqnarray*}
+$M^{\ast }-1$ ist die Anzahl der endogenen Regressoren (auf der rechten Seite);
+und $\dot{K}-K^{\ast }$ ist die Anzahl der exogenen Variablen in den anderen
+Gleichungen. Man braucht also mindestens eine exogene Variable aus den anderen
+Gleichungen für jeden endogenen Regressor.
+
+\subsection*{Schätzung von exakt oder überidentifizierten Gleichungen}
+
+Die zweistufige Methode der kleinsten Quadrate (2SLS) hat folgende
+Grundidee: Generiere Instrumentvariablen aus der reduzierten Form.
+
+Beispiel für 2SLS: Die zweite Gleichung von
+\begin{align*}
+a_{t} &=\alpha +\beta _{1}w_{t}+\beta _{2}p_{t}+u_{t} \\
+w_{t} &=\gamma +\delta _{1}a_{t}+\delta _{2}q_{t}+v_{t}
+\end{align*}
+soll geschätzt werden.
+
+Erste Stufe: Schätze
+\[ a_{t}=\pi _{1}+\pi _{2}p_{t}+\pi _{3}q_{t}+u_{t}^{\ast } \]
+per OLS und berechne $\hat{a}_{t}=\hat{\pi}_{1}+\hat{\pi}_{2}p_{t}+\hat{\pi}_{3}q_{t}$.
+
+Zweite Stufe: OLS-Schätzung von
+\[ w_{t}=\gamma +\delta _{1}\hat{a}_{t}+\delta _{2}q_{t}+v_{t} \]
+Die 2SLS-Schätzer (IV-Schätzer) sind konsistent, aber die Standardfehler aus der
+zweiten Stufe müssen noch angepasst werden.
+
+Die Schätzer haben eine einfache asymptotische Verteilung, aber die
+Verteilung der Schätzer in endlichen Stichproben ist kompliziert.
+
+\subsection*{Matrixnotation für interdependente Gleichungssysteme}
+
+Allgemeine Notation: Sei $M$ die Anzahl der Gleichungen im System.
+Die endogenen Variablen werden in der $(T\times M)$-Matrix
+\[ Y=[y_1\quad y_2\quad \ldots \quad y_M] \]
+zusammengefasst. Die exogenen Variablen (incl.\ Achsenabschnitt)
+befinden sich in der $(T\times \dot{K})$-Matrix
+\[ X=[x_0\quad x_1\quad \ldots \quad x_K]. \]
+Die $m$-te Gleichung ist
+\begin{align*}
+y_m &=\alpha_m x_0+\beta _{1m}x_1+\beta_{2m}x_2+\ldots +\beta _{Km}x_K \\
+&\quad+\gamma _{1m}y_{1}+\ldots +\gamma _{m-1m}y_{m-1}+\gamma_{m+1m}y_{m+1}+\ldots +\gamma _{Mm}y_{M} \\
+&\quad+u_{m}.
+\end{align*}
+Setzt man $\gamma _{mm}=-1$, dann lässt sich die $m$-te Gleichung 
+kompakt schreiben als
+\[ \gamma _{1m}y_{1}+\ldots +\gamma _{Mm}y_{M}
++\alpha _{m}x_{0}+\beta _{1m}x_{1}+\ldots +\beta _{Km}x_{K}+u_{m}=0. \]
+Wir definieren die Parametervektoren
+\begin{align*}
+\gamma_{m} &=(\gamma _{1m},\gamma _{2m},\ldots ,\gamma_{Mm})' \\
+\beta_{m} &=(\alpha _{m},\beta _{1m},\beta _{2m},\ldots ,\beta_{Km})'.
+\end{align*}
+Mit ihrer Hilfe kann man das komplette Gleichungssystem wie folgt schreiben
+\begin{align*}
+Y\gamma_{1}+X\beta_{1}+u_{1} &= 0 \\
+Y\gamma_{2}+X\beta_{2}+u_{2} &= 0 \\
+&\vdots \\
+Y\gamma_{M}+X\beta_{M}+u_{M} &= 0
+\end{align*}
+oder 
+\[ Y\Gamma+XB+U=0, \]
+wobei (beachte die Dimensionen!)
+\begin{align*}
+\Gamma &=[\gamma_{1}\quad \dots \quad \gamma_{M}] \\
+B &=[\beta_{1}\quad \dots \quad \beta_{K}] \\
+U &=[u_{1}\quad \dots \quad u_{M}].
+\end{align*}
+Die Störterme $u_{m}$, $m=1,\ldots ,M$, sollen alle B-Annahmen
+erfüllen. Es ist jedoch erlaubt, dass die Störterme verschiedener
+Gleichungen miteinander korreliert sind.
+
+Annahmen:
+\begin{align*}
+E(u_{m}u_{m}') &=\sigma_{m}^{2}I_{T}\qquad \text{für }m=1,\ldots ,M \\
+E(u_{m}u_{n}') &=\sigma_{mn}I_{T}\qquad \text{für }m\neq n
+\end{align*}
+(Gibt es eine kompakte Notation für diese Annahmen für die
+Matrix $U$?)
+
+Die reduzierte Form (alle endogenen Variablen stehen auf der linken
+Seite, alle exogenen Variablen rechts) lässt sich wie folgt bestimmen:
+Aus
+\[ Y\Gamma+XB+U=0 \]
+folgt
+\[ Y\Gamma \Gamma^{-1}+XB\Gamma^{-1}+U\Gamma^{-1}=0 \]
+oder
+\[ Y=X\Pi+V \]
+mit $\Pi=-B\Gamma^{-1}$ und $V=-U\Gamma^{-1}$.
+
+Die strukturellen Parameter in $\Gamma $ und $B$ können
+identifiziert werden, wenn sich ihre Werte aus den Parametern
+$\Pi$ bestimmen lassen.
+
+Anzahl der Parameter:
+\begin{align*}
+\Pi  &:\quad \dot{K}M \\
+\Gamma  &:\quad M^{2}-M \\
+B &:\quad \dot{K}M
+\end{align*}
+Folglich brauchen wir mindestens $M^2-M$ geeignete Restriktionen in $\Gamma$ 
+und/oder $B$.
+
+\subsection*{Identifikation simultaner Gleichungssysteme}
+
+Im folgenden gehen wir davon aus, dass alle Restriktionen Null-Restriktionen sind.
+Das Modell ist
+\[ Y\Gamma +XB+U=0. \]
+Ohne Beschränkung der Allgemeinheit betrachten wir nur die erste Gleichung.
+Ferner seien die übrigen Gleichungen so sortiert, dass die $M_{1}^{\ast }-1$ 
+endogenen und $K_{1}^{\ast }$ exogenen variablen der ersten Gleichung 
+zuerst kommen ($Y_{1}$ oder $X_{1}$), danach folgen die $M-M_{1}^{\ast }$ 
+endogenen und $\dot{K}-K_{1}^{\ast }$ exogenen Variablen, die nicht in der
+ersten Gleichung vorkommen.
+\[
+\lbrack y\quad Y_{1}\quad Y_{2}]\left[ 
+\begin{array}{cc}
+-1 & \Gamma _{02} \\ 
+\gamma _{1} & \Gamma _{12} \\ 
+0 & \Gamma _{22}%
+\end{array}%
+\right] +[X_{1}\quad X_{2}]\left[ 
+\begin{array}{cc}
+\beta _{1} & B_{12} \\ 
+0 & B_{22}%
+\end{array}%
+\right] +[u_{1}\quad U_{2}]=0. 
+\]
+Die Matrizen $\Gamma $ und $B$ seien analog partitioniert.
+
+In dieser Notation lautet die erste Gleichung
+\[ -y+Y_{1}\gamma _{1}+X_{1}\beta _{1}+u_{1}=0 \]
+oder
+\[ y=Y_{1}\gamma _{1}+X_{1}\beta _{1}+u_{1}=0. \]
+
+Das Endogenitätsproblem kann man durch eine IV-Schätzung 
+lösen. Die $M_{1}^{\ast }-1$ endogenen Variablen $Y_{1}$
+müssen durch Instrumente ersetzt werden. Es gibt $\dot{K}-K_{1}^{\ast }$ 
+Instrumente in $X_{2}$. Das Ordnungs- oder Abzählkriterium ist also
+\[ \dot{K}-K_{1}^{\ast }\geq M_{1}^{\ast }-1. \]
+Diese Bedingung ist jedoch nur eine notwendige Bedingung für
+die Identifikation. Die hinreichende Bedingung lautet, dass
+die Instrumente in $X_{2}$ tatsächlich valide für die IV-Schätzung sind.
+
+Der erste 2SLS-Schritt ergibt sich aus der reduzierten Form
+\[ Y=X\left( B\Gamma ^{-1}\right) +V \]
+oder
+\[
+\lbrack y\quad Y_{1}\quad Y_{2}]=[X_{1}\quad X_{2}]\left( \left[ 
+\begin{array}{cc}
+\beta _{1} & B_{12} \\ 
+0 & B_{22}%
+\end{array}%
+\right] \Gamma ^{-1}\right) +V. 
+\]%
+Diese Gleichung kann man auch schreiben als
+\[
+\lbrack y\quad Y_{1}\quad Y_{2}]=[X_{1}\quad X_{2}]\left[ 
+\begin{array}{ccc}
+\pi _{1} & \Pi _{11} & \Pi _{12} \\ 
+\pi _{2} & \Pi _{21} & \Pi _{22}%
+\end{array}%
+\right] +V. 
+\]%
+Um sicherzustellen, dass alle Elemente von $Y_{1}$ mit $X_{2}$
+korreliert sind, muss die zugehörige Partition der Matrix
+$B\Gamma ^{-1}$ (d.h.\ $\Pi _{21}$) vollen Rang haben.
+Man spricht daher auch vom Rang-Kriterium. Man kann zeigen,
+dass diese Bedingung äquivalent ist zu
+\[
+Rang\left( \left[ 
+\begin{array}{c}
+\Gamma _{22} \\ 
+B_{22}%
+\end{array}%
+\right] \right) =M-1. 
+\]
+
+\subsection*{Schätzung interdependenter Gleichungssysteme}
+
+Reduzierte Form:
+\begin{align*}
+y_{1} &=X\pi_{1}+v_{1} \\
+&\vdots \\
+y_{M} &=X\pi_{M}+v_{M}
+\end{align*}
+OLS-Schätzung der Gleichung $m$:
+\[ \hat{\pi}_{m}=(X'X)^{-1}X'y_{m} \]
+OLS-Schätzung aller Gleichungen:
+\[ \hat{\Pi}=(X'X)^{-1}X'Y \]
+
+Indirekte Kleinste-Quadrate-Methode: Wenn Gleichung $m$ exakt
+identifiziert ist, kann man die strukturellen Parameter
+eindeutig aus der Matrix $\hat\Pi$ bestimmen.
+
+Wenn die Gleichung $m$ exakt oder überidentifiziert ist, 
+kann man 2SLS verwenden. Dazu ordnet und partitioniert man
+die Matrizen, so dass 
+\[ \left[ y_{m}\quad \bar{Y}_{m}\quad \check{Y}_{m}\right] 
+\left[ 
+\begin{array}{c}
+-1 \\ 
+\bar{\gamma}_{m} \\ 
+0
+\end{array}%
+\right] +X\beta_{m}+u_{m}=0,
+\end{equation*}
+wobei $\bar{Y}_{m}$ die endogenen Regressoren aus Gleichung $m$ enthält
+und $\check{Y}_{m}$ die nicht in Gleichung $m$ enthaltenen endogenen
+variablen enthält.
+
+In dieser Notation kann man Gleichung $m$ so schreiben:
+\begin{align*}
+y_{m} &=\bar{Y}_{m}\bar{\gamma}_{m}+X\beta_{m}+u_{m} \\
+&=\left[ \bar{Y}_{m}\quad X\right] \left[ 
+\begin{array}{c}
+\bar{\gamma}_{m} \\ 
+\beta_{m}%
+\end{array}%
+\right] +u_{m}
+\end{align*}
+Erster Schritt der 2SLS-Schätzung: Schätze
+\[ \hat{\Pi}=(X'X)^{-1}X'Y \]
+bzw.
+\[ \left[ \hat{\pi}_{m}\quad \widehat{\bar{\Pi}}_{m}\quad 
+\widehat{\check{\Pi}}_{m}\right] =(X'X)^{-1}X'
+\left[ y_{m}\quad \bar{Y}_{m}\quad \check{Y}_{m}\right] \]
+Die Instrumente für die endogenen Regressoren sind
+\[ \widehat{\bar{Y}}_{m}=X\widehat{\bar{\Pi}}_{m}. \]
+Zweiter Schritt: Ersetze die endogenen Regressoren $\bar{Y}_{m}$ in
+\[ y_{m}=\left[ \bar{Y}_{m}\quad X\right] \left[ 
+\begin{array}{c}
+\bar{\gamma}_{m} \\ 
+\beta _{m}%
+\end{array}%
+\right] +u_{m} \]
+durch die Instrumente $\widehat{\bar{Y}}_{m}$.
+
+Der 2SLS-Schätzer lautet
+\[ \left[ 
+\begin{array}{c}
+\widehat{\bar{\gamma}}_{m}^{ZSKQ} \\ 
+\hat{\beta}_{m}^{ZSKQ}
+\end{array} \right] =\left[ \left[ \widehat{\bar{Y}}_{m}\quad X\right]'
+\left[ \widehat{\bar{Y}}_{m}\quad X\right] \right] ^{-1}
+\left[ \widehat{\bar{Y}}_{m}\quad X\right]'y_{m} \]
+
+Die zugehörige Kovarianzmatrix des Schätzers
+\[ \left[ 
+\begin{array}{c}
+\widehat{\bar{\gamma}}_{m}^{ZSKQ} \\ 
+\hat{\beta}_{m}^{ZSKQ}
+\end{array}
+\right] \]
+ist
+\[ \hat{\sigma}^{2}\left[ \left[ \widehat{\bar{Y}}_{m}\quad X\right]'
+\left[ \widehat{\bar{Y}}_{m}\quad X\right] \right] ^{-1} \]
+mit
+\[ \hat{\sigma}^{2}=\frac{1}{T}\sum_{t=1}^{T}\left(y_{m}-\left[ 
+\bar{Y}_{m}\quad X\right] \left[ \begin{array}{c}
+\widehat{\bar{\gamma}}_{m}^{ZSKQ} \\ 
+\hat{\beta}_{m}^{ZSKQ}
+\end{array}
+\right] \right)^2 \]
+und NICHT
+\[ \hat{\sigma}^{2}=\frac{1}{T}\sum_{t=1}^{T}\left( y_{m}-\left[ 
+\widehat{\bar{Y}}_{m}\quad X\right] \left[ \begin{array}{c}
+\widehat{\bar{\gamma}}_{m}^{ZSKQ} \\ 
+\hat{\beta}_{m}^{ZSKQ}
+\end{array}
+\right] \right)^2. \]
+
+\section*{Weitere Themen in Ökonometrie}
+
+\begin{itemize}
+	\item Univariate Zeitreihenanalyse
+	\item Multivariate Zeitreihenanalyse
+	\item Paneldaten-Ökonometrie
+	\item Bayesianische Ökonometrie und MCMC
+	\item Qualitative abhängige Variable (Logit, Probit, Tobit, geordnetes Probit, 
+	multinomiales Probit, \ldots )
+	\item Fortgeschrittene Schätzmethoden (GMM, MSM, Bootstrap, \ldots)
+	\item Durationsanalyse 
+	\item Zähldaten; Stichprobenverfahren; fehlende Werte
+	\item \ldots
+\end{itemize}
+\end{document}

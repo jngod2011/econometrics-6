@@ -1,0 +1,136 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Die Dokumentenklasse und ihre Optionen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[captions=tableheading, 12pt, headings=small, parskip=half]{scrartcl}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% LaTeX-Pakete %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{setspace,               % Zeilendurchschuss verändern (\doublespacing,\onehalfspacing)
+            booktabs,               % Schöne Tabellen
+            amsmath,                % Mathepackage der American Mathematical Society
+            amsfonts,               % Paket für schönere mathematische Schriftarten
+            amssymb,                % Paket für schönere mathematische Symbole
+            bbm, 					% Blackboard-Style im Mathemodus
+            bm, 					% Bold-Symbols im Mathemodus
+            enumitem, 				% Anpassungen der enumerate-Umgebung
+            graphicx,               % Paket zum Laden von Graphiken
+            lmodern,                % Schrifttyp, der mit Microtype zusammenarbeitet
+            nicefrac,				% Schräge Brüche
+            csquotes,				% für Anführungszeichen
+            microtype,              % Typographische Korrekturen bei Umbrüchen
+            hyperref,				% url-Befehl
+            calligra,
+            setspace,
+            multirow,
+            float,
+            eurosym,
+            epstopdf,
+            lscape,
+            longtable,
+            calc,
+            dsfont
+}
+\usepackage[left=2.5cm,right=2.5cm,top=2cm,bottom=2cm]{geometry} % Seiteneinrichtung
+%\usepackage{geometry} % Seiteneinrichtung
+
+\usepackage{dcolumn}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+
+
+% \graphicspath{{C:\Users\stapperm\Documents\Econometrics 1\Code}}
+
+\newcounter{tfno}
+\newcommand{\mybox}{\resizebox{.5cm}{!}{\raisebox{-.5ex}{$\Box$}}}
+%
+\setcounter{tfno}{0} %% moved here
+\newenvironment{truefalse}{%
+	%\setcounter{tfno}{0}  %% moved up
+	\renewcommand\arraystretch{1.5}
+	\setlength\LTleft{0pt}
+	\setlength\LTright{0pt}
+	\begin{longtable}{>{\stepcounter{tfno}\thetfno.}cp{.5\textwidth}@{\extracolsep{\fill}}cc}
+		\multicolumn{1}{r}{}&  & \fbox{\parbox{\widthof{True}}{True}} & \fbox{\parbox{\widthof{False}}{False}}  \\
+	}{%
+	\end{longtable}
+	\renewcommand\arraystretch{1}
+}
+\newcommand\tfquestion[1]{ & #1 & \mybox  & \mybox  \\}
+
+
+\begin{document}
+
+\begin{table}[H]
+	\begin{tabular}{lr}
+		& \multirow{4}{*}{\includegraphics[width = 8cm]{Code2/wwu_logo.png}}\\
+		Dr. Willi Mutschler& \\
+		M.Sc. Manuel Stapper & \\
+		Summer term 2018 \hphantom{MMMMMMMMMMM}& 
+	\end{tabular}
+\end{table}
+\vspace{1cm}
+\begin{center}
+	{\Large Econometrics II} \\
+	-- Comprehension Exercises --
+\end{center}
+
+\section*{\underline{Exercise 1}}
+
+The food expenses $y_t$ of $n=150$ households are regressed on household income
+$x_t$ and squared household income $x_t^2$. You should investigate if there
+is heteroskedasticity. There are three groups: The poorest third of the households,
+the middle third and the richest third. Regressions for the first and third
+group yield the following sums of squared residuals:
+\begin{align*}
+S_{\hat u \hat u}^I &=     0.00838 \\
+S_{\hat u \hat u}^{III} &= 0.07346.
+\end{align*}
+
+\begin{enumerate}[label = \alph*)]
+	\item What might be a problem with classical OLS estimation in this situation?
+	\item Perform a suitable test to check if the aforementioned problem is present.
+	\item How would you proceed if the above test suggests the problem is present? 
+\end{enumerate}
+
+\section*{\underline{Exercise 2}}
+
+Consider the model
+\[ y=X\beta+u \qquad\textrm{with}\qquad u\sim N(0,\Omega) \]
+with the GLS estimator
+\[ \hat\beta_{GLS}=(X'\Omega^{-1}X)^{-1}X'\Omega^{-1}y. \]
+\begin{enumerate}[label = \alph*)]
+	\item Show that $\hat\beta_{GLS}$ is still unbiased if
+	$X$ is stochastic but independent of $u$. You may assume that the
+	matrix $\Omega$ is non-stochastic and known.
+	\item Which conditions must be satisfied to ensure consistency of the 
+	estimator?
+\end{enumerate}
+
+\section*{\underline{Exercise 3}}
+
+Consider the simple linear regression model
+\[ y_t=\alpha+\beta x_t+u_t. \]
+\begin{enumerate}[label = \alph*)]
+	\item Explain why an OLS estimation of the coefficients 
+	yields inconsistent estimators if the regressor is correlated 
+	with the error term.
+	\item Is $x_{t-1}$ a valid instrument if a large (small)
+	error in $t-1$ tends to be followed by a large (small)
+	error in $t$?
+\end{enumerate}
+
+\section*{\underline{Exercise 4}}
+\begin{enumerate}[label = \alph*)]
+	\item In a regression model with errors that are non-normally distributed, what concept is the justification for tests to give valid results at large samples?
+	\item Describe the principle of the \textit{Law of Large Numbers} in your own words.
+	\item State the null hypothesis of the \textit{White-Test}. What is the advantage of it compared to the \textit{Goldfeld-Quandt-Test}?
+	\item Is there a way to deal with possible heteroscedasticity without using the aforementioned tests?
+	\item When not using a computer for the one-sided \textit{Durbin-Watson-Test}: Why is a lower and upper quantile for the distribution of test statistic needed?
+	\item What values of a test statistics indicate positive/negative autocorrelation at a \textit{Durbin-Watson-Test}?
+\end{enumerate}
+
+
+
+
+\end{document}

@@ -1,0 +1,106 @@
+// question: 0  name: Switch category to $course$/Standard für Ö1-2017_2/SimpleOLS
+$CATEGORY: $course$/Standard für Ö1-2017_2/SimpleOLS
+
+
+// question: 142789  name: Estimator1
+::Estimator1::[html]<p>Consider the simple linear regression model $$y_t \= \\alpha + \\beta \nx_t + u_t$$ and the following estimator for the regression coefficient \n$$\\beta$$\:</p><p>$$\\tilde\{\\beta\} \= \\frac\{\\bar\{y\}_2 - \\bar\{y\}_1\}\{\\bar\{x\}_2 - \\bar\{x\}_1\}$$</p><p>where</p><p>$$\\bar\{y\}_1\n \= \\frac\{1\}\{10\}\\sum_\{t\=1\}^\{10\} y_t$$, $$\\bar\{y\}_2 \= \n\\frac\{1\}\{10\}\\sum_\{t\=11\}^\{20\} y_t$$, $$\\bar\{x\}_1 \= \n\\frac\{1\}\{10\}\\sum_\{t\=1\}^\{10\} x_t$$ and $$\\bar\{x\}_2 \= \n\\frac\{1\}\{10\}\\sum_\{t\=11\}^\{20\} x_t$$. Furthermore, assume that \n$$E(u_t)\=0$$, $$E(u_t^2)\=\\sigma^2$$ and $$E(u_t u_s)\=0$$ for $s\\neq t$</p><p><br></p>
+
+// question: 142794  name: Estimator2
+::Estimator2::[html]<p>Consider the simple linear regression model $$y_t \= \\alpha + \\beta x_t + u_t$$ and the following linear estimators\:</p><p>$$\\tilde\{\\alpha\} \= \\sum_\{t\=1\}^T a_t y_t$$ and $$\\tilde\{\\beta\} \= \\sum_\{t\=1\}^T b_t y_t$$.</p><p>Two estimators are proposed for estimating $$\\alpha$$\:</p><p>$$\\tilde\{\\alpha\}_0 \= \\frac\{x_T y_1-x_1 y_T\}\{x_T - x_1\}$$</p><p>and</p><p><p>$$\\tilde\{\\alpha\}_1 \= \\frac\{x_\{T-1\} y_2-x_2 y_\{T-1\}\}\{x_\{T-1\} - x_2\}$$</p></p>
+
+// question: 142790  name: Estimator1a
+::Estimator1a::[html]The estimator $$\\tilde\{\\beta\}$$ is unbiased.<br><p><br></p>{TRUE}
+
+
+// question: 142791  name: Estimator1b
+::Estimator1b::[html]<p>Assume that $$\\sum_\{t\=1\}^20 (x_t -\\bar\{x\})^2\=40$$,&nbsp; $$\\sigma^2\=1$$,&nbsp; $$\\bar\{x\}_1\=3$$&nbsp; and&nbsp; $$\\bar\{x_2\}\=5$$.</p><p>The estimated variance of $$\\tilde\{\\beta\}$$ is equal to 10.<br></p><p><br></p>{TRUE}
+
+
+// question: 142792  name: Estimator1c
+::Estimator1c::[html]<p>Assume that $$\\sum_\{t\=1\}^20 (x_t -\\bar\{x\})^2\=40$$,&nbsp; $$\\sigma^2\=1$$,&nbsp; $$\\bar\{x\}_1\=3$$&nbsp; and&nbsp; $$\\bar\{x_2\}\=5$$.</p><p>The estimated variance of the OLS estimator for $$\\beta$$ is equal to $$\\frac\{1\}\{40\}$$.<br></p><p><br></p>{TRUE}
+
+
+// question: 142793  name: Estimator1d
+::Estimator1d::[html]<p>If the regressor has the form</p><p>$$x_t \= \\begin\{cases\} 1 &amp; \\text\{for \} t\=1,...,10\\\\ -1 &amp; \\text\{for \} t\=11,...,20\\end\{cases\}$$</p><p>then $$\\tilde\{\\beta\}$$ is equal to the OLS estimator.<br></p><p><br></p>{TRUE}
+
+
+// question: 142795  name: Estimator2a
+::Estimator2a::[html]The variance of $$\\tilde\{\\alpha\}_0$$ is given by $$\\frac\{x_T^2+x_1^2\}\{(x_T-x_1)^2\} \\sigma^2$$.<br><p><br></p>{TRUE}
+
+
+// question: 142796  name: Estimator2b
+::Estimator2b::[html]<p>Consider estimating $$\\alpha$$ by taking the average of the proposed estimators, i.e.</p><p>$$\\tilde\{\\alpha\} \= \\frac\{1\}\{2\} (\\tilde\{\\alpha\}_0 + \\tilde\{\\alpha\}_1)$$</p><p>Then the corresponding weights of the linear estimator are equat to</p><p> $$a_1\=5/8$$, $$a_2\=-1/4$$,&nbsp; $$a_3\=0$$,&nbsp; $$a_4\=3/4$$&nbsp; and&nbsp; $$a_5\=-1/8$$.<br></p>{TRUE}
+
+
+// question: 0  name: Switch category to $course$/Standard für Ö1-2017_2/Foundations Statistics
+$CATEGORY: $course$/Standard für Ö1-2017_2/Foundations Statistics
+
+
+// question: 138442  name: RepStat1
+::RepStat1::[html]<p>There are two random events. The probability that at least one of the two events will occur is equal to the sum of the individual probabilities.<br></p>{FALSE}
+
+
+// question: 138451  name: RepStat 10
+::RepStat 10::[html]<p>Assume that the random variables X and Y are uncorrelated, whereas Y and Z are stochastically independent. Then X and Y are also stochastically independent.<br></p>{FALSE}
+
+
+// question: 138452  name: RepStat 11
+::RepStat 11::[html]<p>Assume that the random variables X and Y are uncorrelated, whereas Y and Z are stochastically independent. Then Y and Z are also uncorrelated.<br></p>{TRUE}
+
+
+// question: 138453  name: RepStat 12
+::RepStat 12::[html]<p>Assume that the random variables X and Y are uncorrelated, whereas Y and Z are stochastically independent. Then X and Z are also stochastically independent, if X and Y are also normally distributed.<br></p>{FALSE}
+
+
+// question: 138454  name: RepStat 13
+::RepStat 13::[html]<p>Consider the stochastically independent random variables X and Y, where $$X \\sim N(0,2)$$ and $$Y \\sim \\chi^2(2)$$. Then $$X^2+Y \\sim \\chi^2(4)$$.<br></p>{FALSE}
+
+
+// question: 138455  name: RepStat 14
+::RepStat 14::[html]<p>Consider the stochastically independent random variables X and Y, where $$X \\sim N(0,2)$$ and $$Y \\sim \\chi^2(2)$$. Then $$X/\\sqrt\{2\} \\sim N(0,1)$$.<br></p>{TRUE}
+
+
+// question: 138456  name: RepStat 15
+::RepStat 15::[html]<p>Consider the stochastically independent random variables X and Y, where $$X \\sim N(0,2)$$ and $$Y \\sim \\chi^2(2)$$. Then $$X/\\sqrt\{Y\} \\sim t(2)$$.<br></p>{FALSE}
+
+
+// question: 138457  name: RepStat 16
+::RepStat 16::[html]<p>Consider the stochastically independent random variables X and Y. If $$X \\sim N(0,1)$$ and $$Y \\sim N(2,2)$$, then $$X+Y\\sim N(2,5)$$.<br></p>{FALSE}
+
+
+// question: 138458  name: RepStat 17
+::RepStat 17::[html]<p>Consider the stochastically independent standard normally distributed random variables X, Y and Z. Then $$\\frac\{2X^2\}\{Y^2+Z^2\} \\sim F(1,2)$$.<br></p>{TRUE}
+
+
+// question: 138443  name: RepStat2
+::RepStat2::[html]<p>There are two random events. The probability that the two events will occur simultaneously is equal to the product of the individual probabilities. <br></p>{FALSE}
+
+
+// question: 138444  name: RepStat 3
+::RepStat 3::[html]<p>There are two independent discrete random variables X and Y with&nbsp; $$E(X^2)\=4, E(Y^2)\=4, E(X)\=1, E(Y)\=0$$. The variance of X is equal to $$Var(X)\=3$$.<br></p>{TRUE}
+
+
+// question: 138445  name: RepStat 4
+::RepStat 4::[html]<p>There are two independent discrete random variables X and Y with&nbsp; $$E(X^2)\=4, E(Y^2)\=4, E(X)\=1, E(Y)\=0$$. The variance of $$X-2Y$$ is equal to $$Var(X-2Y)\=19$$.<br></p>{TRUE}
+
+
+// question: 138446  name: RepStat 5
+::RepStat 5::[html]<p>Consider the following probability density function of a continous random variabe X\:</p><p><img src\="@@PLUGINFILE@@/dreiecksverteilung.png" alt\="" role\="presentation" class\="img-responsive atto_image_button_text-bottom" width\="300" height\="300"><br>then $$E(X)\=1$$.<br></p>{TRUE}
+
+
+// question: 138447  name: RepStat 6
+::RepStat 6::[html]<p>Let X be a continous random variable with probability density function f(x). Then the standardized variable $$Z\=\\frac\{X-E(X)\}\{std(X)\}$$ is standard normally distributed, i.e. $$Z\\sim N(0,1)$$.<br></p>{FALSE}
+
+
+// question: 138448  name: RepStat 7
+::RepStat 7::[html]<p>Consider the stochastically independent random variables $$X_1,X_2,...,X_n$$ with finite expectation and finite variance. Then $$E\\left(\\sum_\{i\=1\}^n X_i\\right) \= \\sum_\{i\=1\}^nE(X_i)$$.<br></p>{TRUE}
+
+
+// question: 138449  name: RepStat 8
+::RepStat 8::[html]<p>Consider the stochastically independent random variables $$X_1,X_2,...,X_n$$ with finite expectation and finite variance. Then $$Var\\left(\\sum_\{i\=1\}^n X_i\\right) \= \\sum_\{i\=1\}^n Var(X_i)$$.<br></p>{TRUE}
+
+
+// question: 138450  name: RepStat 9
+::RepStat 9::[html]<p>Consider the stochastically independent random variables $$X_1,X_2,...,X_n$$ with finite expectation and finite variance. Then $$Var\\left(\\sum_\{i\=1\}^n X_i\\right) \= \\sum_\{i\=1\}^n \\sum_\{j\=1\}^n Cov(X_i,X_j)$$.<br></p>{TRUE}
+
+

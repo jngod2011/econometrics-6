@@ -1,0 +1,316 @@
+% !TeX encoding = UTF-8
+% !TeX spellcheck = en_US
+\documentclass{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[a4paper,top=2cm]{geometry}
+\usepackage{amssymb,amsmath,amsfonts}
+\usepackage[english]{babel}
+\usepackage[a4paper]{geometry}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{csquotes}
+\usepackage{dcolumn}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+
+\begin{document}
+	
+	\title{Econometrics 2 \\ \small Exam}
+	\author{Dr. Willi Mutschler}
+	\date{}
+	\maketitle
+	
+	\begin{itemize}
+		\item Answer \textbf{all} of the following exercises in either German or English.
+		\item Explain your answers and derivations. All your computations and intermediate steps need to be verifiable and understandable. 
+		\item Formulas which we covered in the lecture and class need not to be derived again.
+		\item If you prefer a notation different from the one used in the course, define it.
+		\item Always use significance level $a=5\%$.
+		\item Please report 3 decimal places in numerical answers.
+		\item If not otherwise stated, assume the validity of the assumption A, B and C given in the lecture.
+		\item Permissible aids:
+		\begin{itemize}
+			\item non-programmable pocket calculator
+			\item cheat sheet: one-sided A4 white sheet of paper with annotations, formulas, texts, sketches, etc.
+		\end{itemize}
+	\end{itemize}
+\thispagestyle{empty}
+
+\newpage
+\setcounter{page}{1}
+\section{Understanding}
+\begin{enumerate}[label=(\alph*)]
+\item Briefly describe the intuition and result of the usual Central Limit Theorem for the sample mean of iid random variables.  What does this imply for the distribution of $\frac{1}{\sqrt{T}} \sum_{t}^{T} u_t$ if $u_t \sim iid(0,\sigma^2)$?
+\item The estimation of a dynamic model yields
+$$y_t = 0.6 y_{t-1} + 0.3 x_t +\hat{u}_t$$
+where $y_t$ and $x_t$ are both measured in logs. Compute the dynamic effect (multiplier) of a 1\% increase in x on y (i) in the same period and (ii) in the long run.
+\item What are the effects on the OLS estimator when $X$ is stochastic, but contemporary uncorrelated with $u$, i.e. $Cov(x_{k,t},u_t)=0$ for all $t$ and $k$? What about the reliability of hypothesis tests and interval estimators? (No proof required).
+\end{enumerate}
+\newpage
+
+\section{Violation of B1}
+Assume that the true model is given by
+$$y_t^\ast = \alpha + \beta x_t + u_t$$
+with $u_t \sim N(0,\sigma_u^2)$. However, $y_t^\ast$ is only observable with a measurement error
+$$y_t^\ast = y_t + \lambda$$
+where $\lambda \in \mathbb{R}$. The observed model is hence given by
+$$ y_t = \alpha + \beta x_t + \underbrace{u_t - \lambda}_{\varepsilon_t}$$
+\begin{enumerate}[label=(\alph*)]
+	\item Compute the (i) expectation, (ii) variance and (iii) autocorrelation function of $\varepsilon_t$.
+	\item Compute the bias of the OLS estimators for $\alpha$ and $\beta$.
+	\item What happens to the standard errors of the OLS estimators for $\alpha$ and $\beta$? Are hypothesis tests and interval estimators still valid? 
+	\item Provide intuition whether (or not) the OLS estimator remains consistent. A formal proof is not necessary.	
+\end{enumerate}
+
+\newpage
+
+\section{Testing violations}
+Overall consumption for the period 1962 to 2001 (annual data) is determined by the regression model
+\begin{align*}
+c_t = \alpha + \beta_1 y_{t} + \beta_2 i_{t} + u_t
+\end{align*}
+where $c_t$ denotes the expenditures for consumption (in logs), $y_t$ the income (in logs) and $i_t$ the interest rate (in \%). We have the following intermediate result:
+$$X'X = \begin{bmatrix}40 & 0 & 10\\0 & 100 & 10\\10 & 10 & 20\end{bmatrix}$$
+Furthermore, an OLS estimation yields an estimated error variance of
+$$\hat{\sigma}^2 = 6$$
+\begin{enumerate}[label=(\alph*)]
+	\item It is assumed that the consumption function changed at the time of reunification in 1990. Hence, the model is estimated for both periods, before and after 1990, and the corresponding sums of squared residuals are given by
+	$$\sum_{t=1}^{28} \hat{u}_t^2 = 120 \text{ and } \sum_{t=29}^{40} \hat{u}_t^2 = 40$$
+	Test the hypothesis that the consumption function has not changed using the Chow Break test. What is the underlying intuition of the test?
+	\item It should be checked that the error terms are free of (positive) first-order autocorrelation. The following information is determined for this:
+	$$\sum_{t=2}^T (\hat{u}_t - \hat{u}_{t-1})^2 = 160,\quad \frac{1}{T} \sum_{t=1}^T (y_t - \bar{y})^2=10, \quad R^2 = 0.445$$
+	Perform a Durbin-Watson-Test and briefly provide intution about the critical values one uses in the test.
+\end{enumerate}
+
+\newpage
+\section{Instrument variables}
+
+You would like to know the influence of smoking on the annual logarithmic income $log(income)$. To this end, you use the following model
+\begin{equation}\label{incomecigs}
+log(income_t) = \alpha + \beta_1 cigs_t + \beta_2 educ_t + \beta_3 age_t + \beta_4 age_t^2 + u_t,
+\end{equation}
+where \texttt{cigs} denotes the number of cigarettes consumed per day, \texttt{educ} the number of educational years and \texttt{age} is the age. The following output is provided for estimating the above model:
+\begin{footnotesize}
+	
+	\begin{center}
+		
+		Model 1: OLS, Observations 1--807\\
+		Endogenous Variable: log(income)\\
+		
+		\vspace{1em}
+		\renewcommand{\arraystretch}{0.75}
+		\begin{tabular}{lr@{,}lr@{,}lr@{,}lr@{,}l}
+			&
+			\multicolumn{2}{c}{Coefficient} &
+			\multicolumn{2}{c}{Std.\ Error} &
+			\multicolumn{2}{c}{$t$-statistic} &
+			\multicolumn{2}{c}{p-value} \\[1ex]
+			const &
+			7&79544 &
+			0&170427 &
+			45&7407 &
+			0&0000 \\
+			cigs &
+			0&00173057 &
+			0&00171372 &
+			1&0098 &
+			0&3129 \\
+			educ &
+			0&0603605 &
+			0&00789834 &
+			7&6422 &
+			0&0000 \\
+			age &
+			0&0576907 &
+			0&00764359 &
+			7&5476 &
+			0&0000 \\
+			age2 &
+			$-$0&000630589 &
+			8&33822\textrm{e--005} &
+			$-$7&5626 &
+			0&0000 \\
+		\end{tabular}
+	\end{center}
+\end{footnotesize}
+You suspect that $cigs$ is endogenous and also estimate the following model with OLS:
+\begin{equation*}
+cigs_t = \pi_0 + \pi_1 educ_t + \pi_2 age_t + \pi_3 age_t^2 + \pi_4 restaurn_t + v_t,
+\end{equation*}
+where the variable $restaurn$ is 1, if the person $t$ lives in a state where smoking is prohibited in restaurants, and 0 else. The corresponding output is
+\begin{footnotesize}
+	\begin{center}		
+		Model 2: OLS, Observations 1--807\\
+		Endogenous variable: cigs\\
+		
+		\vspace{1em}
+		\renewcommand{\arraystretch}{0.75}
+		\begin{tabular}{lr@{,}lr@{,}lr@{,}lr@{,}l}
+			&
+			\multicolumn{2}{c}{Coefficient} &
+			\multicolumn{2}{c}{Std.\ error} &
+			\multicolumn{2}{c}{$t$-statistic} &
+			\multicolumn{2}{c}{p-value} \\[1ex]
+			const &
+			0&152140 &
+			3&50332 &
+			0&0434 &
+			0&9654 \\
+			educ &
+			$-$0&450400 &
+			0&161486 &
+			$-$2&7891 &
+			0&0054 \\
+			age &
+			0&822327 &
+			0&154187 &
+			5&3333 &
+			0&0000 \\
+			age2 &
+			$-$0&00958859 &
+			0&00167790 &
+			$-$5&7146 &
+			0&0000 \\
+			restaurn &
+			$-$2&74637 &
+			1&09685 &
+			$-$2&5039 &
+			0&0125 \\
+		\end{tabular}
+		
+		
+	\end{center}
+	
+\end{footnotesize}
+Lastly, you compute the IV estimator for model (\ref{incomecigs}) using $restaurn$ as an instrument for $cigs$:
+\begin{footnotesize}
+	\begin{center}
+		
+		Model 3: IV, Observations 1--807\\
+		Endogenous Variable: log(income)\\
+		Instruments: const educ age agesq restaurn \\
+		Instruments used for: cigs \\
+		
+		\vspace{1em}
+		\renewcommand{\arraystretch}{0.75}
+		\begin{tabular}{lr@{,}lr@{,}lr@{,}lr@{,}l}
+			&
+			\multicolumn{2}{c}{Ceofficient} &
+			\multicolumn{2}{c}{Std.\ Error} &
+			\multicolumn{2}{c}{$t$-statistic} &
+			\multicolumn{2}{c}{p-value} \\[1ex]
+			const &
+			7&78114 &
+			0&228129 &
+			34&1085 &
+			0&0000 \\
+			cigs &
+			$-$0&0413845 &
+			0&0260279 &
+			$-$1&5900 &
+			0&1118 \\
+			educ &
+			0&0400241 &
+			0&0161607 &
+			2&4766 &
+			0&0133 \\
+			age &
+			0&0932076 &
+			0&0236787 &
+			3&9363 &
+			0&0001 \\
+			agesq &
+			$-$0&00104373 &
+			0&000272324 &
+			$-$3&8327 &
+			0&0001 \\
+		\end{tabular}	
+				
+		\vspace{1em}
+		
+	\end{center}
+\end{footnotesize}
+
+
+\begin{enumerate}[label=(\alph*)]
+	\item Compare and interpret the estimated coefficient $\hat{\beta}_1$ in model 1 in terms of economic meaning and statistical significance. Is there a difference between the OLS and IV estimators?
+	
+	\item It is assumed that $log(income)$ and $cigs$ are jointly determined within a system of equations. What is the corresponding problem and what are the consequences for model 1?
+	\item Check if $restaurn$ is a relevant instrument for $cigs$.
+
+\end{enumerate}
+\newpage
+
+
+\section{Stochastic convergence}
+Consider the linear regression model with a deterministic time trend
+$$y_t = \alpha + \delta t + u_t$$
+where $t$ denotes the time index and $u_t \sim N(0,\sigma^2)$. Furthermore, $$H = \begin{pmatrix} T^{1/2} & 0\\0 & T^{3/2} \end{pmatrix}$$
+and $\hat{\beta} =\begin{pmatrix} \hat{\alpha} \\ \hat{\delta}\end{pmatrix}$ denotes the OLS estimator of $\beta =\begin{pmatrix} \alpha \\ \delta\end{pmatrix}$.\\
+\textsl{Hints:}
+\begin{itemize}
+	\item $E(u_t^4) = 4 \sigma^2$
+	\item $\sum_{t=1}^T t = T(T+1)/2 = T^2/2 + T/2$
+	\item $\sum_{t=1}^T t^2 = T(T+1)(2T+1)/6 = T^3/3 + T^2/2 + T/6$
+	\item $\sum_{t=1}^T t^4 = T(T+1)(2T+1)(3T^2+3T-1)/30 = T^5/5 + T^4/2 + T^3/3 -T/30$
+\end{itemize}
+
+\begin{enumerate}[label=(\alph*)]
+\item Show that $$\underset{T\rightarrow \infty}{plim} \left[\frac{X'X}{T}\right]$$ does not converge to a finite matrix. Hence, our usual proof of consistency of the OLS estimator does not work.
+\item Show that $$\underset{T\rightarrow \infty}{plim} \left[H^{-1}(X'X) H^{-1} \right]$$ converges to $Q = \begin{pmatrix} 1 & \frac{1}{2} \\ \frac{1}{2} & \frac{1}{3}\end{pmatrix}$.
+\item Show that $$H^{-1} X'u = \begin{pmatrix} \frac{1}{\sqrt{T}}\sum_{t=1}^{T}u_t \\ \frac{1}{\sqrt{T}}\sum_{t=1}^{T}\frac{t}{T}u_t\end{pmatrix}$$
+\item Show that 
+\begin{enumerate}[label=(\roman*)]
+\item $\lim\limits_{T\rightarrow \infty}E \left[\frac{1}{\sqrt{T}}\sum_{t=1}^{T}u_t\right] = 0$
+\item $\lim\limits_{T\rightarrow \infty}V\left[\frac{1}{\sqrt{T}}\sum_{t=1}^{T}u_t\right] = \sigma^2$
+\end{enumerate}
+\item Show that
+\begin{enumerate}[label=(\roman*)]
+\item $\lim\limits_{T\rightarrow \infty}E \left[\frac{1}{\sqrt{T}}\sum_{t=1}^{T}\frac{t}{T}u_t\right] = 0$
+\item $\lim\limits_{T\rightarrow \infty}V\left[\frac{1}{\sqrt{T}}\sum_{t=1}^{T}\frac{t}{T}u_t\right] = \sigma^2/3$
+\end{enumerate}
+
+\item Show that $\underset{T\rightarrow \infty}{plim}\left[\frac{H^{-1}X'u}{T}\right] = 0$ by checking the sufficient conditions of consistency.
+\item Use the previous results to show that the OLS estimator $\hat{\beta}$ is a consistent estimator for $\beta$.
+\end{enumerate}
+
+
+
+\newpage Table of the quantiles of the $F_{\nu _{1},\nu _{2}}$%
+-distribution,	given are the 0.95 -quantiles (i.e. $a=0.05$)
+
+\begin{tabular}{|r|rrrrrrrrrrr|}
+	\hline
+	& \multicolumn{11}{|c|}{$\nu_1$} \\ 
+	$\nu_2$ & 1 & 2 & 3 & 4 & 5 & 10 & 15 & 20 & 25 & 50 & $\infty$\\ \hline
+	1 & 161.45 & 199.50 & 215.71 & 224.58 & 230.16 & 241.88 & 245.95 & 248.01 & 249.26 & 251.77 & 254\\ 
+	2 & 18.51 & 19.00 & 19.16 & 19.25 & 19.30 & 19.40 & 19.43 & 19.45 & 19.46 & 19.48 & 19.5\\ 
+	3 & 10.13 & 9.55 & 9.28 & 9.12 & 9.01 & 8.79 & 8.70 & 8.66 & 8.63 & 8.58 & 8.53\\ 
+	4 & 7.71 & 6.94 & 6.59 & 6.39 & 6.26 & 5.96 & 5.86 & 5.80 & 5.77 & 5.70 & 5.63\\ 
+	5 & 6.61 & 5.79 & 5.41 & 5.19 & 5.05 & 4.74 & 4.62 & 4.56 & 4.52 & 4.44 & 4.37\\ 
+	6 & 5.99 & 5.14 & 4.76 & 4.53 & 4.39 & 4.06 & 3.94 & 3.87 & 3.83 & 3.75 & 3.67\\ 
+	7 & 5.59 & 4.74 & 4.35 & 4.12 & 3.97 & 3.64 & 3.51 & 3.44 & 3.40 & 3.32 & 3.23\\ 
+	8 & 5.32 & 4.46 & 4.07 & 3.84 & 3.69 & 3.35 & 3.22 & 3.15 & 3.11 & 3.02 & 2.93\\ 
+	9 & 5.12 & 4.26 & 3.86 & 3.63 & 3.48 & 3.14 & 3.01 & 2.94 & 2.89 & 2.80 & 2.71\\ 
+	10 & 4.96 & 4.10 & 3.71 & 3.48 & 3.33 & 2.98 & 2.85 & 2.77 & 2.73 & 2.64 & 2.54\\ 
+	15 & 4.54 & 3.68 & 3.29 & 3.06 & 2.90 & 2.54 & 2.40 & 2.33 & 2.28 & 2.18 & 2.07\\ 
+	20 & 4.35 & 3.49 & 3.10 & 2.87 & 2.71 & 2.35 & 2.20 & 2.12 & 2.07 & 1.97 & 1.84\\ 
+	25 & 4.24 & 3.39 & 2.99 & 2.76 & 2.60 & 2.24 & 2.09 & 2.01 & 1.96 & 1.84 & 1.71\\ 
+	30 & 4.17 & 3.32 & 2.92 & 2.69 & 2.53 & 2.16 & 2.01 & 1.93 & 1.88 & 1.76 & 1.62\\ 
+	35 & 4.12 & 3.27 & 2.87 & 2.64 & 2.49 & 2.11 & 1.96 & 1.88 & 1.82 & 1.70 & 1.56\\ 
+	40 & 4.08 & 3.23 & 2.84 & 2.61 & 2.45 & 2.08 & 1.92 & 1.84 & 1.78 & 1.66 & 1.51\\ 
+	45 & 4.06 & 3.20 & 2.81 & 2.58 & 2.42 & 2.05 & 1.89 & 1.81 & 1.75 & 1.63 & 1.47\\ 
+	50 & 4.03 & 3.18 & 2.79 & 2.56 & 2.40 & 2.03 & 1.87 & 1.78 & 1.73 & 1.60 & 1.44\\ 
+	60 & 4.00 & 3.15 & 2.76 & 2.53 & 2.37 & 1.99 & 1.84 & 1.75 & 1.69 & 1.56 & 1.39\\ 
+	70 & 3.98 & 3.13 & 2.74 & 2.50 & 2.35 & 1.97 & 1.81 & 1.72 & 1.66 & 1.53 & 1.35\\ 
+	80 & 3.96 & 3.11 & 2.72 & 2.49 & 2.33 & 1.95 & 1.79 & 1.70 & 1.64 & 1.51 & 1.32\\ 
+	90 & 3.95 & 3.10 & 2.71 & 2.47 & 2.32 & 1.94 & 1.78 & 1.69 & 1.63 & 1.49 & 1.30\\ 
+	100 & 3.94 & 3.09 & 2.70 & 2.46 & 2.31 & 1.93 & 1.77 & 1.68 & 1.62 & 1.48 & 1.28 \\ 
+	$\infty$ & 3.84 & 3.00 & 2.60 & 2.37 & 2.21 & 1.83 & 1.67 & 1.57 & 1.49 & 1.35 & 1.01 \\ 
+	\hline
+\end{tabular}
+
+
+
+\end{document}

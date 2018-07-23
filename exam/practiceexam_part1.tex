@@ -1,0 +1,253 @@
+% !TeX encoding = UTF-8
+% !TeX spellcheck = en_US
+\documentclass{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[a4paper,top=2cm]{geometry}
+\usepackage{amssymb,amsmath,amsfonts}
+\usepackage[english]{babel}
+\usepackage[a4paper]{geometry}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{csquotes}
+%\parindent0mm
+%\parskip1.5ex plus0.5ex minus0.5ex
+
+\begin{document}
+	
+	\title{Econometrics 1 \\ \small Practice Exam}
+	\author{Dr. Willi Mutschler}
+	\date{Winter 2017/2018}
+	\maketitle
+	
+	\begin{itemize}
+		\item Answer \textbf{all} of the following exercises in either German or English.
+		\item Explain your answers and derivations.
+		\item If you prefer a notation different from the one used in the course, define it.
+		\item Always use significance level $a=5\%$ (if not otherwise stated).
+		\item Please report 3 decimal places in numerical answers.
+		\item If not otherwise stated, assume the validity of the assumption A, B and C given in the lecture.
+	\end{itemize}
+\newpage
+\section{Understanding}
+\begin{enumerate}[label=(\alph*)]
+\item Consider the following confidence set for a parameter $\beta_i$:
+$$Pr(0.5 < \beta_i < 1.5) = 0.95$$
+Now test the following hypothesis without a concrete calculation:
+\begin{enumerate}[label=(\roman*)]
+	\item $H_0: \beta_i = 1.6$ vs. $H_1:\beta_i \neq 1.6$ for $a=5\%$
+	\item $H_0: \beta_i = 0.6$ vs. $H_1:\beta_i \neq 0.6$ for $a=5\%$
+	\item $H_0: \beta_i = 0.5$ vs. $H_1:\beta_i \neq 0.5$ for $a=10\%$
+\end{enumerate}
+\item Formalize the optimization problem which is solved by the ML estimator and give its first order conditions (you need not solve the
+resulting system of equations).
+\end{enumerate}
+\newpage
+
+
+\section{Cobb-Douglas Production Function}
+Consider the following Cobb-Douglas production function
+$$Y = \tau K^{\beta_1} L^{\beta_2}$$
+where $Y$ denotes total production, which is dependent on the used capital stock $K$ and labor input $L$. Assume that technology $\tau$ is constant. The observation period contains quarterly data from 1990Q1 to 2009Q4
+\begin{enumerate}[label=(\alph*)]
+	\item Derive the econometric model, which can be used to estimate the parameters of the production function.
+	\item Which parameters are elasticities?
+	\item Estimate the parameters of the model and test their significance. For this the following results are available:
+	$$(\mathbf{X}'\mathbf{X})^{-1}=
+	\begin{pmatrix}
+    0.021 &   0.005 &   0.007\\
+	0.005 &   0.014 &  -0.004\\
+	0.007 &  -0.004 &   0.012	
+	\end{pmatrix}, \qquad 
+	\mathbf{X}'\mathbf{y}=\begin{pmatrix}
+	-552\\
+	381\\
+	496\\
+	\end{pmatrix}, \qquad
+	\mathbf{y}'\mathbf{y}=4012.214
+	$$
+	where the first column of $X$ contains ones, the second column the values of the capital stock in logs, the third column the labor input in logs and $\mathbf{y}$ is the vector with the values for production in logs.
+	\item Compute and interpret the coefficient of determination.
+	\item Test whether the model is statistically significant, i.e. $H_0: R^2=0$ vs. $H_1: R^2 \neq 0$.
+	\item Test the hypothesis that the Cobb-Douglas production function has constant elasticities to scale, i.e. $\beta_1+\beta_2=1$
+	\item Determine a 98\% and 95\% confidence set for $\beta_1$. Do confidence sets get smaller or larger for increasing significance level $a$? Why?
+\end{enumerate}
+\newpage
+
+\section{Labor Demand}
+In order to estimate the labor demand, the following model is estimated:
+$$ \ln(n_t) = \alpha + \beta_1 \ln(p_t) + \beta_2 \ln(w_t) + u_t$$
+where $n_t$ denotes the labor demand (number of employees), $p_t$ production (real GDP) and $w_t$ the nominal wage. Consider a sample with yearly data covering 1970-2006.
+\begin{enumerate}[label=(\alph*)]
+	\item Compute the value $\beta_2$ such that, when the nominal wage decreases by 5\%, the number of employees will increase from 25 to 26 Millions.
+	\item An estimation with nominal wages in DM yields: 
+	$$\hat{\alpha} = 0.8, \qquad \hat{\beta}_1 = 1.3, \qquad \hat{\beta}_2 = -1.5$$
+	Due to the change of currency to Euro the nominal wage is multiplied by the factor $1/1.956=0.5113$. How do the estimates change if one considers the nominal wage in Euros instead of in DM?
+\end{enumerate}
+
+
+\newpage
+\section{Estimating functions}
+Consider the estimation of a simple regression model without a constant term
+$$y_t = \beta x_t + u_t, \qquad t=1,...,T$$
+where it is assumed that the last observation may be erroneous. Therefore, the observation at time point $T$ gets a lower (deterministic) weight, $0 \leq w <1$, in the following estimating function:
+$$\tilde{\beta}_w = \frac{\left(\sum_{t=1}^{T-1}x_t y_t\right)+w (x_T y_T)}{\left(\sum_{t=1}^{T-1}x_t^2\right)+w x_T^2}$$
+\begin{enumerate}[label=(\alph*)]
+	\item Show that the estimating function $\tilde{\beta}_w$ is unbiased for $\beta$.\\
+\textit{	Hint: Show that
+	$$\tilde{\beta}_w = \beta + \frac{(\sum_{t=1}^{T-1}x_t u_t)+w x_T u_T}{k}$$ where $k=(\sum_{t=1}^{T-1}x_t^2)+w x_T^2$.} 
+	\item Compute the variance of $\tilde{\beta}_w$ for $w=0.5$ provided that
+	$$ \sum_{t=1}^{T} x_t^2 = 100,\qquad x_T = 2,\qquad \sigma^2 = 1$$
+	\textit{Hint: Use the fact that $E(u_t u_s)=0$ for $t\neq s$.}
+	\item Do you expect the variance of the least squares estimator  $\hat{\beta}$ to be smaller, equal or larger to the variance of $\tilde{\beta}_w$?
+\end{enumerate}
+\newpage
+	
+
+	\begin{minipage}[t]{6cm}
+		Table of the $(1-a)$ quantiles of\\ the $t_{\nu }$-distribution
+		
+		\begin{center}
+			\begin{tabular}{|r|rrr|}
+				\hline
+				& \multicolumn{3}{|c|}{$a$} \\ 
+				$\nu$ & 0.05 & 0.025 & 0.01 \\ \hline
+				1 & 6.31380 & 12.70620 & 31.82050 \\
+				2 & 2.92000 & 4.30270 & 6.96460 \\
+				3 & 2.35340 & 3.18240 & 4.54070 \\
+				4 & 2.13180 & 2.77640 & 3.74690 \\
+				5 & 2.01500 & 2.57060 & 3.36490 \\
+				6 & 1.94320 & 2.44690 & 3.14270 \\
+				7 & 1.89460 & 2.36460 & 2.99800 \\
+				8 & 1.85950 & 2.30600 & 2.89650 \\
+				9 & 1.83310 & 2.26220 & 2.82140 \\
+				10 & 1.81250 & 2.22810 & 2.76380 \\
+				11 & 1.79590 & 2.20100 & 2.71810 \\
+				12 & 1.78230 & 2.17880 & 2.68100 \\
+				13 & 1.77090 & 2.16040 & 2.65030 \\
+				14 & 1.76130 & 2.14480 & 2.62450 \\
+				15 & 1.75310 & 2.13140 & 2.60250 \\
+				16 & 1.74590 & 2.11990 & 2.58350 \\
+				17 & 1.73960 & 2.10980 & 2.56690 \\
+				18 & 1.73410 & 2.10090 & 2.55240 \\
+				19 & 1.72910 & 2.09300 & 2.53950 \\
+				20 & 1.72470 & 2.08600 & 2.52800 \\
+				21 & 1.72070 & 2.07960 & 2.51760 \\
+				22 & 1.71710 & 2.07390 & 2.50830 \\
+				23 & 1.71390 & 2.06870 & 2.49990 \\
+				24 & 1.71090 & 2.06390 & 2.49220 \\
+				25 & 1.70810 & 2.05950 & 2.48510 \\
+				26 & 1.70560 & 2.05550 & 2.47860 \\
+				27 & 1.70330 & 2.05180 & 2.47270 \\
+				28 & 1.70110 & 2.04840 & 2.46710 \\
+				29 & 1.69910 & 2.04520 & 2.46200 \\
+				30 & 1.69730 & 2.04230 & 2.45730 \\
+				31 & 1.69550 & 2.03950 & 2.45280 \\
+				32 & 1.69390 & 2.03690 & 2.44870 \\
+				33 & 1.69240 & 2.03450 & 2.44480 \\
+				34 & 1.69090 & 2.03220 & 2.44110 \\
+				35 & 1.68960 & 2.03010 & 2.43770 \\
+				36 & 1.68830 & 2.02810 & 2.43450 \\
+				37 & 1.68710 & 2.02620 & 2.43140 \\
+				38 & 1.68600 & 2.02440 & 2.42860 \\
+				39 & 1.68490 & 2.02270 & 2.42580 \\
+				40 & 1.68390 & 2.02110 & 2.42330 \\
+				$>40$& 1.645 & 1.960 & 2.326 \\ \hline
+			\end{tabular}
+		\end{center}
+	\end{minipage}\hspace{2cm} 
+	\begin{minipage}[t]{6cm}
+		Table of the $(1-a)$ quantiles of\\ the $\chi^2_{\nu }$-distribution
+		
+		\begin{center}
+			\begin{tabular}{|r|rrr|}
+				\hline
+				& \multicolumn{3}{|c|}{$a$} \\ 
+				$\nu$ & 0.05 & 0.025 & 0.01 \\ \hline
+				1 & 3.84 & 5.02 & 6.63 \\
+				2 & 5.99 & 7.38 & 9.21 \\
+				3 & 7.82 & 9.35 & 11.35 \\
+				4 & 9.49 & 11.14 & 13.28 \\
+				5 & 11.07 & 12.83 & 15.09 \\
+				6 & 12.59 & 14.45 & 16.81 \\
+				7 & 14.07 & 16.01 & 18.48 \\
+				8 & 15.51 & 17.54 & 20.09 \\
+				9 & 16.92 & 19.02 & 21.67 \\
+				10 & 18.31 & 20.48 & 23.21 \\
+				11 & 19.68 & 21.92 & 24.73 \\
+				12 & 21.03 & 23.34 & 26.22 \\
+				13 & 22.36 & 24.74 & 27.69 \\
+				14 & 23.68 & 26.12 & 29.14 \\
+				15 & 25.00 & 27.49 & 30.58 \\
+				16 & 26.30 & 28.84 & 32.00 \\
+				17 & 27.59 & 30.19 & 33.41 \\
+				18 & 28.87 & 31.53 & 34.81 \\
+				19 & 30.14 & 32.85 & 36.19 \\
+				20 & 31.41 & 34.17 & 37.57 \\
+				21 & 32.67 & 35.48 & 38.93 \\
+				22 & 33.92 & 36.78 & 40.29 \\
+				23 & 35.17 & 38.08 & 41.64 \\
+				24 & 36.41 & 39.36 & 42.98 \\
+				25 & 37.65 & 40.65 & 44.31 \\
+				26 & 38.88 & 41.92 & 45.64 \\
+				27 & 40.11 & 43.20 & 46.96 \\
+				28 & 41.34 & 44.46 & 48.28 \\
+				29 & 42.56 & 45.72 & 49.59 \\
+				30 & 43.77 & 46.98 & 50.89 \\
+				35 & 49.80 & 53.20 & 57.34 \\
+				40 & 55.76 & 59.34 & 63.69 \\
+				45 & 61.66 & 65.41 & 69.96 \\
+				50 & 67.50 & 71.42 & 76.15 \\
+				55 & 73.31 & 77.38 & 82.29 \\
+				60 & 79.08 & 83.30 & 88.38 \\
+				65 & 84.82 & 89.18 & 94.42 \\
+				70 & 90.53 & 95.02 & 100.43 \\
+				75 & 96.22 & 100.84 & 106.39 \\
+				80 & 101.88 & 106.63 & 112.33 \\
+				85 & 107.52 & 112.39 & 118.24 \\
+				90 & 113.15 & 118.14 & 124.12 \\
+				95 & 118.75 & 123.86 & 129.97 \\
+				100 & 124.34 & 129.56 & 135.81 \\ \hline
+			\end{tabular}
+		\end{center}
+	\end{minipage}\newpage Table of the  0.95 quantiles of the $F_{\nu _{1},\nu _{2}}$-distribution
+	
+	\begin{tabular}{|r|rrrrrrrrrr|}
+		\hline
+		& \multicolumn{10}{|c|}{$\nu_1$} \\ 
+		$\nu_2$ & 1 & 2 & 3 & 4 & 5 & 10 & 15 & 20 & 25 & 50 \\ \hline
+		1 & 161.45 & 199.50 & 215.71 & 224.58 & 230.16 & 241.88 & 245.95 & 248.01 & 
+		249.26 & 251.77 \\ 
+		2 & 18.51 & 19.00 & 19.16 & 19.25 & 19.30 & 19.40 & 19.43 & 19.45 & 19.46 & 
+		19.48 \\ 
+		3 & 10.13 & 9.55 & 9.28 & 9.12 & 9.01 & 8.79 & 8.70 & 8.66 & 8.63 & 8.58 \\ 
+		4 & 7.71 & 6.94 & 6.59 & 6.39 & 6.26 & 5.96 & 5.86 & 5.80 & 5.77 & 5.70 \\ 
+		5 & 6.61 & 5.79 & 5.41 & 5.19 & 5.05 & 4.74 & 4.62 & 4.56 & 4.52 & 4.44 \\ 
+		6 & 5.99 & 5.14 & 4.76 & 4.53 & 4.39 & 4.06 & 3.94 & 3.87 & 3.83 & 3.75 \\ 
+		7 & 5.59 & 4.74 & 4.35 & 4.12 & 3.97 & 3.64 & 3.51 & 3.44 & 3.40 & 3.32 \\ 
+		8 & 5.32 & 4.46 & 4.07 & 3.84 & 3.69 & 3.35 & 3.22 & 3.15 & 3.11 & 3.02 \\ 
+		9 & 5.12 & 4.26 & 3.86 & 3.63 & 3.48 & 3.14 & 3.01 & 2.94 & 2.89 & 2.80 \\ 
+		10 & 4.96 & 4.10 & 3.71 & 3.48 & 3.33 & 2.98 & 2.85 & 2.77 & 2.73 & 2.64 \\ 
+		15 & 4.54 & 3.68 & 3.29 & 3.06 & 2.90 & 2.54 & 2.40 & 2.33 & 2.28 & 2.18 \\ 
+		20 & 4.35 & 3.49 & 3.10 & 2.87 & 2.71 & 2.35 & 2.20 & 2.12 & 2.07 & 1.97 \\ 
+		25 & 4.24 & 3.39 & 2.99 & 2.76 & 2.60 & 2.24 & 2.09 & 2.01 & 1.96 & 1.84 \\ 
+		30 & 4.17 & 3.32 & 2.92 & 2.69 & 2.53 & 2.16 & 2.01 & 1.93 & 1.88 & 1.76 \\ 
+		35 & 4.12 & 3.27 & 2.87 & 2.64 & 2.49 & 2.11 & 1.96 & 1.88 & 1.82 & 1.70 \\ 
+		40 & 4.08 & 3.23 & 2.84 & 2.61 & 2.45 & 2.08 & 1.92 & 1.84 & 1.78 & 1.66 \\ 
+		45 & 4.06 & 3.20 & 2.81 & 2.58 & 2.42 & 2.05 & 1.89 & 1.81 & 1.75 & 1.63 \\ 
+		50 & 4.03 & 3.18 & 2.79 & 2.56 & 2.40 & 2.03 & 1.87 & 1.78 & 1.73 & 1.60 \\ 
+		55 & 4.02 & 3.16 & 2.77 & 2.54 & 2.38 & 2.01 & 1.85 & 1.76 & 1.71 & 1.58 \\ 
+		60 & 4.00 & 3.15 & 2.76 & 2.53 & 2.37 & 1.99 & 1.84 & 1.75 & 1.69 & 1.56 \\ 
+		65 & 3.99 & 3.14 & 2.75 & 2.51 & 2.36 & 1.98 & 1.82 & 1.73 & 1.68 & 1.54 \\ 
+		70 & 3.98 & 3.13 & 2.74 & 2.50 & 2.35 & 1.97 & 1.81 & 1.72 & 1.66 & 1.53 \\ 
+		75 & 3.97 & 3.12 & 2.73 & 2.49 & 2.34 & 1.96 & 1.80 & 1.71 & 1.65 & 1.52 \\ 
+		80 & 3.96 & 3.11 & 2.72 & 2.49 & 2.33 & 1.95 & 1.79 & 1.70 & 1.64 & 1.51 \\ 
+		85 & 3.95 & 3.10 & 2.71 & 2.48 & 2.32 & 1.94 & 1.79 & 1.70 & 1.64 & 1.50 \\ 
+		90 & 3.95 & 3.10 & 2.71 & 2.47 & 2.32 & 1.94 & 1.78 & 1.69 & 1.63 & 1.49 \\ 
+		95 & 3.94 & 3.09 & 2.70 & 2.47 & 2.31 & 1.93 & 1.77 & 1.68 & 1.62 & 1.48 \\ 
+		100 & 3.94 & 3.09 & 2.70 & 2.46 & 2.31 & 1.93 & 1.77 & 1.68 & 1.62 & 1.48 \\ 
+		\hline
+	\end{tabular}
+	
+\end{document}
+
+

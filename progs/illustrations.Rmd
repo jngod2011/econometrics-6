@@ -1,0 +1,147 @@
+---
+title: "Econometrics 2"
+author: "Willi Mutschler"
+output: html_notebook
+---
+# Heteroscedasticity
+Let's consider the rent example from the textbook
+```{r}
+# data
+x <- c(0.5,1.4,1.1,2.2,1.3,3.2,3.1,4.4,3.7,3,3.5,4.1)
+y <- c(16.8,16.2,15.9,15.4,16.4,13.2,12.8,12.2,15,13.6,14.1,13.3)
+# plot
+plot(x,y,xlab="distance to center",ylab="rent",pch=19)
+```
+
+## Goldfeld-Quandt-Test
+
+$$H_0: \sigma^2_{II} \leq  \sigma^2_{I} \text{ vs. } H_1: \sigma^2_{II} >  \sigma^2_{I}$$
+
+1. Estimation for group inner-city (Observations 1...5)
+```{r}
+regrC <- lm(y[1:5]~x[1:5])
+SuuC <- sum(residuals(regrC)^2)
+print(SuuC)
+```
+
+2. Estimation for group suburban (Observations 6...12)
+```{r}
+regrS <- lm(y[6:12]~x[6:12])
+SuuS <- sum(residuals(regrS)^2)
+print(SuuS)
+```
+
+3. Compute test statistic and critical value
+```{r}
+print(paste("Test statistic F =",(SuuS/5)/(SuuC/3)))
+print(paste("5% critical value =",qf(0.95,5,3)))
+```
+Hence, we reject the null hypothesis. It seems like there is heteroskedasticity in the error term.
+
+## White-Test
+As we only have one exogenous variable (and the constant), the auxiliary model is
+$$\hat{u}_t^2 = \gamma_0 + \gamma_1 x_{1t} + \gamma_2 x_{1t}^2 + v_t$$
+We want to test the joint hypothesis that $$H_0: \gamma_1=\gamma_2=0$$
+```{r}
+regr <- lm(y~x)
+uhatsquared <- residuals(regr)^2
+aux <- lm(uhatsquared~x+I(x^2))
+TT <- length(uhatsquared)
+summary_aux <- summary(aux)
+TR2 <- summary_aux$r.squared*TT
+print(paste("Test statistic T x R2 =",TR2))
+print(paste("5% critical value =",qchisq(0.95,2)))
+print(paste("p-value of test statistic =",pchisq(TR2,2)))
+print(summary_aux)
+```
+Hence we cannot reject the null hypothesis. One can also look at the p-value of the F-statistic given in the summary. Note that the reliability of the White Test is not good in small samples.
+
+# White's Heteroskedasticity-Consistent (HC) Standard Errors
+```{r}
+X <- cbind(1,x) # make regressor matrix
+betahat <- solve(t(X)%*%X)%*%t(X)%*%y #(X'X)^{-1}X'y, betahat is unbiased
+uhat <- y-X%*%betahat 
+What <- diag(as.vector(uhat^2))
+Covbetahat <- solve(t(X)%*%X)%*%t(X)%*%What%*%X%*%solve(t(X)%*%X)
+print(paste("HC standard error for alpha =",sqrt(diag(Covbetahat)[1])))
+print(paste("(Wrong) LS standard error for alpha =",summary(lm(y~x))$coefficients[1,2]))
+print(paste("HC standard error for beta =",sqrt(diag(Covbetahat)[2])))
+print(paste("(Wrong) LS standard error for beta =",summary(lm(y~x))$coefficients[2,2]))
+```
+The (wrong) standard errors of the normal least squares estimators are larger than the HC standard errors.
+
+# Autocorrelation
+Let's consider the waterfilter example from the textbook
+
+```{r}
+price <- c(24.2,25.5,26.8,26.4,25.2,24.4,26.2,26.1,27.4,28.4,29.8,31.3,32.2,32.4,33.2,34,33.7,32.8,31.3,30.9,30,28.3,27.5,26.8)
+quant <- c(1990,1630,1570,1960,2150,2450,2210,2400,2200,1270,1250,1500,1700,1450,1480,1450,1000,1080,1270,1520,1820,1660,1500,1810)
+n <- length(price)
+regr <- lm(quant~price)
+uhat <- residuals(regr)
+plot(price,quant,xlab="Price",ylab="Demand (quantity)",pch=19)
+abline(regr)
+lines(price,quant,type="b")
+
+```
+
+## Time series of residuals
+Let's look at the time series of residuals
+```{r}
+plot(1:n,uhat,t="b",xlab="Month",ylab="Residual")
+abline(h=0)
+```
+
+## Scatterplot of pairwise residuals
+Let's look at the scatterplot of pairwise residuals
+```{r}
+plot(uhat[-n],uhat[-1],xlab="lagged residual",ylab="residual",pch=19)
+abline(h=0)
+abline(v=0)
+```
+
+## OLS estimation of AR(1) for residuals
+OLS estimation of first-order autocorrelation in residuals
+```{r}
+print(summary(lm(uhat[-1]~uhat[-n])))
+```
+
+
+## Hildreth-Lu
+Note that the transformation matrix $P$ has the following form
+$$ P = 
+\frac{1}{\sqrt{1-\rho^2}}
+\begin{bmatrix}
+\sqrt{1-\rho^2} & 0 & 0 & ... & 0 & 0\\
+-\rho & 1 & 0 & ... & 0 & 0\\
+0 & -\rho & 1 & ... & 0 & 0\\
+\vdots & \vdots & \vdots & \ddots & \vdots & \vdots\\
+0 & 0 & 0 & ... & 1 & 0\\
+0 & 0 & 0 & ... & -\rho & 1
+\end{bmatrix}$$
+```{r}
+X <- cbind(1,price) # make regressor matrix
+y <- quant
+ngridpoints <- 199
+Z <- matrix(NA,ngridpoints,ncol(X)) # initialize output matrix
+rho0 <- seq(-0.99,0.99,length=199)
+for(i in 1:199) {
+  # create transformation matrix P
+  P <- diag(n)
+  P[1,1] <- sqrt(1-rho0[i]^2)
+  for(j in 2:n) P[j,(j-1)] <- -rho0[i]
+  P <- P/sqrt(1-rho0[i]^2)
+  # Transform variables
+  ystar <- P%*%y
+  Xstar <- P%*%X
+  # OLS on transformed variables
+  regr <- lm(ystar~Xstar-1)
+  uhatstar <- residuals(regr)
+  Z[i,] <- c(rho0[i],sum(uhatstar^2)*(1-rho0[i]^2))
+  }
+rhostar <- Z[which.min(Z[,2]),1]
+print(paste("The value of rho with minimum sum of squared residuals is",rhostar))
+```
+
+```
+
